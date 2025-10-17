@@ -12,6 +12,10 @@ project {
   header_ignore = [
     # --- IDE / Editor ---
     ".idea/**",
-    ".vscode/**"
+    ".vscode/**",
+
+    # --- C / C++ ---
+    "cmake-build/**",
+    "cmake-build-*/**"
   ]
 }

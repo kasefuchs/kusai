@@ -7,8 +7,18 @@ project(kusai
   LANGUAGES CXX
 )
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_subdirectory(src)
+# Include
+include(FindProtobuf)
+
+# Abseil
+find_package(absl REQUIRED)
+
+# Protobuf
+find_package(Protobuf REQUIRED)
+
 add_subdirectory(app)
+add_subdirectory(proto)
+add_subdirectory(src)

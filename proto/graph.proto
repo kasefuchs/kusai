@@ -1,0 +1,20 @@
+// Copyright (c) Kasefuchs
+// SPDX-License-Identifier: MIT
+
+syntax = "proto3";
+
+package graph;
+
+message Node {
+  uint32 id = 1;
+}
+
+message Edge {
+  uint32 source = 1;
+  uint32 target = 2;
+}
+
+message Graph {
+  repeated Node nodes = 1;
+  repeated Edge edges = 2;
+}

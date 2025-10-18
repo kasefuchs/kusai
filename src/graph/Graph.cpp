@@ -3,14 +3,21 @@
 
 #include "Graph.hpp"
 
-Node *Graph::addNode() {
-  auto node = std::make_unique<Node>(lastId_++);
+#include "graph.hpp"
+
+graph::Node *Graph::addNode() {
+  auto node = std::make_unique<graph::Node>();
+  node->set_id(lastId_++);
+
   nodes_.emplace_back(std::move(node));
   return nodes_.back().get();
 }
 
-Edge *Graph::addEdge(const Node *source, const Node *target) {
-  auto edge = std::make_unique<Edge>(source->id(), target->id());
+graph::Edge *Graph::addEdge(const graph::Node *source, const graph::Node *target) {
+  auto edge = std::make_unique<graph::Edge>();
+  edge->set_source(source->id());
+  edge->set_target(target->id());
+
   edges_.emplace_back(std::move(edge));
   return edges_.back().get();
 }
@@ -18,22 +25,25 @@ Edge *Graph::addEdge(const Node *source, const Node *target) {
 void Graph::serialize(graph::Graph *out) const {
   for (const auto &node: nodes_) {
     graph::Node *n = out->add_nodes();
-    node->serialize(n);
+    n->CopyFrom(*node);
   }
 
   for (const auto &edge: edges_) {
     graph::Edge *e = out->add_edges();
-    edge->serialize(e);
+    e->CopyFrom(*edge);
   }
 }
 
 void Graph::deserialize(const graph::Graph *in) {
-  std::unordered_map<uint32_t, Node *> idToNode;
+  lastId_ = 1;
+  nodes_.clear();
+  edges_.clear();
+
+  std::unordered_map<uint32_t, graph::Node *> idToNode;
 
   for (const auto &nodeProto: in->nodes()) {
-    Node *n = addNode();
-    n->deserialize(&nodeProto);
-
+    graph::Node *n = addNode();
+    n->CopyFrom(nodeProto);
     idToNode[n->id()] = n;
   }
 
@@ -49,11 +59,11 @@ std::string Graph::toD2() const {
   std::ostringstream buf;
 
   for (const auto &node: nodes_) {
-    buf << node->id() << std::endl;
+    buf << graph::toD2(*node) << std::endl;
   }
 
   for (const auto &edge: edges_) {
-    buf << edge->sourceId() << " -> " << edge->targetId() << std::endl;
+    buf << graph::toD2(*edge) << std::endl;
   }
 
   return buf.str();

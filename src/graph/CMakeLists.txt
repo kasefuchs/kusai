@@ -2,12 +2,8 @@
 # SPDX-License-Identifier: MIT
 
 add_library(graph
-  Edge.cpp
-  Edge.hpp
   Graph.cpp
   Graph.hpp
-  Node.cpp
-  Node.hpp
 )
 
 target_include_directories(graph

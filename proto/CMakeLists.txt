@@ -4,6 +4,8 @@
 add_library(proto SHARED
   graph.hpp
   graph.proto
+  markov.hpp
+  markov.proto
 )
 
 protobuf_generate(

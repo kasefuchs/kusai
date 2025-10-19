@@ -12,6 +12,7 @@ target_include_directories(${PROJECT_NAME}
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}
   PRIVATE proto
   PRIVATE graph
+  PRIVATE markov
   PRIVATE absl::status
   PRIVATE absl::log_internal_check_op
   PRIVATE protobuf::libprotobuf

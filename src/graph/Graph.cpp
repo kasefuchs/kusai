@@ -13,13 +13,56 @@ graph::Node *Graph::addNode() {
   return nodes_.back().get();
 }
 
-graph::Edge *Graph::addEdge(const graph::Node *source, const graph::Node *target) {
+graph::Node *Graph::getNode(const uint32_t id) const {
+  for (const auto &node: nodes_) {
+    if (node->id() == id) return node.get();
+  }
+
+  return nullptr;
+}
+
+graph::Edge *Graph::addEdge(const uint32_t source, const uint32_t target) {
   auto edge = std::make_unique<graph::Edge>();
-  edge->set_source(source->id());
-  edge->set_target(target->id());
+  edge->set_source(source);
+  edge->set_target(target);
 
   edges_.emplace_back(std::move(edge));
   return edges_.back().get();
+}
+
+graph::Edge *Graph::addEdge(const graph::Node *source, const graph::Node *target) {
+  return addEdge(source->id(), target->id());
+}
+
+graph::Edge *Graph::getEdge(const uint32_t source, const uint32_t target) const {
+  for (const auto &edge: edges_) {
+    if (edge->source() == source && edge->target() == target) return edge.get();
+  }
+
+  return nullptr;
+}
+
+graph::Edge *Graph::getEdge(const graph::Node *source, const graph::Node *target) const {
+  return getEdge(source->id(), target->id());
+}
+
+std::vector<graph::Edge *> Graph::getOutgoingEdges(const graph::Node *source) const {
+  std::vector<graph::Edge *> result;
+  for (const auto &edge: edges_) {
+    if (edge->source() == source->id()) result.push_back(edge.get());
+  }
+
+  return result;
+}
+
+graph::Edge *Graph::getOrAddEdge(const uint32_t source, const uint32_t target) {
+  if (auto *edge = getEdge(source, target)) return edge;
+
+  return addEdge(source, target);
+}
+
+graph::Edge *Graph::getOrAddEdge(const graph::Node *source, const graph::Node *target) {
+  return getOrAddEdge(source->id(), target->id());
 }
 
 void Graph::serialize(graph::Graph *out) const {
@@ -48,10 +91,7 @@ void Graph::deserialize(const graph::Graph *in) {
   }
 
   for (const auto &edgeProto: in->edges()) {
-    const auto itSrc = idToNode.find(edgeProto.source());
-    const auto itDst = idToNode.find(edgeProto.target());
-
-    addEdge(itSrc->second, itDst->second);
+    addEdge(edgeProto.source(), edgeProto.target());
   }
 }
 

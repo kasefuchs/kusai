@@ -1,0 +1,14 @@
+// Copyright (c) Kasefuchs
+// SPDX-License-Identifier: MIT
+
+syntax = "proto3";
+
+package markov;
+
+message NodeMetadata {
+  uint32 value = 1;
+}
+
+message EdgeMetadata {
+  uint32 count = 1;
+}

@@ -10,7 +10,7 @@
 
 graph::Node *Markov::getNodeByValue(const uint32_t value) const {
   markov::NodeMetadata meta;
-  for (const auto &node: nodes_) {
+  for (const auto &[_, node]: nodes_) {
     if (markov::unpackNodeMetadata(node.get(), &meta) && meta.value() == value) {
       return node.get();
     }

@@ -13,6 +13,7 @@ TARGET_LINK_LIBRARIES(${PROJECT_NAME}
   PRIVATE proto
   PRIVATE graph
   PRIVATE markov
+  PRIVATE textchain
   PRIVATE absl::status
   PRIVATE absl::log_internal_check_op
   PRIVATE protobuf::libprotobuf

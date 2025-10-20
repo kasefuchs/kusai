@@ -36,9 +36,9 @@ public:
   [[nodiscard]] std::string toD2() const;
 
 private:
-  uint32_t lastId_ = 1;
+  uint32_t lastNodeId_ = 1;
 
 protected:
-  std::vector<std::unique_ptr<graph::Node> > nodes_;
+  std::unordered_map<uint32_t, std::unique_ptr<graph::Node> > nodes_;
   std::vector<std::unique_ptr<graph::Edge> > edges_;
 };

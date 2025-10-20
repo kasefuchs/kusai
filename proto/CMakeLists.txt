@@ -6,6 +6,7 @@ add_library(proto SHARED
   graph.proto
   markov.hpp
   markov.proto
+  textchain.proto
 )
 
 protobuf_generate(

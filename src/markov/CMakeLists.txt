@@ -13,4 +13,5 @@ target_include_directories(markov
 TARGET_LINK_LIBRARIES(markov
   PRIVATE proto
   PRIVATE graph
+  PRIVATE idgen
 )

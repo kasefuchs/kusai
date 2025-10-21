@@ -14,4 +14,5 @@ target_link_libraries(textchain
   PRIVATE proto
   PRIVATE graph
   PRIVATE markov
+  PRIVATE idgen
 )

@@ -8,33 +8,39 @@
 
 class TextChain : public Markov {
 public:
-  TextChain();
-
-  textchain::Token *startToken() const;
-
-  textchain::Token *endToken() const;
-
-  textchain::Token *getTokenByNode(uint32_t id) const;
-
-  textchain::Token *getTokenByNode(const graph::Node *node) const;
+  TextChain() = default;
 
   ~TextChain() = default;
 
-  textchain::Token *addToken(const std::string &value);
+  textchain::Token &startToken();
+
+  textchain::Token &endToken();
+
+  textchain::Token *getTokenByNode(uint32_t id) const;
+
+  textchain::Token *getTokenByNode(const graph::Node &node) const;
+
+  textchain::Token &addToken(const std::string &value);
+
+  textchain::Token &getOrAddTokenByValue(const std::string &value);
 
   void train(const std::vector<std::string> &strings);
 
-  textchain::Token *nextToken(const textchain::Token *current) const;
+  graph::Node *nextNode(const textchain::Token &current) const;
+
+  textchain::Token *nextToken(const textchain::Token &current) const;
 
   textchain::Token *getTokenByValue(const std::string &value) const;
 
-  void serialize(textchain::TextChain *out) const;
+  textchain::Token &addToken(uint32_t id, const std::string &value);
 
-  void deserialize(const textchain::TextChain *in);
+  void serialize(textchain::TextChain &out) const;
+
+  void deserialize(const textchain::TextChain &in);
 
 private:
-  uint32_t lastTokenId_ = 1;
-  textchain::Token *startToken_, *endToken_;
-
+  IdGenerator tokenIdGenerator_;
+  textchain::Token *startToken_ = nullptr, *endToken_ = nullptr;
   std::unordered_map<uint32_t, std::unique_ptr<textchain::Token> > tokens_;
+  std::unordered_map<std::string, textchain::Token *> tokenByValueIndex_;
 };

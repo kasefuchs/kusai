@@ -12,6 +12,7 @@ target_include_directories(${PROJECT_NAME}
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}
   PRIVATE proto
   PRIVATE graph
+  PRIVATE idgen
   PRIVATE markov
   PRIVATE textchain
   PRIVATE absl::status

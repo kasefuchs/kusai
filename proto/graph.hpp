@@ -9,6 +9,10 @@
 #include "graph.pb.h"
 
 namespace graph {
+  inline uint64_t makeEdgeId(const uint32_t source, const uint32_t target) {
+    return static_cast<uint64_t>(source) << 32 | static_cast<uint64_t>(target);
+  }
+
   inline std::string toD2(const Node &node) {
     std::string json;
     if (const auto status = google::protobuf::json::MessageToJsonString(node, &json); !status.ok()) {

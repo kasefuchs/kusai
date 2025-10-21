@@ -4,6 +4,7 @@
 add_library(proto SHARED
   graph.hpp
   graph.proto
+  idgen.proto
   markov.hpp
   markov.proto
   textchain.proto

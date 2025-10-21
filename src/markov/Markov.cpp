@@ -9,63 +9,70 @@
 #include "markov.pb.h"
 
 graph::Node *Markov::getNodeByValue(const uint32_t value) const {
-  markov::NodeMetadata meta;
-  for (const auto &[_, node]: nodes_) {
-    if (markov::unpackNodeMetadata(node.get(), &meta) && meta.value() == value) {
-      return node.get();
-    }
-  }
-
-  return nullptr;
+  const auto it = nodeByValueIndex_.find(value);
+  return it != nodeByValueIndex_.end() ? it->second : nullptr;
 }
 
-graph::Node *Markov::nextNode(const graph::Node *current) const {
+graph::Node *Markov::nextNode(const graph::Node &current) const {
+  const auto outgoing = getOutgoingEdges(current);
+  if (outgoing.empty()) return nullptr;
+
   std::vector<uint32_t> weights;
-  std::vector<graph::Edge *> edges;
-  for (const auto &edge: getOutgoingEdges(current)) {
+  std::vector<std::reference_wrapper<graph::Edge> > edges;
+  weights.reserve(outgoing.size());
+  edges.reserve(outgoing.size());
+
+  for (auto &edge: outgoing) {
     markov::EdgeMetadata meta;
-    if (markov::unpackEdgeMetadata(edge, &meta)) {
-      if (const uint32_t count = meta.count(); count != 0) {
-        weights.push_back(count);
-        edges.push_back(edge);
-      }
+    if (markov::unpackEdgeMetadata(edge, &meta) && meta.count() != 0) {
+      weights.push_back(meta.count());
+      edges.push_back(edge);
     }
   }
 
   if (edges.empty()) return nullptr;
 
-  std::discrete_distribution distribution(weights.begin(), weights.end());
-
-  static std::mt19937 gen(std::random_device{}());
-
-  return getNode(edges[distribution(gen)]->target());
+  std::discrete_distribution<> dist(weights.begin(), weights.end());
+  const auto &selectedEdge = edges[dist(rng_)];
+  return getNode(selectedEdge.get().target());
 }
 
 void Markov::train(const std::vector<std::vector<uint32_t> > &sequences) {
-  for (auto &edge: edges_) markov::resetEdgeMetadata(edge.get());
+  for (auto &[_, edge]: edges_) markov::resetEdgeMetadata(*edge);
 
-  std::unordered_map<uint32_t, graph::Node *> nodeIndex;
   for (const auto &sequence: sequences) {
     const graph::Node *prev = nullptr;
     for (uint32_t value: sequence) {
-      const auto [it, inserted] = nodeIndex.try_emplace(value, nullptr);
-      if (inserted && !((it->second = getNodeByValue(value)))) {
-        it->second = addNode();
+      graph::Node *node = getNodeByValue(value);
+      if (!node) {
+        node = &addNode();
         markov::NodeMetadata meta;
         meta.set_value(value);
-        markov::packNodeMetadata(it->second, &meta);
+        markov::packNodeMetadata(*node, meta);
+        nodeByValueIndex_[value] = node;
       }
 
       if (prev) {
-        auto *edge = getOrAddEdge(prev, it->second);
-
+        auto &edge = getOrAddEdge(*prev, *node);
         markov::EdgeMetadata meta;
         markov::unpackEdgeMetadata(edge, &meta);
         meta.set_count(meta.count() + 1);
-        markov::packEdgeMetadata(edge, &meta);
+        markov::packEdgeMetadata(edge, meta);
       }
 
-      prev = it->second;
+      prev = node;
+    }
+  }
+}
+
+void Markov::deserialize(const graph::Graph &in) {
+  Graph::deserialize(in);
+
+  nodeByValueIndex_.clear();
+  for (const auto &[_, node]: nodes_) {
+    markov::NodeMetadata meta;
+    if (markov::unpackNodeMetadata(*node, &meta)) {
+      nodeByValueIndex_[meta.value()] = node.get();
     }
   }
 }

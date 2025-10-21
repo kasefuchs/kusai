@@ -1,0 +1,10 @@
+// Copyright (c) Kasefuchs
+// SPDX-License-Identifier: MIT
+
+syntax = "proto3";
+
+package idgen;
+
+message IdGenerator {
+  uint32 last_id = 1;
+}

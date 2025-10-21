@@ -12,4 +12,5 @@ target_include_directories(graph
 
 target_link_libraries(graph
   PRIVATE proto
+  PRIVATE idgen
 )

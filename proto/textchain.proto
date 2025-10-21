@@ -6,6 +6,7 @@ syntax = "proto3";
 package textchain;
 
 import "graph.proto";
+import "idgen.proto";
 
 message Token {
   uint32 id = 1;
@@ -15,4 +16,5 @@ message Token {
 message TextChain {
   graph.Graph graph = 1;
   repeated Token tokens = 2;
+  idgen.IdGenerator token_id_generator = 3;
 }

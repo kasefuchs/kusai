@@ -1,6 +1,3 @@
-// Copyright (c) Kasefuchs
-// SPDX-License-Identifier: MIT
-
 #include "IdGenerator.hpp"
 #include "idgen.pb.h"
 

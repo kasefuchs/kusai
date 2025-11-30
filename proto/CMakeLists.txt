@@ -1,6 +1,3 @@
-# Copyright (c) Kasefuchs
-# SPDX-License-Identifier: MIT
-
 add_library(proto SHARED
   graph.hpp
   graph.proto

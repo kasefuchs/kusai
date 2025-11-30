@@ -1,6 +1,3 @@
-# Copyright (c) Kasefuchs
-# SPDX-License-Identifier: MIT
-
 add_library(idgen
   IdGenerator.cpp
   IdGenerator.hpp

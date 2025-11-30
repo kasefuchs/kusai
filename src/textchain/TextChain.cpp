@@ -1,6 +1,3 @@
-// Copyright (c) Kasefuchs
-// SPDX-License-Identifier: MIT
-
 #include "TextChain.hpp"
 #include "markov.hpp"
 

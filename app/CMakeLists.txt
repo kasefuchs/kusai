@@ -1,6 +1,3 @@
-# Copyright (c) Kasefuchs
-# SPDX-License-Identifier: MIT
-
 add_executable(${PROJECT_NAME}
   main.cpp
 )

@@ -1,16 +1,16 @@
 #include "Graph.hpp"
 #include "graph.hpp"
 
-graph::Node &Graph::addNode(const uint32_t id) {
+graph::Node *Graph::addNode(const uint32_t id) {
   auto node = std::make_unique<graph::Node>();
   node->set_id(id);
 
   auto [it, _] = nodes_.emplace(node->id(), std::move(node));
-  return *it->second;
+  return it->second.get();
 }
 
-graph::Node &Graph::addNode() {
-  return addNode(nodeIdGenerator_.next());
+graph::Node *Graph::addNode() {
+  return addNode(idGenerator.next());
 }
 
 graph::Node *Graph::getNode(const uint32_t id) const {
@@ -18,7 +18,7 @@ graph::Node *Graph::getNode(const uint32_t id) const {
   return nullptr;
 }
 
-graph::Edge &Graph::addEdge(const uint32_t source, const uint32_t target) {
+graph::Edge *Graph::addEdge(const uint32_t source, const uint32_t target) {
   const uint64_t id = graph::makeEdgeId(source, target);
 
   auto edge = std::make_unique<graph::Edge>();
@@ -27,10 +27,10 @@ graph::Edge &Graph::addEdge(const uint32_t source, const uint32_t target) {
   edge->set_target(target);
 
   const auto [it, _] = edges_.emplace(id, std::move(edge));
-  return *it->second;
+  return it->second.get();
 }
 
-graph::Edge &Graph::addEdge(const graph::Node &source, const graph::Node &target) {
+graph::Edge *Graph::addEdge(const graph::Node &source, const graph::Node &target) {
   return addEdge(source.id(), target.id());
 }
 
@@ -44,51 +44,46 @@ graph::Edge *Graph::getEdge(const graph::Node &source, const graph::Node &target
   return getEdge(source.id(), target.id());
 }
 
-std::vector<std::reference_wrapper<graph::Edge> > Graph::getOutgoingEdges(const graph::Node &source) const {
-  std::vector<std::reference_wrapper<graph::Edge> > result;
+std::vector<graph::Edge *> Graph::getOutgoingEdges(const graph::Node &source) const {
+  std::vector<graph::Edge *> result;
   for (const auto &[_, edge]: edges_) {
-    if (edge->source() == source.id()) result.emplace_back(*edge);
+    if (edge->source() == source.id()) result.emplace_back(edge.get());
   }
 
   return result;
 }
 
-graph::Edge &Graph::getOrAddEdge(const uint32_t source, const uint32_t target) {
-  if (auto *edge = getEdge(source, target)) return *edge;
+graph::Edge *Graph::getOrAddEdge(const uint32_t source, const uint32_t target) {
+  if (auto *edge = getEdge(source, target)) return edge;
   return addEdge(source, target);
 }
 
-graph::Edge &Graph::getOrAddEdge(const graph::Node &source, const graph::Node &target) {
+graph::Edge *Graph::getOrAddEdge(const graph::Node &source, const graph::Node &target) {
   return getOrAddEdge(source.id(), target.id());
 }
 
 void Graph::serialize(graph::Graph &out) const {
-  nodeIdGenerator_.serialize(*out.mutable_node_id_generator());
+  idGenerator.serialize(*out.mutable_id_generator());
 
   for (const auto &[_, node]: nodes_) out.add_nodes()->CopyFrom(*node);
   for (const auto &[_, edge]: edges_) out.add_edges()->CopyFrom(*edge);
 }
 
 void Graph::deserialize(const graph::Graph &in) {
-  nodeIdGenerator_.deserialize(in.node_id_generator());
+  idGenerator.deserialize(in.id_generator());
 
   nodes_.clear();
-  for (const auto &nodeProto: in.nodes()) addNode(nodeProto.id()).CopyFrom(nodeProto);
-
   edges_.clear();
+
+  for (const auto &nodeProto: in.nodes()) addNode(nodeProto.id())->CopyFrom(nodeProto);
   for (const auto &edgeProto: in.edges()) addEdge(edgeProto.source(), edgeProto.target());
 }
 
 std::string Graph::toD2() const {
   std::ostringstream buf;
 
-  for (const auto &[_, node]: nodes_) {
-    buf << graph::toD2(*node) << std::endl;
-  }
-
-  for (const auto &[_, edge]: edges_) {
-    buf << graph::toD2(*edge) << std::endl;
-  }
+  for (const auto &[_, node]: nodes_) buf << graph::toD2(*node) << std::endl;
+  for (const auto &[_, edge]: edges_) buf << graph::toD2(*edge) << std::endl;
 
   return buf.str();
 }

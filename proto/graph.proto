@@ -15,11 +15,12 @@ message Edge {
   uint64 id = 1;
   uint32 source = 2;
   uint32 target = 3;
-  google.protobuf.Any metadata = 4;
+  uint32 weight = 4;
+  google.protobuf.Any metadata = 5;
 }
 
 message Graph {
   repeated Node nodes = 1;
   repeated Edge edges = 2;
-  idgen.IdGenerator node_id_generator = 3;
+  idgen.IdGenerator id_generator = 3;
 }

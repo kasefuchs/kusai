@@ -2,74 +2,32 @@
 
 #include <random>
 
-#include "markov.hpp"
-#include "markov.pb.h"
-
-graph::Node *Markov::getNodeByValue(const uint32_t value) const {
-  const auto it = nodeByValueIndex_.find(value);
-  return it != nodeByValueIndex_.end() ? it->second : nullptr;
-}
-
 graph::Node *Markov::nextNode(const graph::Node &current) const {
   const auto outgoing = getOutgoingEdges(current);
   if (outgoing.empty()) return nullptr;
 
   std::vector<uint32_t> weights;
-  std::vector<std::reference_wrapper<graph::Edge> > edges;
-  weights.reserve(outgoing.size());
-  edges.reserve(outgoing.size());
-
-  for (auto &edge: outgoing) {
-    markov::EdgeMetadata meta;
-    if (markov::unpackEdgeMetadata(edge, &meta) && meta.count() != 0) {
-      weights.push_back(meta.count());
-      edges.push_back(edge);
-    }
-  }
-
-  if (edges.empty()) return nullptr;
+  for (const auto *edge: outgoing) weights.push_back(edge->weight());
 
   std::discrete_distribution<> dist(weights.begin(), weights.end());
-  const auto &selectedEdge = edges[dist(rng_)];
-  return getNode(selectedEdge.get().target());
+  const auto *chosen = outgoing[dist(rng_)];
+
+  return getNode(chosen->target());
 }
 
-void Markov::train(const std::vector<std::vector<uint32_t> > &sequences) {
-  for (auto &[_, edge]: edges_) markov::resetEdgeMetadata(*edge);
+void Markov::train(const std::vector<std::vector<graph::Node *> > &sequences) {
+  for (auto &[_, edge]: edges_) edge->set_weight(0);
 
-  for (const auto &sequence: sequences) {
+  for (auto &seq: sequences) {
     const graph::Node *prev = nullptr;
-    for (uint32_t value: sequence) {
-      graph::Node *node = getNodeByValue(value);
-      if (!node) {
-        node = &addNode();
-        markov::NodeMetadata meta;
-        meta.set_value(value);
-        markov::packNodeMetadata(*node, meta);
-        nodeByValueIndex_[value] = node;
-      }
 
+    for (const auto *node: seq) {
       if (prev) {
-        auto &edge = getOrAddEdge(*prev, *node);
-        markov::EdgeMetadata meta;
-        markov::unpackEdgeMetadata(edge, &meta);
-        meta.set_count(meta.count() + 1);
-        markov::packEdgeMetadata(edge, meta);
+        auto *edge = getOrAddEdge(*prev, *node);
+        edge->set_weight(edge->weight() + 1);
       }
 
       prev = node;
-    }
-  }
-}
-
-void Markov::deserialize(const graph::Graph &in) {
-  Graph::deserialize(in);
-
-  nodeByValueIndex_.clear();
-  for (const auto &[_, node]: nodes_) {
-    markov::NodeMetadata meta;
-    if (markov::unpackNodeMetadata(*node, &meta)) {
-      nodeByValueIndex_[meta.value()] = node.get();
     }
   }
 }

@@ -19,5 +19,5 @@ public:
   void deserialize(const idgen::IdGenerator &in);
 
 private:
-  uint32_t lastId_ = 0;
+  uint32_t last_ = 0;
 };

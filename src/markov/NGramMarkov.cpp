@@ -15,9 +15,13 @@ void NGramMarkov::train(const std::vector<std::vector<graph::Node *> > &sequence
       for (const auto *node: window.first(n_ - 1)) ctx.push_back(node->id());
 
       const auto id = makeContextId(ctx);
-      const auto *node = getOrAddNode(id);
-      const auto *next = window.back();
+      auto *node = getOrAddNode(id);
 
+      auto metadata = markov::NGramNodeMetadata();
+      metadata.mutable_context()->Assign(ctx.begin(), ctx.end());
+      node->mutable_metadata()->PackFrom(metadata);
+
+      const auto *next = window.back();
       auto *edge = getOrAddEdge(*node, *next);
       edge->set_weight(edge->weight() + 1);
     }

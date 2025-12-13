@@ -16,6 +16,10 @@ public:
 
   graph::Node *getNode(uint32_t id) const;
 
+  graph::Node *getNode(const google::protobuf::Any &msg);
+
+  graph::Node *getNode(const google::protobuf::Message &msg);
+
   graph::Node *getOrAddNode(uint32_t id);
 
   graph::Edge *addEdge(uint32_t source, uint32_t target);
@@ -25,6 +29,10 @@ public:
   graph::Edge *getEdge(uint32_t source, uint32_t target) const;
 
   graph::Edge *getEdge(const graph::Node &source, const graph::Node &target) const;
+
+  graph::Edge *getEdge(const google::protobuf::Any &msg);
+
+  graph::Edge *getEdge(const google::protobuf::Message &msg);
 
   graph::Edge *getOrAddEdge(uint32_t source, uint32_t target);
 

@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package markov;
+
+import "graph.proto";
+
+message NGramMarkov {
+  uint32 n = 1;
+  graph.Graph graph = 2;
+}

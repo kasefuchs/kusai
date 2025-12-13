@@ -9,14 +9,14 @@ graph::Node *Markov::nextNode(const graph::Node &current) const {
   std::vector<uint32_t> weights;
   for (const auto *edge: outgoing) weights.push_back(edge->weight());
 
-  std::discrete_distribution<> dist(weights.begin(), weights.end());
+  std::discrete_distribution dist(weights.begin(), weights.end());
   const auto *chosen = outgoing[dist(rng_)];
 
   return getNode(chosen->target());
 }
 
 void Markov::train(const std::vector<std::vector<graph::Node *> > &sequences) {
-  for (auto &[_, edge]: edges_) edge->set_weight(0);
+  for (const auto &edge: edges_ | std::views::values) edge->set_weight(0);
 
   for (auto &seq: sequences) {
     const graph::Node *prev = nullptr;

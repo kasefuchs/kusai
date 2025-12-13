@@ -23,7 +23,7 @@ namespace graph {
 
   inline std::string toD2(const Edge &edge) {
     std::string json;
-    if (const auto status = google::protobuf::json::MessageToJsonString(edge.metadata(), &json); !status.ok()) {
+    if (const auto status = google::protobuf::json::MessageToJsonString(edge, &json); !status.ok()) {
       throw std::runtime_error("Failed to serialize edge metadata");
     }
 

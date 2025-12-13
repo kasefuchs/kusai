@@ -12,11 +12,10 @@ message Node {
 }
 
 message Edge {
-  uint64 id = 1;
-  uint32 source = 2;
-  uint32 target = 3;
-  uint32 weight = 4;
-  google.protobuf.Any metadata = 5;
+  uint32 source = 1;
+  uint32 target = 2;
+  uint32 weight = 3;
+  google.protobuf.Any metadata = 4;
 }
 
 message Graph {

@@ -1,6 +1,8 @@
 add_library(markov
   Markov.cpp
   Markov.hpp
+  NGramMarkov.cpp
+  NGramMarkov.hpp
 )
 
 target_include_directories(markov

@@ -16,6 +16,8 @@ public:
 
   graph::Node *getNode(uint32_t id) const;
 
+  graph::Node *getOrAddNode(uint32_t id);
+
   graph::Edge *addEdge(uint32_t source, uint32_t target);
 
   graph::Edge *addEdge(const graph::Node &source, const graph::Node &target);
@@ -28,7 +30,7 @@ public:
 
   graph::Edge *getOrAddEdge(const graph::Node &source, const graph::Node &target);
 
-  std::vector<graph::Edge*> getOutgoingEdges(const graph::Node& source) const;
+  std::vector<graph::Edge *> getOutgoingEdges(const graph::Node &source) const;
 
   void serialize(graph::Graph &out) const;
 

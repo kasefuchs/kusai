@@ -2,21 +2,21 @@
 #include "idgen.pb.h"
 
 uint32_t IdGenerator::next() {
-  return ++lastId_;
+  return ++last_;
 }
 
 uint32_t IdGenerator::current() const {
-  return lastId_;
+  return last_;
 }
 
 void IdGenerator::reset(const uint32_t value = 0) {
-  lastId_ = value;
+  last_ = value;
 }
 
 void IdGenerator::serialize(idgen::IdGenerator &out) const {
-  out.set_last_id(lastId_);
+  out.set_last(last_);
 }
 
 void IdGenerator::deserialize(const idgen::IdGenerator &in) {
-  lastId_ = in.last_id();
+  last_ = in.last();
 }

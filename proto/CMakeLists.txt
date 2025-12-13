@@ -3,6 +3,7 @@ add_library(proto SHARED
   graph.proto
   idgen.proto
   markov.proto
+  textchain.proto
 )
 
 protobuf_generate(

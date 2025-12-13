@@ -1,3 +1,5 @@
+#include <google/protobuf/util/message_differencer.h>
+
 #include "Graph.hpp"
 #include "graph.hpp"
 
@@ -16,6 +18,23 @@ graph::Node *Graph::addNode() {
 graph::Node *Graph::getNode(const uint32_t id) const {
   if (const auto it = nodes_.find(id); it != nodes_.end()) return it->second.get();
   return nullptr;
+}
+
+graph::Node *Graph::getNode(const google::protobuf::Any &msg) {
+  for (const auto &node: nodes_ | std::views::values) {
+    if (google::protobuf::util::MessageDifferencer::Equals(node->metadata(), msg)) {
+      return node.get();
+    }
+  }
+
+  return nullptr;
+}
+
+graph::Node *Graph::getNode(const google::protobuf::Message &msg) {
+  google::protobuf::Any anyMsg;
+  anyMsg.PackFrom(msg);
+
+  return getNode(anyMsg);
 }
 
 graph::Node *Graph::getOrAddNode(const uint32_t id) {
@@ -46,6 +65,23 @@ graph::Edge *Graph::getEdge(const uint32_t source, const uint32_t target) const 
 
 graph::Edge *Graph::getEdge(const graph::Node &source, const graph::Node &target) const {
   return getEdge(source.id(), target.id());
+}
+
+graph::Edge *Graph::getEdge(const google::protobuf::Any &msg) {
+  for (const auto &edge: edges_ | std::views::values) {
+    if (google::protobuf::util::MessageDifferencer::Equals(edge->metadata(), msg)) {
+      return edge.get();
+    }
+  }
+
+  return nullptr;
+}
+
+graph::Edge *Graph::getEdge(const google::protobuf::Message &msg) {
+  google::protobuf::Any anyMsg;
+  anyMsg.PackFrom(msg);
+
+  return getEdge(anyMsg);
 }
 
 std::vector<graph::Edge *> Graph::getOutgoingEdges(const graph::Node &source) const {

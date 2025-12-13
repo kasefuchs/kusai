@@ -1,5 +1,6 @@
 #include <span>
 
+#include "hash.hpp"
 #include "NGramMarkov.hpp"
 
 void NGramMarkov::train(const std::vector<std::vector<graph::Node *> > &sequences) {
@@ -30,14 +31,15 @@ void NGramMarkov::train(const std::vector<std::vector<graph::Node *> > &sequence
 
 graph::Node *NGramMarkov::nextNode(const std::vector<graph::Node *> &context) const {
   const std::span window(context);
+  if (window.size() < n_ - 1) return nullptr;
 
   std::vector<uint32_t> ctx;
   for (const auto *node: window.last(n_ - 1)) ctx.push_back(node->id());
 
   const auto ctxId = makeContextId(ctx);
-  const auto *it = getNode(ctxId);
+  if (const auto *it = getNode(ctxId); it != nullptr) return Markov::nextNode(*it);
 
-  return Markov::nextNode(*it);
+  return nullptr;
 }
 
 void NGramMarkov::serialize(markov::NGramMarkov &out) const {
@@ -51,11 +53,5 @@ void NGramMarkov::deserialize(const markov::NGramMarkov &in) {
 }
 
 uint32_t NGramMarkov::makeContextId(const std::vector<uint32_t> &ids) {
-  uint32_t hash = 0x811c9dc5;
-  for (const uint32_t id: ids) {
-    hash ^= id;
-    hash *= 0x01000193;
-  }
-
-  return hash;
+  return util::hash::fnv1a(reinterpret_cast<const char *>(ids.data()), ids.size());
 }

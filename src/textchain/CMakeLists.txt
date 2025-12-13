@@ -10,6 +10,5 @@ target_include_directories(textchain
 TARGET_LINK_LIBRARIES(textchain
   PRIVATE proto
   PRIVATE graph
-  PRIVATE idgen
   PRIVATE markov
 )

@@ -11,10 +11,6 @@ graph::Node *Graph::addNode(const uint32_t id) {
   return it->second.get();
 }
 
-graph::Node *Graph::addNode() {
-  return addNode(idGenerator.next());
-}
-
 graph::Node *Graph::getNode(const uint32_t id) const {
   if (const auto it = nodes_.find(id); it != nodes_.end()) return it->second.get();
   return nullptr;
@@ -103,15 +99,11 @@ graph::Edge *Graph::getOrAddEdge(const graph::Node &source, const graph::Node &t
 }
 
 void Graph::serialize(graph::Graph &out) const {
-  idGenerator.serialize(*out.mutable_id_generator());
-
   for (const auto &node: nodes_ | std::views::values) out.add_nodes()->CopyFrom(*node);
   for (const auto &edge: edges_ | std::views::values) out.add_edges()->CopyFrom(*edge);
 }
 
 void Graph::deserialize(const graph::Graph &in) {
-  idGenerator.deserialize(in.id_generator());
-
   nodes_.clear();
   edges_.clear();
 

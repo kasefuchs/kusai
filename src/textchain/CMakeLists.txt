@@ -11,4 +11,5 @@ TARGET_LINK_LIBRARIES(textchain
   PRIVATE proto
   PRIVATE graph
   PRIVATE markov
+  PRIVATE util
 )

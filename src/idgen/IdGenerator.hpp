@@ -1,7 +1,5 @@
 #pragma once
 
-#include <cstdint>
-
 #include "idgen.pb.h"
 
 class IdGenerator {

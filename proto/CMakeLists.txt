@@ -2,6 +2,7 @@ add_library(proto SHARED
   graph.hpp
   graph.proto
   idgen.proto
+  markov.proto
 )
 
 protobuf_generate(

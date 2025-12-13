@@ -2,8 +2,6 @@
 
 #include <graph.pb.h>
 
-#include "IdGenerator.hpp"
-
 class Graph {
 public:
   Graph() = default;
@@ -11,8 +9,6 @@ public:
   ~Graph() = default;
 
   graph::Node *addNode(uint32_t id);
-
-  graph::Node *addNode();
 
   graph::Node *getNode(uint32_t id) const;
 
@@ -47,8 +43,6 @@ public:
   [[nodiscard]] std::string toD2() const;
 
 protected:
-  IdGenerator idGenerator;
-
   std::unordered_map<uint32_t, std::unique_ptr<graph::Node> > nodes_;
   std::unordered_map<uint64_t, std::unique_ptr<graph::Edge> > edges_;
 };

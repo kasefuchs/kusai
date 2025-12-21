@@ -42,6 +42,19 @@ graph::Node *NGramMarkov::nextNode(const std::vector<graph::Node *> &context) co
   return nullptr;
 }
 
+std::vector<graph::Node *> NGramMarkov::generateNodes(const std::vector<graph::Node *> &context, uint32_t limit) const {
+  std::vector<graph::Node*> result = context;
+
+  while (limit--) {
+    graph::Node* node = nextNode(result);
+    if (!node) break;
+
+    result.push_back(node);
+  }
+
+  return result;
+}
+
 void NGramMarkov::serialize(markov::NGramMarkov &out) const {
   out.set_n(n_);
   Graph::serialize(*out.mutable_graph());

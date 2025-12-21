@@ -56,6 +56,12 @@ graph::Node *TextChain::nextNode(const std::string &context) {
   return NGramMarkov::nextNode(seq);
 }
 
+std::vector<graph::Node *> TextChain::generateNodes(const std::string &context, const uint32_t limit) {
+  const auto seq = contextNodes(context);
+
+  return NGramMarkov::generateNodes(seq, limit);
+}
+
 std::string TextChain::nextToken(const std::string &context) {
   const auto *node = nextNode(context);
   if (!node) return "";
@@ -64,6 +70,20 @@ std::string TextChain::nextToken(const std::string &context) {
   if (!node->metadata().UnpackTo(&meta)) return "";
 
   return meta.value();
+}
+
+std::string TextChain::generateTokens(const std::string &context, const uint32_t limit) {
+  std::string result;
+  for (const auto nodes = generateNodes(context, limit); const auto* node : nodes) {
+    textchain::NodeMetadata meta;
+    if (!node || !node->metadata().UnpackTo(&meta)) continue;
+
+    if (!result.empty()) result += ' ';
+
+    result += meta.value();
+  }
+
+  return result;
 }
 
 uint32_t TextChain::makeTokenId(const std::string &token) {

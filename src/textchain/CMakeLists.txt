@@ -7,9 +7,9 @@ target_include_directories(textchain
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-TARGET_LINK_LIBRARIES(textchain
-  PRIVATE proto
-  PRIVATE graph
-  PRIVATE markov
-  PRIVATE util
+target_link_libraries(textchain
+  PUBLIC proto
+  PUBLIC graph
+  PUBLIC markov
+  PUBLIC util
 )

@@ -6,12 +6,8 @@ target_include_directories(${PROJECT_NAME}
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-TARGET_LINK_LIBRARIES(${PROJECT_NAME}
-  PRIVATE proto
-  PRIVATE graph
-  PRIVATE markov
+target_link_libraries(${PROJECT_NAME}
   PRIVATE textchain
   PRIVATE absl::status
   PRIVATE absl::log_internal_check_op
-  PRIVATE protobuf::libprotobuf
 )

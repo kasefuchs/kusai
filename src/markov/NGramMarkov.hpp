@@ -11,6 +11,8 @@ public:
 
   graph::Node *nextNode(const std::vector<graph::Node *> &context) const;
 
+  std::vector<graph::Node*> generateNodes(const std::vector<graph::Node *> &context, uint32_t limit) const;
+
   void serialize(markov::NGramMarkov &out) const;
 
   void deserialize(const markov::NGramMarkov &in);

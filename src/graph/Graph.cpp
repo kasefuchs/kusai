@@ -1,3 +1,4 @@
+#include <fstream>
 #include <google/protobuf/util/message_differencer.h>
 
 #include "Graph.hpp"
@@ -103,12 +104,38 @@ void Graph::serialize(graph::Graph &out) const {
   for (const auto &edge: edges_ | std::views::values) out.add_edges()->CopyFrom(*edge);
 }
 
+void Graph::serializeToOstream(std::ostream &out) const {
+  graph::Graph model;
+  serialize(model);
+
+  model.SerializeToOstream(&out);
+}
+
+void Graph::serializeToFile(const std::string &filename) const {
+  std::ofstream ofs(filename, std::ios::binary);
+
+  serializeToOstream(ofs);
+}
+
 void Graph::deserialize(const graph::Graph &in) {
   nodes_.clear();
   edges_.clear();
 
   for (const auto &nodeProto: in.nodes()) addNode(nodeProto.id())->CopyFrom(nodeProto);
   for (const auto &edgeProto: in.edges()) addEdge(edgeProto.source(), edgeProto.target());
+}
+
+void Graph::deserializeFromIstream(std::istream &in) {
+  graph::Graph model;
+  model.ParseFromIstream(&in);
+
+  deserialize(model);
+}
+
+void Graph::deserializeFromFile(const std::string &filename) {
+  std::ifstream ifs(filename, std::ios::binary);
+
+  deserializeFromIstream(ifs);
 }
 
 std::string Graph::toD2() const {

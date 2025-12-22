@@ -8,9 +8,9 @@ class Markov : public Graph {
 public:
   Markov() = default;
 
-  ~Markov() = default;
+  ~Markov() override = default;
 
-  void train(const std::vector<std::vector<graph::Node *> > &sequences);
+  virtual void train(const std::vector<std::vector<graph::Node *> > &sequences);
 
   graph::Node *nextNode(const graph::Node &current) const;
 

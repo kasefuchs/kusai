@@ -6,7 +6,7 @@ class Graph {
 public:
   Graph() = default;
 
-  ~Graph() = default;
+  virtual ~Graph() = default;
 
   graph::Node *addNode(uint32_t id);
 
@@ -38,7 +38,15 @@ public:
 
   void serialize(graph::Graph &out) const;
 
+  virtual void serializeToOstream(std::ostream &out) const;
+
+  void serializeToFile(const std::string &filename) const;
+
   void deserialize(const graph::Graph &in);
+
+  virtual void deserializeFromIstream(std::istream &in);
+
+  void deserializeFromFile(const std::string &filename);
 
   [[nodiscard]] std::string toD2() const;
 

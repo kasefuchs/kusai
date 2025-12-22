@@ -60,9 +60,23 @@ void NGramMarkov::serialize(markov::NGramMarkov &out) const {
   Graph::serialize(*out.mutable_graph());
 }
 
+void NGramMarkov::serializeToOstream(std::ostream &out) const {
+  markov::NGramMarkov model;
+  serialize(model);
+
+  model.SerializeToOstream(&out);
+}
+
 void NGramMarkov::deserialize(const markov::NGramMarkov &in) {
   n_ = in.n();
   Graph::deserialize(in.graph());
+}
+
+void NGramMarkov::deserializeFromIstream(std::istream &in) {
+  markov::NGramMarkov model;
+  model.ParseFromIstream(&in);
+
+  deserialize(model);
 }
 
 uint32_t NGramMarkov::makeContextId(const std::vector<uint32_t> &ids) {

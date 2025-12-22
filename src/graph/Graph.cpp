@@ -122,7 +122,7 @@ void Graph::deserialize(const graph::Graph &in) {
   edges_.clear();
 
   for (const auto &nodeProto: in.nodes()) addNode(nodeProto.id())->CopyFrom(nodeProto);
-  for (const auto &edgeProto: in.edges()) addEdge(edgeProto.source(), edgeProto.target());
+  for (const auto &edgeProto: in.edges()) addEdge(edgeProto.source(), edgeProto.target())->CopyFrom(edgeProto);
 }
 
 void Graph::deserializeFromIstream(std::istream &in) {

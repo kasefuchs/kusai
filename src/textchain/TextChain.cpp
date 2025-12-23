@@ -3,9 +3,9 @@
 #include "hash.hpp"
 #include "textchain.pb.h"
 
-graph::Node *TextChain::addNode(const std::string &token) {
+graph::Node *TextChain::addNode(const std::string &token) const {
   const uint32_t id = makeTokenId(token);
-  auto *node = Graph::addNode(id);
+  auto *node = markov.addNode(id);
 
   textchain::NodeMetadata meta;
   meta.set_value(token);
@@ -16,15 +16,15 @@ graph::Node *TextChain::addNode(const std::string &token) {
 
 graph::Node *TextChain::getNode(const std::string &token) const {
   const uint32_t id = makeTokenId(token);
-  return Graph::getNode(id);
+  return markov.getNode(id);
 }
 
-graph::Node *TextChain::getOrAddNode(const std::string &token) {
+graph::Node *TextChain::getOrAddNode(const std::string &token) const {
   if (auto *node = getNode(token)) return node;
   return addNode(token);
 }
 
-std::vector<graph::Node *> TextChain::contextNodes(const std::string &context) {
+std::vector<graph::Node *> TextChain::contextNodes(const std::string &context) const {
   std::vector<graph::Node *> seq;
   std::istringstream stream(context);
   std::string token;
@@ -37,32 +37,30 @@ std::vector<graph::Node *> TextChain::contextNodes(const std::string &context) {
   return seq;
 }
 
-void TextChain::train(const std::vector<std::string> &sequences) {
-  Markov::train({});
-
-  std::vector<std::vector<graph::Node *> > nodeSequences;
+void TextChain::train(const std::vector<std::string>& sequences) const {
+  std::vector<std::vector<graph::Node*>> nodeSequences;
   nodeSequences.reserve(sequences.size());
 
-  for (const auto &text: sequences) {
-    if (const auto seq = contextNodes(text); !seq.empty()) nodeSequences.push_back(seq);
+  for (const auto& text : sequences) {
+    if (auto seq = contextNodes(text); !seq.empty()) {
+      nodeSequences.push_back(std::move(seq));
+    }
   }
 
-  NGramMarkov::train(nodeSequences);
+  markov.train(nodeSequences);
 }
 
-graph::Node *TextChain::nextNode(const std::string &context) {
+graph::Node* TextChain::nextNode(const std::string& context) const {
   const auto seq = contextNodes(context);
-
-  return NGramMarkov::nextNode(seq);
+  return markov.nextNode(seq);
 }
 
-std::vector<graph::Node *> TextChain::generateNodes(const std::string &context, const uint32_t limit) {
+std::vector<graph::Node*> TextChain::generateNodes(const std::string& context,const uint32_t limit) const {
   const auto seq = contextNodes(context);
-
-  return NGramMarkov::generateNodes(seq, limit);
+  return markov.generateNodes(seq, limit);
 }
 
-std::string TextChain::nextToken(const std::string &context) {
+std::string TextChain::nextToken(const std::string &context) const {
   const auto *node = nextNode(context);
   if (!node) return "";
 
@@ -72,9 +70,9 @@ std::string TextChain::nextToken(const std::string &context) {
   return meta.value();
 }
 
-std::string TextChain::generateTokens(const std::string &context, const uint32_t limit) {
+std::string TextChain::generateTokens(const std::string &context, const uint32_t limit) const {
   std::string result;
-  for (const auto nodes = generateNodes(context, limit); const auto* node : nodes) {
+  for (const auto nodes = generateNodes(context, limit); const auto *node: nodes) {
     textchain::NodeMetadata meta;
     if (!node || !node->metadata().UnpackTo(&meta)) continue;
 

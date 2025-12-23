@@ -10,11 +10,14 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Include
 include(FindProtobuf)
 
+# Protobuf
+find_package(Protobuf REQUIRED)
+
 # Abseil
 find_package(absl REQUIRED)
 
-# Protobuf
-find_package(Protobuf REQUIRED)
+# pugixml
+find_package(pugixml REQUIRED)
 
 add_subdirectory(app)
 add_subdirectory(proto)

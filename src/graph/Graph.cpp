@@ -146,3 +146,41 @@ std::string Graph::toD2() const {
 
   return buf.str();
 }
+
+std::string Graph::toGEXF() const {
+  pugi::xml_document doc;
+
+  pugi::xml_node gexf = doc.append_child("gexf");
+  gexf.append_attribute("xmlns") = "http://www.gexf.net/1.2draft";
+  gexf.append_attribute("xmlns:xsi") = "http://www.w3.org/2001/XMLSchema-instance";
+  gexf.append_attribute("xsi:schemaLocation") = "http://www.gexf.net/1.2draft http://www.gexf.net/1.2draft/gexf.xsd";
+  gexf.append_attribute("version") = "1.2";
+
+  pugi::xml_node graphNode = gexf.append_child("graph");
+  graphNode.append_attribute("mode") = "static";
+  graphNode.append_attribute("defaultedgetype") = "directed";
+
+  pugi::xml_node nodeAttrs = graphNode.append_child("attributes");
+  nodeAttrs.append_attribute("class") = "node";
+  pugi::xml_node nodeAttr = nodeAttrs.append_child("attribute");
+  nodeAttr.append_attribute("id") = "node_json";
+  nodeAttr.append_attribute("title") = "data";
+  nodeAttr.append_attribute("type") = "string";
+
+  pugi::xml_node edgeAttrs = graphNode.append_child("attributes");
+  edgeAttrs.append_attribute("class") = "edge";
+  pugi::xml_node edgeAttr = edgeAttrs.append_child("attribute");
+  edgeAttr.append_attribute("id") = "edge_json";
+  edgeAttr.append_attribute("title") = "data";
+  edgeAttr.append_attribute("type") = "string";
+
+  pugi::xml_node nodesNode = graphNode.append_child("nodes");
+  for (const auto &node: nodes_ | std::views::values) graph::toGEXF(nodesNode, *node);
+
+  pugi::xml_node edgesNode = graphNode.append_child("edges");
+  for (const auto &edge: edges_ | std::views::values) graph::toGEXF(edgesNode, *edge);
+
+  std::ostringstream oss;
+  doc.save(oss);
+  return oss.str();
+}

@@ -22,7 +22,7 @@ public:
 
   std::string nextToken(const std::string &context);
 
-  std::string generateTokens(const std::string &context, const uint32_t limit);
+  std::string generateTokens(const std::string &context, uint32_t limit);
 
 private:
   static uint32_t makeTokenId(const std::string &token);

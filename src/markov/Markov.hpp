@@ -14,6 +14,10 @@ public:
 
   graph::Node *nextNode(const graph::Node &current) const;
 
+  virtual graph::Node *nextNode(const std::vector<graph::Node *> &context) const;
+
+  std::vector<graph::Node*> generateNodes(const std::vector<graph::Node *> &context, uint32_t limit) const;
+
 private:
   mutable std::mt19937 rng_{std::random_device{}()};
 

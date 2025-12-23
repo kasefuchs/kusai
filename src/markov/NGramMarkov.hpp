@@ -9,9 +9,7 @@ public:
 
   void train(const std::vector<std::vector<graph::Node *> > &sequences) override;
 
-  graph::Node *nextNode(const std::vector<graph::Node *> &context) const;
-
-  std::vector<graph::Node*> generateNodes(const std::vector<graph::Node *> &context, uint32_t limit) const;
+  graph::Node *nextNode(const std::vector<graph::Node *> &context) const override;
 
   void serialize(markov::NGramMarkov &out) const;
 

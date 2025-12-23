@@ -8,6 +8,4 @@ target_include_directories(${PROJECT_NAME}
 
 target_link_libraries(${PROJECT_NAME}
   PRIVATE textchain
-  PRIVATE absl::status
-  PRIVATE absl::log_internal_check_op
 )

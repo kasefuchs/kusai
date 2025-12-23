@@ -11,6 +11,7 @@ protobuf_generate(
 )
 
 target_link_libraries(proto
+  PUBLIC pugixml::pugixml
   PUBLIC protobuf::libprotobuf
 )
 

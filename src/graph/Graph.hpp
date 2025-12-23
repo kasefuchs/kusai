@@ -50,6 +50,8 @@ public:
 
   [[nodiscard]] std::string toD2() const;
 
+  std::string toGEXF() const;
+
 protected:
   std::unordered_map<uint32_t, std::unique_ptr<graph::Node> > nodes_;
   std::unordered_map<uint64_t, std::unique_ptr<graph::Edge> > edges_;

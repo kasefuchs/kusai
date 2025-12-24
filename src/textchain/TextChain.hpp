@@ -27,5 +27,5 @@ public:
   std::string generateTokens(const std::string &context, uint32_t limit) const;
 
 private:
-  static uint32_t makeTokenId(const std::string &token);
+  static uint64_t makeTokenId(const std::string &token);
 };

@@ -7,8 +7,8 @@
 #include "graph.pb.h"
 
 namespace graph {
-  inline uint64_t makeEdgeId(const uint32_t source, const uint32_t target) {
-    return static_cast<uint64_t>(source) << 32 | static_cast<uint64_t>(target);
+  inline absl::uint128 makeEdgeId(const uint64_t source, const uint64_t target) {
+    return absl::MakeUint128(source, target);
   }
 
   inline std::string toD2(const Node &node) {
@@ -56,10 +56,10 @@ namespace graph {
       throw std::runtime_error("Failed to serialize edge to JSON");
     }
 
-    const uint64_t eid = makeEdgeId(edge.source(), edge.target());
+    const absl::uint128 eid = makeEdgeId(edge.source(), edge.target());
 
     pugi::xml_node edgeElem = parent.append_child("edge");
-    edgeElem.append_attribute("id") = std::to_string(eid).c_str();
+    edgeElem.append_attribute("id") = absl::StrFormat("%u", eid);
     edgeElem.append_attribute("source") = std::to_string(edge.source()).c_str();
     edgeElem.append_attribute("target") = std::to_string(edge.target()).c_str();
     edgeElem.append_attribute("weight") = std::to_string(edge.weight()).c_str();

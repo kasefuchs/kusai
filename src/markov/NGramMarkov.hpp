@@ -22,7 +22,7 @@ public:
 private:
   uint32_t n_;
 
-  static uint32_t makeContextId(const std::vector<uint32_t> &ids);
+  static uint64_t makeContextId(const std::vector<uint64_t> &ids);
 
 protected:
   using Graph::nodes_;

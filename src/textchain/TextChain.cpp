@@ -1,10 +1,10 @@
-#include "TextChain.hpp"
+#include <xxhash.h>
 
-#include "hash.hpp"
+#include "TextChain.hpp"
 #include "textchain.pb.h"
 
 graph::Node *TextChain::addNode(const std::string &token) const {
-  const uint32_t id = makeTokenId(token);
+  const auto id = makeTokenId(token);
   auto *node = markov.addNode(id);
 
   textchain::NodeMetadata meta;
@@ -15,7 +15,7 @@ graph::Node *TextChain::addNode(const std::string &token) const {
 }
 
 graph::Node *TextChain::getNode(const std::string &token) const {
-  const uint32_t id = makeTokenId(token);
+  const auto id = makeTokenId(token);
   return markov.getNode(id);
 }
 
@@ -84,6 +84,6 @@ std::string TextChain::generateTokens(const std::string &context, const uint32_t
   return result;
 }
 
-uint32_t TextChain::makeTokenId(const std::string &token) {
-  return util::hash::fnv1a(token.data(), token.size());
+uint64_t TextChain::makeTokenId(const std::string &token) {
+  return XXH64(&token[0], token.size(), 0);
 }

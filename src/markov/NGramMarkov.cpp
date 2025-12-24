@@ -1,6 +1,6 @@
 #include <span>
+#include <xxhash.h>
 
-#include "hash.hpp"
 #include "NGramMarkov.hpp"
 
 void NGramMarkov::train(const std::vector<std::vector<graph::Node *> > &sequences) {
@@ -12,7 +12,7 @@ void NGramMarkov::train(const std::vector<std::vector<graph::Node *> > &sequence
     for (size_t i = 0; i + n_ <= seq.size(); ++i) {
       std::span window(seq.data() + i, n_);
 
-      std::vector<uint32_t> ctx;
+      std::vector<uint64_t> ctx;
       for (const auto *node: window.first(n_ - 1)) ctx.push_back(node->id());
 
       const auto id = makeContextId(ctx);
@@ -33,7 +33,7 @@ graph::Node *NGramMarkov::nextNode(const std::vector<graph::Node *> &context) co
   const std::span window(context);
   if (window.size() < n_ - 1) return nullptr;
 
-  std::vector<uint32_t> ctx;
+  std::vector<uint64_t> ctx;
   for (const auto *node: window.last(n_ - 1)) ctx.push_back(node->id());
 
   const auto ctxId = makeContextId(ctx);
@@ -66,6 +66,6 @@ void NGramMarkov::deserializeFromIstream(std::istream &in) {
   deserialize(model);
 }
 
-uint32_t NGramMarkov::makeContextId(const std::vector<uint32_t> &ids) {
-  return util::hash::fnv1a(reinterpret_cast<const char *>(ids.data()), ids.size());
+uint64_t NGramMarkov::makeContextId(const std::vector<uint64_t> &ids) {
+  return XXH64(ids.data(), ids.size() * sizeof(uint64_t), 0);
 }

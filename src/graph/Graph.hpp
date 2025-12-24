@@ -8,21 +8,21 @@ public:
 
   virtual ~Graph() = default;
 
-  graph::Node *addNode(uint32_t id);
+  graph::Node *addNode(uint64_t id);
 
-  graph::Node *getNode(uint32_t id) const;
+  graph::Node *getNode(uint64_t id) const;
 
   graph::Node *getNode(const google::protobuf::Any &msg);
 
   graph::Node *getNode(const google::protobuf::Message &msg);
 
-  graph::Node *getOrAddNode(uint32_t id);
+  graph::Node *getOrAddNode(uint64_t id);
 
-  graph::Edge *addEdge(uint32_t source, uint32_t target);
+  graph::Edge *addEdge(uint64_t source, uint64_t target);
 
   graph::Edge *addEdge(const graph::Node &source, const graph::Node &target);
 
-  graph::Edge *getEdge(uint32_t source, uint32_t target) const;
+  graph::Edge *getEdge(uint64_t source, uint64_t target) const;
 
   graph::Edge *getEdge(const graph::Node &source, const graph::Node &target) const;
 
@@ -30,7 +30,7 @@ public:
 
   graph::Edge *getEdge(const google::protobuf::Message &msg);
 
-  graph::Edge *getOrAddEdge(uint32_t source, uint32_t target);
+  graph::Edge *getOrAddEdge(uint64_t source, uint64_t target);
 
   graph::Edge *getOrAddEdge(const graph::Node &source, const graph::Node &target);
 
@@ -50,9 +50,9 @@ public:
 
   [[nodiscard]] std::string toD2() const;
 
-  std::string toGEXF() const;
+  [[nodiscard]] std::string toGEXF() const;
 
 protected:
-  std::unordered_map<uint32_t, std::unique_ptr<graph::Node> > nodes_;
-  std::unordered_map<uint64_t, std::unique_ptr<graph::Edge> > edges_;
+  absl::flat_hash_map<uint64_t, std::unique_ptr<graph::Node> > nodes_;
+  absl::flat_hash_map<absl::uint128, std::unique_ptr<graph::Edge> > edges_;
 };

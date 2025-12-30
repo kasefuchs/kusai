@@ -19,9 +19,7 @@ graph::Node *Graph::getNode(const uint64_t id) const {
 
 graph::Node *Graph::getNode(const google::protobuf::Any &msg) {
   for (const auto &node: nodes_ | std::views::values) {
-    if (google::protobuf::util::MessageDifferencer::Equals(node->metadata(), msg)) {
-      return node.get();
-    }
+    if (google::protobuf::util::MessageDifferencer::Equals(node->metadata(), msg)) return node.get();
   }
 
   return nullptr;
@@ -55,7 +53,7 @@ graph::Edge *Graph::addEdge(const graph::Node &source, const graph::Node &target
 }
 
 graph::Edge *Graph::getEdge(const uint64_t source, const uint64_t target) const {
-  const  absl::uint128 id = graph::makeEdgeId(source, target);
+  const absl::uint128 id = graph::makeEdgeId(source, target);
   if (const auto it = edges_.find(id); it != edges_.end()) return it->second.get();
   return nullptr;
 }
@@ -66,9 +64,7 @@ graph::Edge *Graph::getEdge(const graph::Node &source, const graph::Node &target
 
 graph::Edge *Graph::getEdge(const google::protobuf::Any &msg) {
   for (const auto &edge: edges_ | std::views::values) {
-    if (google::protobuf::util::MessageDifferencer::Equals(edge->metadata(), msg)) {
-      return edge.get();
-    }
+    if (google::protobuf::util::MessageDifferencer::Equals(edge->metadata(), msg)) return edge.get();
   }
 
   return nullptr;
@@ -151,9 +147,7 @@ std::string Graph::toGEXF() const {
   pugi::xml_document doc;
 
   pugi::xml_node gexf = doc.append_child("gexf");
-  gexf.append_attribute("xmlns") = "http://www.gexf.net/1.2draft";
-  gexf.append_attribute("xmlns:xsi") = "http://www.w3.org/2001/XMLSchema-instance";
-  gexf.append_attribute("xsi:schemaLocation") = "http://www.gexf.net/1.2draft http://www.gexf.net/1.2draft/gexf.xsd";
+  gexf.append_attribute("xmlns") = "https://gexf.net/1.2";
   gexf.append_attribute("version") = "1.2";
 
   pugi::xml_node graphNode = gexf.append_child("graph");
@@ -162,17 +156,31 @@ std::string Graph::toGEXF() const {
 
   pugi::xml_node nodeAttrs = graphNode.append_child("attributes");
   nodeAttrs.append_attribute("class") = "node";
-  pugi::xml_node nodeAttr = nodeAttrs.append_child("attribute");
-  nodeAttr.append_attribute("id") = "node_json";
-  nodeAttr.append_attribute("title") = "data";
-  nodeAttr.append_attribute("type") = "string";
+  nodeAttrs.append_attribute("mode") = "static";
+
+  pugi::xml_node nodeTypeAttr = nodeAttrs.append_child("attribute");
+  nodeTypeAttr.append_attribute("id") = "node_metadata_type";
+  nodeTypeAttr.append_attribute("type") = "string";
+  nodeTypeAttr.append_attribute("title") = "type";
+
+  pugi::xml_node nodeJsonAttr = nodeAttrs.append_child("attribute");
+  nodeJsonAttr.append_attribute("id") = "node_json";
+  nodeJsonAttr.append_attribute("type") = "string";
+  nodeJsonAttr.append_attribute("title") = "data";
 
   pugi::xml_node edgeAttrs = graphNode.append_child("attributes");
   edgeAttrs.append_attribute("class") = "edge";
-  pugi::xml_node edgeAttr = edgeAttrs.append_child("attribute");
-  edgeAttr.append_attribute("id") = "edge_json";
-  edgeAttr.append_attribute("title") = "data";
-  edgeAttr.append_attribute("type") = "string";
+  edgeAttrs.append_attribute("mode") = "static";
+
+  pugi::xml_node edgeTypeAttr = edgeAttrs.append_child("attribute");
+  edgeTypeAttr.append_attribute("id") = "edge_metadata_type";
+  edgeTypeAttr.append_attribute("type") = "string";
+  edgeTypeAttr.append_attribute("title") = "type";
+
+  pugi::xml_node edgeJsonAttr = edgeAttrs.append_child("attribute");
+  edgeJsonAttr.append_attribute("id") = "edge_json";
+  edgeJsonAttr.append_attribute("type") = "string";
+  edgeJsonAttr.append_attribute("title") = "data";
 
   pugi::xml_node nodesNode = graphNode.append_child("nodes");
   for (const auto &node: nodes_ | std::views::values) graph::toGEXF(nodesNode, *node);

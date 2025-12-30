@@ -11,64 +11,71 @@ namespace graph {
     return absl::MakeUint128(source, target);
   }
 
-  inline std::string toD2(const Node &node) {
+  inline std::string toJsonOrThrow(const google::protobuf::Message &msg, const std::string &err) {
     std::string json;
-    if (const auto status = google::protobuf::json::MessageToJsonString(node, &json); !status.ok()) {
-      throw std::runtime_error("Failed to serialize node");
+    if (const auto status = google::protobuf::json::MessageToJsonString(msg, &json); !status.ok()) {
+      throw std::runtime_error(err);
     }
 
-    std::ostringstream oss;
-    oss << node.id() << ": |json " << json << " |";
-    return oss.str();
+    return json;
+  }
+
+  inline std::string toD2(const Node &node) {
+    const auto json = toJsonOrThrow(node, "Failed to serialize node");
+
+    return absl::StrCat(node.id(), ": |json ", json, " |");
   }
 
   inline std::string toD2(const Edge &edge) {
-    std::string json;
-    if (const auto status = google::protobuf::json::MessageToJsonString(edge, &json); !status.ok()) {
-      throw std::runtime_error("Failed to serialize edge metadata");
-    }
+    const auto json = toJsonOrThrow(edge, "Failed to serialize edge");
 
-    std::ostringstream oss;
-    oss << edge.source() << " -> " << edge.target() << ": |json " << json << " |";
-    return oss.str();
+    return absl::StrCat(edge.source(), " -> ", edge.target(), ": |json ", json, " |");
   }
 
   inline pugi::xml_node toGEXF(pugi::xml_node &parent, const Node &node) {
-    std::string json;
-    if (const auto status = google::protobuf::json::MessageToJsonString(node, &json); !status.ok()) {
-      throw std::runtime_error("Failed to serialize node to JSON");
+    pugi::xml_node elem = parent.append_child("node");
+    elem.append_attribute("id") = node.id();
+
+    pugi::xml_node attValues = elem.append_child("attvalues");
+
+    if (node.has_metadata() && !node.metadata().type_url().empty()) {
+      const auto &type = node.metadata().type_url();
+      pugi::xml_node typeAtt = attValues.append_child("attvalue");
+      typeAtt.append_attribute("for") = "node_metadata_type";
+      typeAtt.append_attribute("value") = type;
     }
 
-    pugi::xml_node nodeElem = parent.append_child("node");
-    nodeElem.append_attribute("id") = std::to_string(node.id()).c_str();
+    const auto json = toJsonOrThrow(node, "Failed to serialize node");
+    pugi::xml_node jsonAtt = attValues.append_child("attvalue");
+    jsonAtt.append_attribute("for") = "node_json";
+    jsonAtt.append_attribute("value") = json;
 
-    pugi::xml_node attvalues = nodeElem.append_child("attvalues");
-    pugi::xml_node attvalue = attvalues.append_child("attvalue");
-    attvalue.append_attribute("for") = "node_json";
-    attvalue.append_attribute("value") = json.c_str();
-
-    return nodeElem;
+    return elem;
   }
 
   inline pugi::xml_node toGEXF(pugi::xml_node &parent, const Edge &edge) {
-    std::string json;
-    if (const auto status = google::protobuf::json::MessageToJsonString(edge, &json); !status.ok()) {
-      throw std::runtime_error("Failed to serialize edge to JSON");
-    }
-
     const absl::uint128 eid = makeEdgeId(edge.source(), edge.target());
 
-    pugi::xml_node edgeElem = parent.append_child("edge");
-    edgeElem.append_attribute("id") = absl::StrFormat("%u", eid);
-    edgeElem.append_attribute("source") = std::to_string(edge.source()).c_str();
-    edgeElem.append_attribute("target") = std::to_string(edge.target()).c_str();
-    edgeElem.append_attribute("weight") = std::to_string(edge.weight()).c_str();
+    pugi::xml_node elem = parent.append_child("edge");
+    elem.append_attribute("id") = absl::StrCat(eid);
+    elem.append_attribute("source") = edge.source();
+    elem.append_attribute("target") = edge.target();
+    elem.append_attribute("weight") = edge.weight();
 
-    pugi::xml_node attvalues = edgeElem.append_child("attvalues");
-    pugi::xml_node attvalue = attvalues.append_child("attvalue");
-    attvalue.append_attribute("for") = "edge_json";
-    attvalue.append_attribute("value") = json.c_str();
+    pugi::xml_node attValues = elem.append_child("attvalues");
 
-    return edgeElem;
+    if (edge.has_metadata() && !edge.metadata().type_url().empty()) {
+      const auto &type = edge.metadata().type_url();
+      pugi::xml_node typeAtt = attValues.append_child("attvalue");
+      typeAtt.append_attribute("for") = "edge_metadata_type";
+      typeAtt.append_attribute("value") = type;
+    }
+
+    const auto json = toJsonOrThrow(edge, "Failed to serialize edge");
+    pugi::xml_node jsonAtt = attValues.append_child("attvalue");
+    jsonAtt.append_attribute("for") = "edge_json";
+    jsonAtt.append_attribute("value") = json;
+
+    return elem;
   }
 }

@@ -2,18 +2,19 @@
 #include <xxhash.h>
 
 #include "NGramMarkov.hpp"
-
-void NGramMarkov::train(const std::vector<std::vector<graph::Node *> > &sequences) {
+void NGramMarkov::train(const std::vector<std::vector<graph::Node *>> &sequences) {
   Markov::train({});
 
-  for (const auto &seq: sequences) {
-    if (seq.size() < n_) continue;
+  const size_t windowSize = contextSize_ + 1;
+  for (const auto &seq : sequences) {
+    if (seq.size() < windowSize) continue;
 
-    for (size_t i = 0; i + n_ <= seq.size(); ++i) {
-      std::span window(seq.data() + i, n_);
+    for (size_t i = 0; i + windowSize <= seq.size(); ++i) {
+      std::span window(seq.data() + i, windowSize);
 
       std::vector<uint64_t> ctx;
-      for (const auto *node: window.first(n_ - 1)) ctx.push_back(node->id());
+      ctx.reserve(contextSize_);
+      for (const auto *node : window.first(contextSize_)) ctx.push_back(node->id());
 
       const auto id = makeContextId(ctx);
       auto *node = getOrAddNode(id);
@@ -30,11 +31,11 @@ void NGramMarkov::train(const std::vector<std::vector<graph::Node *> > &sequence
 }
 
 graph::Node *NGramMarkov::nextNode(const std::vector<graph::Node *> &context) const {
-  const std::span window(context);
-  if (window.size() < n_ - 1) return nullptr;
+  if (context.size() < contextSize_) return nullptr;
 
   std::vector<uint64_t> ctx;
-  for (const auto *node: window.last(n_ - 1)) ctx.push_back(node->id());
+  ctx.reserve(contextSize_);
+  for (const std::span window(context); const auto *node : window.last(contextSize_)) ctx.push_back(node->id());
 
   const auto ctxId = makeContextId(ctx);
   if (const auto *it = getNode(ctxId); it != nullptr) return Markov::nextNode(*it);
@@ -43,7 +44,7 @@ graph::Node *NGramMarkov::nextNode(const std::vector<graph::Node *> &context) co
 }
 
 void NGramMarkov::serialize(markov::NGramMarkov &out) const {
-  out.set_n(n_);
+  out.set_context_size(contextSize_);
   Graph::serialize(*out.mutable_graph());
 }
 
@@ -55,7 +56,7 @@ void NGramMarkov::serializeToOstream(std::ostream &out) const {
 }
 
 void NGramMarkov::deserialize(const markov::NGramMarkov &in) {
-  n_ = in.n();
+  contextSize_ = in.context_size();
   Graph::deserialize(in.graph());
 }
 

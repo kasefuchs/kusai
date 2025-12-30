@@ -4,7 +4,8 @@
 
 class NGramMarkov : public Markov {
 public:
-  explicit NGramMarkov(const uint32_t n) : n_(n) {
+  explicit NGramMarkov(const uint32_t contextSize = 1) : contextSize_(contextSize) {
+    assert(contextSize_ > 0);
   }
 
   void train(const std::vector<std::vector<graph::Node *> > &sequences) override;
@@ -20,7 +21,7 @@ public:
   void deserializeFromIstream(std::istream &in) override;
 
 private:
-  uint32_t n_;
+  uint32_t contextSize_;
 
   static uint64_t makeContextId(const std::vector<uint64_t> &ids);
 

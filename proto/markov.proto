@@ -5,7 +5,7 @@ package markov;
 import "graph.proto";
 
 message NGramMarkov {
-  uint32 n = 1;
+  uint32 context_size = 1;
   graph.Graph graph = 2;
 }
 

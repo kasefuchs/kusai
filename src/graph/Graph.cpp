@@ -1,8 +1,9 @@
 #include <fstream>
+#include <pugixml.hpp>
 #include <google/protobuf/util/message_differencer.h>
 
 #include "Graph.hpp"
-#include "graph.hpp"
+#include "helpers/graph.hpp"
 
 graph::Node *Graph::addNode(const uint64_t id) {
   auto node = std::make_unique<graph::Node>();

@@ -1,8 +1,8 @@
 add_library(proto STATIC
-  graph.hpp
   graph.proto
   markov.proto
   textchain.proto
+  helpers/graph.hpp
 )
 
 protobuf_generate(

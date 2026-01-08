@@ -1,14 +1,11 @@
 # Protobuf
-include(FindProtobuf)
+find_package(protobuf CONFIG REQUIRED)
 
 # Abseil
-find_package(absl REQUIRED)
+find_package(absl CONFIG REQUIRED)
 
 # pugixml
-find_package(pugixml REQUIRED)
-
-# PkgConfig
-find_package(PkgConfig REQUIRED)
+find_package(pugixml CONFIG REQUIRED)
 
 # xxHash
-pkg_check_modules(XXHASH REQUIRED libxxhash)
+find_package(xxHash CONFIG REQUIRED)

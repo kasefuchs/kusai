@@ -1,4 +1,4 @@
-add_library(proto SHARED
+add_library(proto STATIC
   graph.hpp
   graph.proto
   markov.proto
@@ -11,6 +11,8 @@ protobuf_generate(
 )
 
 target_link_libraries(proto
+  PUBLIC absl::status
+  PUBLIC absl::strings
   PUBLIC absl::numeric
   PUBLIC pugixml::pugixml
   PUBLIC protobuf::libprotobuf

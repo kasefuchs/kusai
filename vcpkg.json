@@ -4,6 +4,7 @@
   "dependencies": [
     "abseil",
     "protobuf",
+    "cli11",
     "pugixml",
     "xxhash"
   ]

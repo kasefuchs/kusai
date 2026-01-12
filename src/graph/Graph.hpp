@@ -48,8 +48,6 @@ public:
 
   void deserializeFromFile(const std::string &filename);
 
-  [[nodiscard]] std::string toD2() const;
-
   [[nodiscard]] std::string toGEXF() const;
 
 protected:

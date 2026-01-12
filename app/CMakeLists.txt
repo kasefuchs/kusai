@@ -1,1 +1,1 @@
-add_subdirectory(textchain_train)
+add_subdirectory(textchain_util)

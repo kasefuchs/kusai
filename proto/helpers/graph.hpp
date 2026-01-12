@@ -1,7 +1,6 @@
 #pragma once
 
 #include <string>
-#include <pugixml.hpp>
 #include <google/protobuf/util/json_util.h>
 
 #include "graph.pb.h"
@@ -18,18 +17,6 @@ namespace graph {
     }
 
     return json;
-  }
-
-  inline std::string toD2(const Node &node) {
-    const auto json = toJsonOrThrow(node, "Failed to serialize node");
-
-    return absl::StrCat(node.id(), ": |json ", json, " |");
-  }
-
-  inline std::string toD2(const Edge &edge) {
-    const auto json = toJsonOrThrow(edge, "Failed to serialize edge");
-
-    return absl::StrCat(edge.source(), " -> ", edge.target(), ": |json ", json, " |");
   }
 
   inline pugi::xml_node toGEXF(pugi::xml_node &parent, const Node &node) {

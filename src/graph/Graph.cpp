@@ -135,15 +135,6 @@ void Graph::deserializeFromFile(const std::string &filename) {
   deserializeFromIstream(ifs);
 }
 
-std::string Graph::toD2() const {
-  std::ostringstream buf;
-
-  for (const auto &node: nodes_ | std::views::values) buf << graph::toD2(*node) << std::endl;
-  for (const auto &edge: edges_ | std::views::values) buf << graph::toD2(*edge) << std::endl;
-
-  return buf.str();
-}
-
 std::string Graph::toGEXF() const {
   pugi::xml_document doc;
 

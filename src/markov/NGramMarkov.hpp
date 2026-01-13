@@ -4,11 +4,9 @@
 
 class NGramMarkov : public Markov {
 public:
-  explicit NGramMarkov(const uint32_t contextSize = 1) : contextSize_(contextSize) {
-    assert(contextSize_ > 0);
-  }
+  explicit NGramMarkov(const uint32_t contextSize = 1) : contextSize_(contextSize) { assert(contextSize_ > 0); }
 
-  void train(const std::vector<std::vector<graph::Node *> > &sequences) override;
+  void train(const std::vector<std::vector<graph::Node *>> &sequences) override;
 
   graph::Node *nextNode(const std::vector<graph::Node *> &context) const override;
 
@@ -26,6 +24,6 @@ private:
   static uint64_t makeContextId(const std::vector<uint64_t> &ids);
 
 protected:
-  using Graph::nodes_;
   using Graph::edges_;
+  using Graph::nodes_;
 };

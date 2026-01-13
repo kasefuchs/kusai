@@ -1,26 +1,17 @@
+#include <CLI/CLI.hpp>
 #include <fstream>
 #include <iostream>
 #include <map>
 #include <string>
 #include <vector>
 
-#include <CLI/CLI.hpp>
-
 #include "NGramMarkov.hpp"
 #include "TextChain.hpp"
 
-enum class ModelType {
-  Markov,
-  NGram
-};
+enum class ModelType { Markov, NGram };
 
 auto modelTypeTransformer = CLI::CheckedTransformer(
-  std::map<std::string, ModelType>{
-    {"markov", ModelType::Markov},
-    {"ngram", ModelType::NGram}
-  },
-  CLI::ignore_case
-);
+    std::map<std::string, ModelType>{{"markov", ModelType::Markov}, {"ngram", ModelType::NGram}}, CLI::ignore_case);
 
 int main(int argc, char *argv[]) {
   auto modelType = ModelType::NGram;
@@ -36,7 +27,7 @@ int main(int argc, char *argv[]) {
   auto runSubcommand = app.add_subcommand("run");
   runSubcommand->add_option("-i,--input", inputFile, "Input binary file")->required();
   runSubcommand->add_option("-c,--context", context, "Generation context")->required();
-  runSubcommand->add_option("-l,--limit", limit, "Limit number of returned tokens");
+  runSubcommand->add_option("-l,--limit", limit, "Limit of returned tokens");
 
   std::string outputFile = "output.bin";
   std::string gexfFile;
@@ -44,7 +35,7 @@ int main(int argc, char *argv[]) {
   auto trainSubcommand = app.add_subcommand("train");
   trainSubcommand->add_option("-i,--input", inputFile, "Input text file")->required();
   trainSubcommand->add_option("-o,--output", outputFile, "Output binary model");
-  trainSubcommand->add_option("-s,--size", contextSize, "Context size for NGram model");
+  trainSubcommand->add_option("-s,--size", contextSize, "Context size of NGram model");
   trainSubcommand->add_option("-g,--gexf", gexfFile, "Optional GEXF output");
 
   CLI11_PARSE(app, argc, argv);
@@ -52,13 +43,13 @@ int main(int argc, char *argv[]) {
   Markov *markov = nullptr;
 
   switch (modelType) {
-    case ModelType::Markov:
-      markov = new Markov;
-      break;
+  case ModelType::Markov:
+    markov = new Markov;
+    break;
 
-    case ModelType::NGram:
-      markov = new NGramMarkov(contextSize);
-      break;
+  case ModelType::NGram:
+    markov = new NGramMarkov(contextSize);
+    break;
   }
 
   // ReSharper disable once CppDFANullDereference
@@ -80,7 +71,8 @@ int main(int argc, char *argv[]) {
       std::string line;
       std::vector<std::string> data;
       while (std::getline(in, line)) {
-        if (!line.empty()) data.push_back(std::move(line));
+        if (!line.empty())
+          data.push_back(std::move(line));
       }
       chain.train(data);
 

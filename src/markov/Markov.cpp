@@ -2,13 +2,14 @@
 
 #include <random>
 
-void Markov::train(const std::vector<std::vector<graph::Node *> > &sequences) {
-  for (const auto &edge: edges_ | std::views::values) edge->set_weight(0);
+void Markov::train(const std::vector<std::vector<graph::Node *>> &sequences) {
+  for (const auto &edge : edges_ | std::views::values)
+    edge->set_weight(0);
 
-  for (auto &seq: sequences) {
+  for (auto &seq : sequences) {
     const graph::Node *prev = nullptr;
 
-    for (const auto *node: seq) {
+    for (const auto *node : seq) {
       if (prev) {
         auto *edge = getOrAddEdge(*prev, *node);
         edge->set_weight(edge->weight() + 1);
@@ -21,10 +22,12 @@ void Markov::train(const std::vector<std::vector<graph::Node *> > &sequences) {
 
 graph::Node *Markov::nextNode(const graph::Node &current) const {
   const auto outgoing = getOutgoingEdges(current);
-  if (outgoing.empty()) return nullptr;
+  if (outgoing.empty())
+    return nullptr;
 
   std::vector<uint32_t> weights;
-  for (const auto *edge: outgoing) weights.push_back(edge->weight());
+  for (const auto *edge : outgoing)
+    weights.push_back(edge->weight());
 
   std::discrete_distribution dist(weights.begin(), weights.end());
   const auto *chosen = outgoing[dist(rng_)];
@@ -43,7 +46,8 @@ std::vector<graph::Node *> Markov::generateNodes(const std::vector<graph::Node *
 
   while (limit--) {
     graph::Node *node = nextNode(result);
-    if (!node) break;
+    if (!node)
+      break;
 
     result.push_back(node);
   }

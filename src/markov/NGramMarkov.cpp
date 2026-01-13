@@ -1,20 +1,24 @@
-#include <span>
+#include "NGramMarkov.hpp"
+
 #include <xxhash.h>
 
-#include "NGramMarkov.hpp"
+#include <span>
+
 void NGramMarkov::train(const std::vector<std::vector<graph::Node *>> &sequences) {
   Markov::train({});
 
   const size_t windowSize = contextSize_ + 1;
   for (const auto &seq : sequences) {
-    if (seq.size() < windowSize) continue;
+    if (seq.size() < windowSize)
+      continue;
 
     for (size_t i = 0; i + windowSize <= seq.size(); ++i) {
       std::span window(seq.data() + i, windowSize);
 
       std::vector<uint64_t> ctx;
       ctx.reserve(contextSize_);
-      for (const auto *node : window.first(contextSize_)) ctx.push_back(node->id());
+      for (const auto *node : window.first(contextSize_))
+        ctx.push_back(node->id());
 
       const auto id = makeContextId(ctx);
       auto *node = getOrAddNode(id);
@@ -31,14 +35,17 @@ void NGramMarkov::train(const std::vector<std::vector<graph::Node *>> &sequences
 }
 
 graph::Node *NGramMarkov::nextNode(const std::vector<graph::Node *> &context) const {
-  if (context.size() < contextSize_) return nullptr;
+  if (context.size() < contextSize_)
+    return nullptr;
 
   std::vector<uint64_t> ctx;
   ctx.reserve(contextSize_);
-  for (const std::span window(context); const auto *node : window.last(contextSize_)) ctx.push_back(node->id());
+  for (const std::span window(context); const auto *node : window.last(contextSize_))
+    ctx.push_back(node->id());
 
   const auto ctxId = makeContextId(ctx);
-  if (const auto *it = getNode(ctxId); it != nullptr) return Markov::nextNode(*it);
+  if (const auto *it = getNode(ctxId); it != nullptr)
+    return Markov::nextNode(*it);
 
   return nullptr;
 }

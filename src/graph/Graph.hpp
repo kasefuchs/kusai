@@ -51,6 +51,6 @@ public:
   [[nodiscard]] std::string toGEXF() const;
 
 protected:
-  absl::flat_hash_map<uint64_t, std::unique_ptr<graph::Node> > nodes_;
-  absl::flat_hash_map<absl::uint128, std::unique_ptr<graph::Edge> > edges_;
+  absl::flat_hash_map<uint64_t, std::unique_ptr<graph::Node>> nodes_;
+  absl::flat_hash_map<absl::uint128, std::unique_ptr<graph::Edge>> edges_;
 };

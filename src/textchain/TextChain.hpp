@@ -3,8 +3,7 @@
 
 class TextChain {
 public:
-  explicit TextChain(Markov &markov) : markov(markov) {
-  }
+  explicit TextChain(Markov &markov) : markov(markov) {}
 
   Markov &markov;
 

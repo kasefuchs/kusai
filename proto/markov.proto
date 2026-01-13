@@ -9,6 +9,4 @@ message NGramMarkov {
   graph.Graph graph = 2;
 }
 
-message NGramNodeMetadata {
-  repeated uint32 context = 1;
-}
+message NGramNodeMetadata { repeated uint32 context = 1; }

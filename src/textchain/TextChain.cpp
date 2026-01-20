@@ -6,7 +6,7 @@
 
 graph::Node *TextChain::addNode(const std::string &token) const {
   const auto id = makeTokenId(token);
-  auto *node = markov.addNode(id);
+  auto *node = markov.graph.addNode(id);
 
   textchain::NodeMetadata meta;
   meta.set_value(token);
@@ -17,7 +17,7 @@ graph::Node *TextChain::addNode(const std::string &token) const {
 
 graph::Node *TextChain::getNode(const std::string &token) const {
   const auto id = makeTokenId(token);
-  return markov.getNode(id);
+  return markov.graph.getNode(id);
 }
 
 graph::Node *TextChain::getOrAddNode(const std::string &token) const {

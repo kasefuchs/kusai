@@ -16,10 +16,12 @@ auto modelTypeTransformer = CLI::CheckedTransformer(
 int main(int argc, char *argv[]) {
   auto modelType = ModelType::NGram;
   std::string inputFile;
+  std::string gexfFile;
   int contextSize = 1;
 
   CLI::App app{"CLI tool for TextChain Markov models"};
   app.add_option("-m,--model", modelType, "Model type")->transform(modelTypeTransformer);
+  app.add_option("-g,--gexf", gexfFile, "Optional GEXF output");
 
   int limit;
   std::string context;
@@ -30,25 +32,24 @@ int main(int argc, char *argv[]) {
   runSubcommand->add_option("-l,--limit", limit, "Limit of returned tokens");
 
   std::string outputFile = "output.bin";
-  std::string gexfFile;
 
   auto trainSubcommand = app.add_subcommand("train");
   trainSubcommand->add_option("-i,--input", inputFile, "Input text file")->required();
   trainSubcommand->add_option("-o,--output", outputFile, "Output binary model");
   trainSubcommand->add_option("-s,--size", contextSize, "Context size of NGram model");
-  trainSubcommand->add_option("-g,--gexf", gexfFile, "Optional GEXF output");
 
   CLI11_PARSE(app, argc, argv);
 
-  Markov *markov = nullptr;
+  Graph graph;
+  AbstractMarkov *markov = nullptr;
 
   switch (modelType) {
   case ModelType::Markov:
-    markov = new Markov;
+    markov = new Markov(graph);
     break;
 
   case ModelType::NGram:
-    markov = new NGramMarkov(contextSize);
+    markov = new NGramMarkov(graph, contextSize);
     break;
   }
 
@@ -81,14 +82,14 @@ int main(int argc, char *argv[]) {
         throw std::runtime_error("Cannot open output file: " + outputFile);
       }
       markov->serializeToOstream(out);
+    }
 
-      if (!gexfFile.empty()) {
-        std::ofstream gexfOut(gexfFile);
-        if (!gexfOut.is_open()) {
-          throw std::runtime_error("Cannot open GEXF file: " + gexfFile);
-        }
-        gexfOut << markov->toGEXF();
+    if (!gexfFile.empty()) {
+      std::ofstream gexfOut(gexfFile);
+      if (!gexfOut.is_open()) {
+        throw std::runtime_error("Cannot open GEXF file: " + gexfFile);
       }
+      gexfOut << graph.toGEXF();
     }
   } catch (const std::exception &e) {
     std::cerr << e.what() << std::endl;

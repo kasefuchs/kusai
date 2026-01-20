@@ -5,13 +5,16 @@
 #include <string>
 #include <vector>
 
+#include "BackoffMarkov.hpp"
 #include "NGramMarkov.hpp"
 #include "TextChain.hpp"
 
-enum class ModelType { Markov, NGram };
+enum class ModelType { Markov, NGram, Backoff };
 
-auto modelTypeTransformer = CLI::CheckedTransformer(
-    std::map<std::string, ModelType>{{"markov", ModelType::Markov}, {"ngram", ModelType::NGram}}, CLI::ignore_case);
+auto modelTypeTransformer = CLI::CheckedTransformer(std::map<std::string, ModelType>{{"markov", ModelType::Markov},
+                                                                                     {"ngram", ModelType::NGram},
+                                                                                     {"backoff", ModelType::Backoff}},
+                                                    CLI::ignore_case);
 
 int main(int argc, char *argv[]) {
   auto modelType = ModelType::NGram;
@@ -23,7 +26,7 @@ int main(int argc, char *argv[]) {
   app.add_option("-m,--model", modelType, "Model type")->transform(modelTypeTransformer);
   app.add_option("-g,--gexf", gexfFile, "Optional GEXF output");
 
-  int limit;
+  int limit = INT32_MAX;
   std::string context;
 
   auto runSubcommand = app.add_subcommand("run");
@@ -36,7 +39,7 @@ int main(int argc, char *argv[]) {
   auto trainSubcommand = app.add_subcommand("train");
   trainSubcommand->add_option("-i,--input", inputFile, "Input text file")->required();
   trainSubcommand->add_option("-o,--output", outputFile, "Output binary model");
-  trainSubcommand->add_option("-s,--size", contextSize, "Context size of NGram model");
+  trainSubcommand->add_option("-s,--size", contextSize, "Context size of model");
 
   CLI11_PARSE(app, argc, argv);
 
@@ -50,6 +53,10 @@ int main(int argc, char *argv[]) {
 
   case ModelType::NGram:
     markov = new NGramMarkov(graph, contextSize);
+    break;
+
+  case ModelType::Backoff:
+    markov = new BackoffMarkov(graph, contextSize);
     break;
   }
 

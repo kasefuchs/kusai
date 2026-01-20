@@ -15,8 +15,6 @@ public:
 
   graph::Node *nextNode(const std::vector<graph::Node *> &context) const override;
 
-  std::vector<graph::Node *> generateNodes(const std::vector<graph::Node *> &context, uint32_t limit) const override;
-
   void serialize(google::protobuf::Any &out) const override;
 
   void deserialize(const google::protobuf::Any &in) override;

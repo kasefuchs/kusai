@@ -57,7 +57,8 @@ graph::Node *TextChain::nextNode(const std::string &context) const {
   return markov.nextNode(seq);
 }
 
-std::vector<graph::Node *> TextChain::generateNodes(const std::string &context, const uint32_t limit) const {
+std::vector<graph::Node *> TextChain::generateNodes(const std::string &context,
+                                                    const uint32_t limit = UINT32_MAX) const {
   const auto seq = contextNodes(context);
   return markov.generateNodes(seq, limit);
 }
@@ -74,7 +75,7 @@ std::string TextChain::nextToken(const std::string &context) const {
   return meta.value();
 }
 
-std::string TextChain::generateTokens(const std::string &context, const uint32_t limit) const {
+std::string TextChain::generateTokens(const std::string &context, const uint32_t limit = UINT32_MAX) const {
   std::string result;
   for (const auto nodes = generateNodes(context, limit); const auto *node : nodes) {
     textchain::NodeMetadata meta;

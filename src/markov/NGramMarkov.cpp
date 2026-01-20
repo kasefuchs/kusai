@@ -5,8 +5,6 @@
 #include <span>
 
 void NGramMarkov::train(const std::vector<std::vector<graph::Node *>> &sequences) {
-  Markov::train({});
-
   const size_t windowSize = contextSize_ + 1;
   for (const auto &seq : sequences) {
     if (seq.size() < windowSize)

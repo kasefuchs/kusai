@@ -40,6 +40,8 @@ public:
 
   [[nodiscard]] std::vector<graph::Edge *> getOutgoingEdges(const graph::Node &source) const;
 
+  void resetEdgeWeights();
+
   void serialize(graph::Graph &out) const;
 
   void deserialize(const graph::Graph &in);

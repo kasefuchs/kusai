@@ -12,3 +12,8 @@ message NGramMarkov {
 }
 
 message NGramNodeMetadata { repeated uint64 context = 1; }
+
+message BackoffMarkov {
+  uint32 max_context_size = 1;
+  graph.Graph graph = 2;
+}

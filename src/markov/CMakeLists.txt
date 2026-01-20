@@ -1,6 +1,8 @@
 add_library(markov SHARED
   AbstractMarkov.hpp
   AbstractMarkov.cpp
+  BackoffMarkov.cpp
+  BackoffMarkov.hpp
   Markov.cpp
   Markov.hpp
   NGramMarkov.cpp

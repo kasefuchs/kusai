@@ -96,6 +96,11 @@ std::vector<graph::Edge *> Graph::getOutgoingEdges(const graph::Node &source) co
   return result;
 }
 
+void Graph::resetEdgeWeights() {
+  for (const auto &edge : edges | std::views::values)
+    edge->set_weight(0);
+}
+
 graph::Edge *Graph::getOrAddEdge(const uint64_t source, const uint64_t target) {
   if (auto *edge = getEdge(source, target))
     return edge;

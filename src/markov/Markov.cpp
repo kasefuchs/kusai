@@ -4,9 +4,6 @@
 #include <random>
 
 void Markov::train(const std::vector<std::vector<graph::Node *>> &sequences) {
-  for (const auto &edge : graph.edges | std::views::values)
-    edge->set_weight(0);
-
   for (auto &seq : sequences) {
     const graph::Node *prev = nullptr;
 
@@ -40,20 +37,6 @@ graph::Node *Markov::nextNode(const std::vector<graph::Node *> &context) const {
   const auto *current = context.back();
 
   return nextNode(*current);
-}
-
-std::vector<graph::Node *> Markov::generateNodes(const std::vector<graph::Node *> &context, uint32_t limit) const {
-  std::vector<graph::Node *> result = context;
-
-  while (limit--) {
-    graph::Node *node = nextNode(result);
-    if (!node)
-      break;
-
-    result.push_back(node);
-  }
-
-  return result;
 }
 
 void Markov::serialize(google::protobuf::Any &out) const {

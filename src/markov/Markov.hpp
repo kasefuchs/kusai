@@ -2,26 +2,25 @@
 
 #include <random>
 
+#include "AbstractMarkov.hpp"
 #include "Graph.hpp"
 
-class Markov : public Graph {
+class Markov : public AbstractMarkov {
 public:
-  Markov() = default;
+  explicit Markov(Graph &graph) : AbstractMarkov(graph) {}
 
-  ~Markov() override = default;
-
-  virtual void train(const std::vector<std::vector<graph::Node *>> &sequences);
+  void train(const std::vector<std::vector<graph::Node *>> &sequences) override;
 
   graph::Node *nextNode(const graph::Node &current) const;
 
-  virtual graph::Node *nextNode(const std::vector<graph::Node *> &context) const;
+  graph::Node *nextNode(const std::vector<graph::Node *> &context) const override;
 
-  std::vector<graph::Node *> generateNodes(const std::vector<graph::Node *> &context, uint32_t limit) const;
+  std::vector<graph::Node *> generateNodes(const std::vector<graph::Node *> &context, uint32_t limit) const override;
+
+  void serialize(google::protobuf::Any &out) const override;
+
+  void deserialize(const google::protobuf::Any &in) override;
 
 private:
   mutable std::mt19937 rng_{std::random_device{}()};
-
-protected:
-  using Graph::edges_;
-  using Graph::nodes_;
 };

@@ -11,18 +11,18 @@ graph::Node *Graph::addNode(const uint64_t id) {
   auto node = std::make_unique<graph::Node>();
   node->set_id(id);
 
-  auto [it, _] = nodes_.emplace(node->id(), std::move(node));
+  auto [it, _] = nodes.emplace(node->id(), std::move(node));
   return it->second.get();
 }
 
 graph::Node *Graph::getNode(const uint64_t id) const {
-  if (const auto it = nodes_.find(id); it != nodes_.end())
+  if (const auto it = nodes.find(id); it != nodes.end())
     return it->second.get();
   return nullptr;
 }
 
 graph::Node *Graph::getNode(const google::protobuf::Any &msg) {
-  for (const auto &node : nodes_ | std::views::values) {
+  for (const auto &node : nodes | std::views::values) {
     if (google::protobuf::util::MessageDifferencer::Equals(node->metadata(), msg))
       return node.get();
   }
@@ -50,7 +50,7 @@ graph::Edge *Graph::addEdge(const uint64_t source, const uint64_t target) {
   edge->set_source(source);
   edge->set_target(target);
 
-  const auto [it, _] = edges_.emplace(id, std::move(edge));
+  const auto [it, _] = edges.emplace(id, std::move(edge));
   return it->second.get();
 }
 
@@ -60,8 +60,9 @@ graph::Edge *Graph::addEdge(const graph::Node &source, const graph::Node &target
 
 graph::Edge *Graph::getEdge(const uint64_t source, const uint64_t target) const {
   const absl::uint128 id = graph::makeEdgeId(source, target);
-  if (const auto it = edges_.find(id); it != edges_.end())
+  if (const auto it = edges.find(id); it != edges.end())
     return it->second.get();
+
   return nullptr;
 }
 
@@ -70,7 +71,7 @@ graph::Edge *Graph::getEdge(const graph::Node &source, const graph::Node &target
 }
 
 graph::Edge *Graph::getEdge(const google::protobuf::Any &msg) {
-  for (const auto &edge : edges_ | std::views::values) {
+  for (const auto &edge : edges | std::views::values) {
     if (google::protobuf::util::MessageDifferencer::Equals(edge->metadata(), msg))
       return edge.get();
   }
@@ -87,7 +88,7 @@ graph::Edge *Graph::getEdge(const google::protobuf::Message &msg) {
 
 std::vector<graph::Edge *> Graph::getOutgoingEdges(const graph::Node &source) const {
   std::vector<graph::Edge *> result;
-  for (const auto &edge : edges_ | std::views::values) {
+  for (const auto &edge : edges | std::views::values) {
     if (edge->source() == source.id())
       result.emplace_back(edge.get());
   }
@@ -98,6 +99,7 @@ std::vector<graph::Edge *> Graph::getOutgoingEdges(const graph::Node &source) co
 graph::Edge *Graph::getOrAddEdge(const uint64_t source, const uint64_t target) {
   if (auto *edge = getEdge(source, target))
     return edge;
+
   return addEdge(source, target);
 }
 
@@ -106,46 +108,20 @@ graph::Edge *Graph::getOrAddEdge(const graph::Node &source, const graph::Node &t
 }
 
 void Graph::serialize(graph::Graph &out) const {
-  for (const auto &node : nodes_ | std::views::values)
+  for (const auto &node : nodes | std::views::values)
     out.add_nodes()->CopyFrom(*node);
-  for (const auto &edge : edges_ | std::views::values)
+  for (const auto &edge : edges | std::views::values)
     out.add_edges()->CopyFrom(*edge);
 }
 
-void Graph::serializeToOstream(std::ostream &out) const {
-  graph::Graph model;
-  serialize(model);
-
-  model.SerializeToOstream(&out);
-}
-
-void Graph::serializeToFile(const std::string &filename) const {
-  std::ofstream ofs(filename, std::ios::binary);
-
-  serializeToOstream(ofs);
-}
-
 void Graph::deserialize(const graph::Graph &in) {
-  nodes_.clear();
-  edges_.clear();
+  nodes.clear();
+  edges.clear();
 
   for (const auto &nodeProto : in.nodes())
     addNode(nodeProto.id())->CopyFrom(nodeProto);
   for (const auto &edgeProto : in.edges())
     addEdge(edgeProto.source(), edgeProto.target())->CopyFrom(edgeProto);
-}
-
-void Graph::deserializeFromIstream(std::istream &in) {
-  graph::Graph model;
-  model.ParseFromIstream(&in);
-
-  deserialize(model);
-}
-
-void Graph::deserializeFromFile(const std::string &filename) {
-  std::ifstream ifs(filename, std::ios::binary);
-
-  deserializeFromIstream(ifs);
 }
 
 std::string Graph::toGEXF() const {
@@ -188,11 +164,11 @@ std::string Graph::toGEXF() const {
   edgeJsonAttr.append_attribute("title") = "data";
 
   pugi::xml_node nodesNode = graphNode.append_child("nodes");
-  for (const auto &node : nodes_ | std::views::values)
+  for (const auto &node : nodes | std::views::values)
     graph::toGEXF(nodesNode, *node);
 
   pugi::xml_node edgesNode = graphNode.append_child("edges");
-  for (const auto &edge : edges_ | std::views::values)
+  for (const auto &edge : edges | std::views::values)
     graph::toGEXF(edgesNode, *edge);
 
   std::ostringstream oss;

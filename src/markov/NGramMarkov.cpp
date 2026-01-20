@@ -21,14 +21,14 @@ void NGramMarkov::train(const std::vector<std::vector<graph::Node *>> &sequences
         ctx.push_back(node->id());
 
       const auto id = makeContextId(ctx);
-      auto *node = getOrAddNode(id);
+      auto *node = graph.getOrAddNode(id);
 
       auto metadata = markov::NGramNodeMetadata();
       metadata.mutable_context()->Assign(ctx.begin(), ctx.end());
       node->mutable_metadata()->PackFrom(metadata);
 
       const auto *next = window.back();
-      auto *edge = getOrAddEdge(*node, *next);
+      auto *edge = graph.getOrAddEdge(*node, *next);
       edge->set_weight(edge->weight() + 1);
     }
   }
@@ -44,34 +44,27 @@ graph::Node *NGramMarkov::nextNode(const std::vector<graph::Node *> &context) co
     ctx.push_back(node->id());
 
   const auto ctxId = makeContextId(ctx);
-  if (const auto *it = getNode(ctxId); it != nullptr)
+  if (const auto *it = graph.getNode(ctxId); it != nullptr)
     return Markov::nextNode(*it);
 
   return nullptr;
 }
 
-void NGramMarkov::serialize(markov::NGramMarkov &out) const {
-  out.set_context_size(contextSize_);
-  Graph::serialize(*out.mutable_graph());
+void NGramMarkov::serialize(google::protobuf::Any &out) const {
+  markov::NGramMarkov container;
+
+  container.set_context_size(contextSize_);
+  graph.serialize(*container.mutable_graph());
+
+  out.PackFrom(container);
 }
 
-void NGramMarkov::serializeToOstream(std::ostream &out) const {
-  markov::NGramMarkov model;
-  serialize(model);
+void NGramMarkov::deserialize(const google::protobuf::Any &in) {
+  markov::NGramMarkov container;
+  in.UnpackTo(&container);
 
-  model.SerializeToOstream(&out);
-}
-
-void NGramMarkov::deserialize(const markov::NGramMarkov &in) {
-  contextSize_ = in.context_size();
-  Graph::deserialize(in.graph());
-}
-
-void NGramMarkov::deserializeFromIstream(std::istream &in) {
-  markov::NGramMarkov model;
-  model.ParseFromIstream(&in);
-
-  deserialize(model);
+  contextSize_ = container.context_size();
+  graph.deserialize(container.graph());
 }
 
 uint64_t NGramMarkov::makeContextId(const std::vector<uint64_t> &ids) {

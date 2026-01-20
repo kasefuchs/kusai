@@ -4,6 +4,8 @@ package markov;
 
 import "graph.proto";
 
+message Markov { graph.Graph graph = 1; }
+
 message NGramMarkov {
   uint32 context_size = 1;
   graph.Graph graph = 2;

@@ -1,4 +1,4 @@
-add_library(markov
+add_library(markov SHARED
   Markov.cpp
   Markov.hpp
   NGramMarkov.cpp
@@ -12,5 +12,5 @@ target_include_directories(markov
 target_link_libraries(markov
   PUBLIC proto
   PUBLIC graph
-  PUBLIC xxHash::xxhash
+  PRIVATE xxHash::xxhash
 )

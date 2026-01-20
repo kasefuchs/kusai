@@ -42,6 +42,8 @@ public:
 
   void resetEdgeWeights();
 
+  void multiplyEdgeWeights(double scale);
+
   void serialize(graph::Graph &out) const;
 
   void deserialize(const graph::Graph &in);

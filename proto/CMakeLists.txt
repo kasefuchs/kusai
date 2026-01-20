@@ -1,4 +1,4 @@
-add_library(proto STATIC
+add_library(proto SHARED
   graph.proto
   markov.proto
   textchain.proto
@@ -11,11 +11,11 @@ protobuf_generate(
 )
 
 target_link_libraries(proto
-  PUBLIC absl::status
-  PUBLIC absl::strings
-  PUBLIC absl::numeric
-  PUBLIC pugixml::pugixml
   PUBLIC protobuf::libprotobuf
+  PRIVATE absl::status
+  PRIVATE absl::strings
+  PRIVATE absl::numeric
+  PRIVATE pugixml::pugixml
 )
 
 target_include_directories(proto

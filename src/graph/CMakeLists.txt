@@ -1,4 +1,4 @@
-add_library(graph
+add_library(graph SHARED
   Graph.cpp
   Graph.hpp
 )
@@ -9,6 +9,7 @@ target_include_directories(graph
 
 target_link_libraries(graph
   PUBLIC proto
-  PUBLIC absl::numeric
-  PUBLIC absl::flat_hash_map
+  PRIVATE absl::numeric
+  PRIVATE absl::flat_hash_map
+  PRIVATE pugixml::pugixml
 )

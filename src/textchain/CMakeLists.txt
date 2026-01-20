@@ -1,4 +1,4 @@
-add_library(textchain
+add_library(textchain SHARED
   TextChain.cpp
   TextChain.hpp
 )
@@ -11,5 +11,5 @@ target_link_libraries(textchain
   PUBLIC proto
   PUBLIC graph
   PUBLIC markov
-  PUBLIC xxHash::xxhash
+  PRIVATE xxHash::xxhash
 )

@@ -19,11 +19,12 @@ public:
 
   [[nodiscard]] graph::Node *nextNode(const std::string &context) const;
 
-  [[nodiscard]] std::vector<graph::Node *> generateNodes(const std::string &context, uint32_t limit) const;
+  [[nodiscard]] std::vector<graph::Node *> generateNodes(const std::string &context, uint32_t limit = UINT32_MAX) const;
 
   [[nodiscard]] std::string nextToken(const std::string &context) const;
 
-  [[nodiscard]] std::string generateTokens(const std::string &context, uint32_t limit) const;
+  [[nodiscard]] std::string generateTokens(const std::string &context, uint32_t limit = UINT32_MAX,
+                                           const std::string &breakValue = "") const;
 
 private:
   static uint64_t makeTokenId(const std::string &token);

@@ -17,7 +17,7 @@ void AbstractMarkov::deserializeFromIstream(std::istream &in) {
 }
 
 std::vector<graph::Node *> AbstractMarkov::generateNodes(const std::vector<graph::Node *> &context,
-                                                         uint32_t limit = UINT32_MAX) const {
+                                                         uint32_t limit) const {
   std::vector<graph::Node *> result = context;
 
   while (limit--) {

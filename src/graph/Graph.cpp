@@ -101,6 +101,11 @@ void Graph::resetEdgeWeights() {
     edge->set_weight(0);
 }
 
+void Graph::multiplyEdgeWeights(const double scale) {
+  for (const auto &edge : edges | std::views::values)
+    edge->set_weight(edge->weight() * scale);
+}
+
 graph::Edge *Graph::getOrAddEdge(const uint64_t source, const uint64_t target) {
   if (auto *edge = getEdge(source, target))
     return edge;

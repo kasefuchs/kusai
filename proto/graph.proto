@@ -12,7 +12,7 @@ message Node {
 message Edge {
   uint64 source = 1;
   uint64 target = 2;
-  uint32 weight = 3;
+  double weight = 3;
   google.protobuf.Any metadata = 4;
 }
 

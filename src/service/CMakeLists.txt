@@ -13,7 +13,3 @@ target_link_libraries(service
   PUBLIC markov
   PUBLIC textchain
 )
-
-install(TARGETS service
-  LIBRARY DESTINATION lib
-)

@@ -18,7 +18,3 @@ target_link_libraries(markov
   PUBLIC graph
   PRIVATE xxHash::xxhash
 )
-
-install(TARGETS markov
-  LIBRARY DESTINATION lib
-)

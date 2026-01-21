@@ -13,7 +13,3 @@ target_link_libraries(textchain
   PUBLIC markov
   PRIVATE xxHash::xxhash
 )
-
-install(TARGETS textchain
-  LIBRARY DESTINATION lib
-)

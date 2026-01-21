@@ -13,3 +13,7 @@ target_link_libraries(graph
   PRIVATE absl::flat_hash_map
   PRIVATE pugixml::pugixml
 )
+
+install(TARGETS graph
+  LIBRARY DESTINATION lib
+)

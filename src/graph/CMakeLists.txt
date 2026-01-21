@@ -9,7 +9,7 @@ target_include_directories(graph
 
 target_link_libraries(graph
   PUBLIC proto
-  PRIVATE absl::numeric
-  PRIVATE absl::flat_hash_map
-  PRIVATE pugixml::pugixml
+  PUBLIC absl::numeric
+  PUBLIC absl::flat_hash_map
+  PUBLIC pugixml::pugixml
 )

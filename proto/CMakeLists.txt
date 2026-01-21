@@ -21,10 +21,10 @@ protobuf_generate(
 target_link_libraries(proto
   PUBLIC protobuf::libprotobuf
   PUBLIC gRPC::grpc++
-  PRIVATE absl::status
-  PRIVATE absl::strings
-  PRIVATE absl::numeric
-  PRIVATE pugixml::pugixml
+  PUBLIC absl::status
+  PUBLIC absl::strings
+  PUBLIC absl::numeric
+  PUBLIC pugixml::pugixml
 )
 
 target_include_directories(proto

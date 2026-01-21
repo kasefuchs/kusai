@@ -18,7 +18,7 @@ target_include_directories(${PROJECT_NAME}
 )
 
 target_link_libraries(${PROJECT_NAME}
-  PRIVATE service
-  PRIVATE textchain
-  PRIVATE CLI11::CLI11
+  PUBLIC service
+  PUBLIC textchain
+  PUBLIC CLI11::CLI11
 )

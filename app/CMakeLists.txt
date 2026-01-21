@@ -1,5 +1,14 @@
 add_executable(${PROJECT_NAME}
   main.cpp
+  commands/AbstractCommand.cpp
+  commands/AbstractCommand.hpp
+  commands/RunCommand.cpp
+  commands/RunCommand.hpp
+  commands/TrainCommand.cpp
+  commands/TrainCommand.hpp
+  commands/RootCommand.cpp
+  commands/RootCommand.hpp
+  helpers/model.hpp
 )
 
 target_include_directories(${PROJECT_NAME}

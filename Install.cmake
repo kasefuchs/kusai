@@ -1,3 +1,5 @@
+include(GNUInstallDirs)
+
 install(TARGETS proto graph markov service textchain
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
 )

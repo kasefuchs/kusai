@@ -11,5 +11,5 @@ target_link_libraries(textchain
   PUBLIC proto
   PUBLIC graph
   PUBLIC markov
-  PRIVATE xxHash::xxhash
+  PUBLIC xxHash::xxhash
 )

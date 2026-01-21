@@ -1,6 +1,9 @@
 # Protobuf
 find_package(protobuf CONFIG REQUIRED)
 
+# gRPC
+find_package(gRPC CONFIG REQUIRED)
+
 # Abseil
 find_package(absl CONFIG REQUIRED)
 

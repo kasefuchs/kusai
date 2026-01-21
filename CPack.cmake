@@ -1,8 +1,0 @@
-set(CMAKE_SKIP_RPATH TRUE)
-set(CPACK_GENERATOR "ZIP")
-
-install(FILES "${CMAKE_SOURCE_DIR}/LICENSE"
-  DESTINATION .
-)
-
-include(CPack)

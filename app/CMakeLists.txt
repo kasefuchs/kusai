@@ -22,7 +22,3 @@ target_link_libraries(${PROJECT_NAME}
   PRIVATE textchain
   PRIVATE CLI11::CLI11
 )
-
-install(TARGETS ${PROJECT_NAME}
-  RUNTIME DESTINATION bin
-)

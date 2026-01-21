@@ -3,16 +3,15 @@
 #include "AbstractCommand.hpp"
 #include "helpers/model.hpp"
 
-class RunCommand : public AbstractCommand {
+class ServeCommand : public AbstractCommand {
 public:
-  explicit RunCommand(CLI::App &app);
+  explicit ServeCommand(CLI::App &app);
 
 protected:
   void execute() override;
 
 private:
   ModelType modelType_ = ModelType::Backoff;
+  std::string bindAddr_ = "127.0.0.1:9080";
   std::string inputFile_ = "model.bin";
-  std::string context_;
-  int limit_ = INT32_MAX;
 };

@@ -6,6 +6,7 @@
     "protobuf",
     "cli11",
     "pugixml",
-    "xxhash"
+    "xxhash",
+    "grpc"
   ]
 }

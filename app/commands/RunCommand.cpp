@@ -9,13 +9,12 @@ RunCommand::RunCommand(CLI::App &app) : AbstractCommand(app) {
   cmd_->add_option("-i,--input", inputFile_, "Input binary model")->required();
   cmd_->add_option("-c,--context", context_, "Generation context")->required();
   cmd_->add_option("-l,--limit", limit_, "Limit of returned tokens");
-  cmd_->add_option("-s,--size", contextSize_, "Context size");
   cmd_->add_option("-m,--model", modelType_, "Model type")->transform(modelTypeTransformer());
 }
 
 void RunCommand::execute() {
   Graph graph;
-  auto markov = makeModel(modelType_, graph, contextSize_);
+  auto markov = makeModel(modelType_, graph);
 
   std::ifstream in(inputFile_, std::ios::binary);
   if (!in.is_open()) {

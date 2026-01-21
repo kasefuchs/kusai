@@ -18,7 +18,7 @@ inline CLI::CheckedTransformer modelTypeTransformer() {
   return CLI::CheckedTransformer(mapping, CLI::ignore_case);
 }
 
-inline std::unique_ptr<AbstractMarkov> makeModel(const ModelType type, Graph &graph, int contextSize) {
+inline std::unique_ptr<AbstractMarkov> makeModel(const ModelType type, Graph &graph, int contextSize = 1) {
   switch (type) {
   case ModelType::Markov:
     return std::make_unique<Markov>(graph);

@@ -1,8 +1,14 @@
 #include "BackoffMarkov.hpp"
 
 void BackoffMarkov::train(const std::vector<std::vector<graph::Node *>> &sequences) {
+  std::vector<std::vector<graph::Node *>> filtered;
+  filtered.reserve(sequences.size());
+
+  std::ranges::copy_if(sequences, std::back_inserter(filtered),
+                       [this](const auto &seq) { return seq.size() >= maxContextSize_ + 1; });
+
   for (const auto &model : models_ | std::views::values) {
-    model->train(sequences);
+    model->train(filtered);
   }
 }
 

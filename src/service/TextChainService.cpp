@@ -18,9 +18,7 @@ grpc::Status TextChainService::NextToken(grpc::ServerContext *context, const ser
 grpc::Status TextChainService::GenerateTokens(grpc::ServerContext *context,
                                               const service::GenerateTokensRequest *request,
                                               service::GenerateTokensResponse *response) {
-  const auto limit = request->has_limit() ? request->limit() : UINT32_MAX;
-
-  std::cout << request->break_value();
+  const auto limit = request->has_limit() ? request->limit() : INT8_MAX;
 
   const auto text = chain_.generateTokens(request->context(), limit, request->break_value());
   response->set_text(text);

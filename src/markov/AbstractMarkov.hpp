@@ -16,8 +16,7 @@ public:
 
   virtual void deserialize(const google::protobuf::Any &in) = 0;
 
-  std::vector<graph::Node *> generateNodes(const std::vector<graph::Node *> &context,
-                                           uint32_t limit = UINT32_MAX) const;
+  std::vector<graph::Node *> generateNodes(const std::vector<graph::Node *> &context, uint32_t limit = INT8_MAX) const;
 
   void serializeToOstream(std::ostream &out) const;
 

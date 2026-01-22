@@ -1,9 +1,6 @@
 #pragma once
 
 #include "AbstractCommand.hpp"
-#include "RunCommand.hpp"
-#include "ServeCommand.hpp"
-#include "TrainCommand.hpp"
 
 class RootCommand : public AbstractCommand {
 public:
@@ -15,7 +12,5 @@ protected:
   void execute() override;
 
 private:
-  RunCommand runCommand_;
-  ServeCommand serveCommand_;
-  TrainCommand trainCommand_;
+  std::vector<std::unique_ptr<AbstractCommand>> commands_;
 };

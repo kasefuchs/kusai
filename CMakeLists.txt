@@ -5,10 +5,17 @@ project(kusai
   LANGUAGES CXX
 )
 
+include(CMakeDependentOption)
+option(KUSAI_BUILD_APP "Build CLI app" OFF)
+cmake_dependent_option(KUSAI_BUILD_SERVICE "Build grpc service" ON KUSAI_BUILD_APP OFF)
+
 include(Settings.cmake)
 include(Dependencies.cmake)
 
-add_subdirectory(app)
+if (KUSAI_BUILD_APP)
+    add_subdirectory(app)
+endif ()
+
 add_subdirectory(proto)
 add_subdirectory(src)
 

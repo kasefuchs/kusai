@@ -8,7 +8,7 @@ public:
 
   virtual ~AbstractCommand() = default;
 
-  virtual void run();
+  virtual bool run();
 
 protected:
   CLI::App *cmd_ = nullptr;

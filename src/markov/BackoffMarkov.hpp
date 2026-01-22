@@ -3,11 +3,14 @@
 #include "AbstractMarkov.hpp"
 #include "NGramMarkov.hpp"
 
+#include "absl/log/check.h"
+
 class BackoffMarkov : public AbstractMarkov {
 public:
   explicit BackoffMarkov(Graph &graph, const uint32_t maxContextSize = 1)
       : AbstractMarkov(graph), maxContextSize_(maxContextSize) {
-    assert(maxContextSize_ > 0);
+    CHECK(maxContextSize_ > 0) << "Maximum context size must be greater than 0.";
+
     rebuildModels();
   }
 

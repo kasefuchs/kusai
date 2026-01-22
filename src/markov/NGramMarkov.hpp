@@ -3,10 +3,12 @@
 #include "Markov.hpp"
 #include "markov.pb.h"
 
+#include "absl/log/check.h"
+
 class NGramMarkov : public Markov {
 public:
   explicit NGramMarkov(Graph &graph, const uint32_t contextSize = 1) : Markov(graph), contextSize_(contextSize) {
-    assert(contextSize_ > 0);
+    CHECK(contextSize_ > 0) << "Context size must be greater than 0.";
   }
 
   void train(const std::vector<std::vector<graph::Node *>> &sequences) override;

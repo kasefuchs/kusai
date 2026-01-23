@@ -6,13 +6,35 @@ bool AbstractGraph::hasEdge(const NodeId source, const NodeId target) {
   return hasEdge(id);
 }
 
+EdgeId AbstractGraph::addEdge(const NodeId source, const NodeId target) {
+  const auto id = makeEdgeId(source, target);
+
+  return addEdge(id);
+}
+
+NodeId AbstractGraph::ensureNode(const NodeId id) {
+  if (!hasNode(id)) {
+    addNode(id);
+  }
+
+  return id;
+}
+
+EdgeId AbstractGraph::ensureEdge(const EdgeId id) {
+  if (!hasEdge(id)) {
+    addEdge(id);
+  }
+
+  return id;
+}
+
 EdgeId AbstractGraph::ensureEdge(const NodeId source, const NodeId target) {
   const auto id = makeEdgeId(source, target);
 
   return ensureEdge(id);
 }
 
-std::optional<graph::Edge> AbstractGraph::getEdge(const NodeId source, const NodeId target) {
+std::optional<graph::Edge> AbstractGraph::getEdge(const NodeId source, const NodeId target) const {
   const auto id = makeEdgeId(source, target);
 
   return getEdge(id);
@@ -56,5 +78,8 @@ absl::uint128 AbstractGraph::makeEdgeId(const NodeId source, const NodeId target
 }
 
 std::pair<NodeId, NodeId> AbstractGraph::splitEdgeId(const EdgeId id) {
-  return {absl::Uint128High64(id), absl::Uint128Low64(id)};
+  return {
+      absl::Uint128High64(id), // source
+      absl::Uint128Low64(id)   // target
+  };
 }

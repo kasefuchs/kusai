@@ -16,17 +16,23 @@ public:
 
   bool hasEdge(NodeId source, NodeId target);
 
-  virtual NodeId ensureNode(NodeId id) = 0;
+  virtual NodeId addNode(NodeId id) = 0;
 
-  virtual EdgeId ensureEdge(EdgeId id) = 0;
+  virtual EdgeId addEdge(EdgeId id) = 0;
+
+  EdgeId addEdge(NodeId source, NodeId target);
+
+  NodeId ensureNode(NodeId id);
+
+  EdgeId ensureEdge(EdgeId id);
 
   EdgeId ensureEdge(NodeId source, NodeId target);
 
-  virtual std::optional<graph::Node> getNode(NodeId id) = 0;
+  virtual std::optional<graph::Node> getNode(NodeId id) const = 0;
 
-  virtual std::optional<graph::Edge> getEdge(EdgeId id) = 0;
+  virtual std::optional<graph::Edge> getEdge(EdgeId id) const = 0;
 
-  std::optional<graph::Edge> getEdge(NodeId source, NodeId target);
+  std::optional<graph::Edge> getEdge(NodeId source, NodeId target) const;
 
   virtual bool modifyNode(NodeId id, std::function<void(graph::Node &)> fn) = 0;
 
@@ -38,11 +44,15 @@ public:
 
   [[nodiscard]] virtual std::vector<EdgeId> getAllEdgeIds() const = 0;
 
+  [[nodiscard]] virtual std::vector<EdgeId> getIncomingEdgeIds(NodeId target) const = 0;
+
   [[nodiscard]] virtual std::vector<EdgeId> getOutgoingEdgeIds(NodeId source) const = 0;
 
   [[nodiscard]] virtual std::vector<graph::Node> getAllNodes() const = 0;
 
   [[nodiscard]] virtual std::vector<graph::Edge> getAllEdges() const = 0;
+
+  [[nodiscard]] virtual std::vector<graph::Edge> getIncomingEdges(NodeId target) const = 0;
 
   [[nodiscard]] virtual std::vector<graph::Edge> getOutgoingEdges(NodeId source) const = 0;
 

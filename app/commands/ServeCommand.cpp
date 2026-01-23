@@ -1,9 +1,9 @@
-#include <grpcpp/grpcpp.h>
-
 #include "ServeCommand.hpp"
 
 #include <absl/log/log.h>
+#include <grpcpp/grpcpp.h>
 
+#include "MemoryGraph.hpp"
 #include "TextChain.hpp"
 #include "TextChainService.hpp"
 
@@ -16,7 +16,7 @@ ServeCommand::ServeCommand(CLI::App &app) : AbstractCommand(app) {
 }
 
 void ServeCommand::execute() {
-  Graph graph;
+  MemoryGraph graph;
   auto markov = makeModel(modelType_, graph);
 
   std::ifstream in(inputFile_, std::ios::binary);

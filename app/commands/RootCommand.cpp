@@ -27,8 +27,9 @@ int RootCommand::main(const int argc, char *argv[]) {
 
 void RootCommand::execute() {
   for (const auto &cmd : commands_) {
-    if (const auto it = cmd->run(); it)
-      break;
+    if (const auto it = cmd->run(); it) {
+      return;
+    }
   }
 
   std::cerr << app.help() << std::flush;

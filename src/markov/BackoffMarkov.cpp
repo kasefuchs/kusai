@@ -1,7 +1,7 @@
 #include "BackoffMarkov.hpp"
 
-void BackoffMarkov::train(const std::vector<std::vector<graph::Node *>> &sequences) {
-  std::vector<std::vector<graph::Node *>> filtered;
+void BackoffMarkov::train(const std::vector<std::vector<NodeId>> &sequences) {
+  std::vector<std::vector<NodeId>> filtered;
   filtered.reserve(sequences.size());
 
   std::ranges::copy_if(sequences, std::back_inserter(filtered),
@@ -12,15 +12,16 @@ void BackoffMarkov::train(const std::vector<std::vector<graph::Node *>> &sequenc
   }
 }
 
-graph::Node *BackoffMarkov::nextNode(const std::vector<graph::Node *> &context) const {
+std::optional<NodeId> BackoffMarkov::nextNode(const std::vector<NodeId> &context) const {
   for (uint32_t n = maxContextSize_; n > 0; --n) {
     if (auto it = models_.find(n); it != models_.end()) {
-      if (graph::Node *node = it->second->nextNode(context); node != nullptr)
+      if (auto node = it->second->nextNode(context); node.has_value()) {
         return node;
+      }
     }
   }
 
-  return nullptr;
+  return std::nullopt;
 }
 
 void BackoffMarkov::serialize(google::protobuf::Any &out) const {

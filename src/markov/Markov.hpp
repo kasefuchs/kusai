@@ -3,17 +3,16 @@
 #include <random>
 
 #include "AbstractMarkov.hpp"
-#include "Graph.hpp"
 
 class Markov : public AbstractMarkov {
 public:
-  explicit Markov(Graph &graph) : AbstractMarkov(graph) {}
+  explicit Markov(AbstractGraph &graph) : AbstractMarkov(graph) {}
 
-  void train(const std::vector<std::vector<graph::Node *>> &sequences) override;
+  void train(const std::vector<std::vector<NodeId>> &sequences) override;
 
-  graph::Node *nextNode(const graph::Node &current) const;
+  std::optional<NodeId> nextNode(NodeId current) const;
 
-  graph::Node *nextNode(const std::vector<graph::Node *> &context) const override;
+  std::optional<NodeId> nextNode(const std::vector<NodeId> &context) const override;
 
   void serialize(google::protobuf::Any &out) const override;
 

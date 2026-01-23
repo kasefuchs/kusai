@@ -1,6 +1,6 @@
 #include "TrainCommand.hpp"
 
-#include "Graph.hpp"
+#include "MemoryGraph.hpp"
 #include "TextChain.hpp"
 
 #include <fstream>
@@ -12,13 +12,12 @@ TrainCommand::TrainCommand(CLI::App &app) : AbstractCommand(app) {
 
   cmd_->add_option("-i,--input", inputFile_, "Input text file")->required();
   cmd_->add_option("-o,--output", outputFile_, "Output binary model");
-  cmd_->add_option("-g,--gexf", gexfFile_, "Output graph in GEXF format");
   cmd_->add_option("-s,--size", contextSize_, "Context size")->required();
   cmd_->add_option("-m,--model", modelType_, "Model type")->transform(modelTypeTransformer());
 }
 
 void TrainCommand::execute() {
-  Graph graph;
+  MemoryGraph graph;
   auto markov = makeModel(modelType_, graph, contextSize_);
 
   std::ifstream in(inputFile_);
@@ -43,13 +42,4 @@ void TrainCommand::execute() {
   }
 
   markov->serializeToOstream(out);
-
-  if (!gexfFile_.empty()) {
-    std::ofstream gexfOut(gexfFile_);
-    if (!gexfOut.is_open()) {
-      throw std::runtime_error("Cannot open GEXF file: " + gexfFile_);
-    }
-
-    gexfOut << graph.toGEXF();
-  }
 }

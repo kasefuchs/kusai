@@ -14,6 +14,5 @@ private:
   ModelType modelType_ = ModelType::Backoff;
   std::string inputFile_;
   std::string outputFile_ = "model.bin";
-  std::string gexfFile_;
   int contextSize_ = 1;
 };

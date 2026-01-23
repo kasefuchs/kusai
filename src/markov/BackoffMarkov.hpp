@@ -1,22 +1,22 @@
 #pragma once
 
+#include <absl/log/check.h>
+
 #include "AbstractMarkov.hpp"
 #include "NGramMarkov.hpp"
 
-#include "absl/log/check.h"
-
 class BackoffMarkov : public AbstractMarkov {
 public:
-  explicit BackoffMarkov(Graph &graph, const uint32_t maxContextSize = 1)
+  explicit BackoffMarkov(AbstractGraph &graph, const uint32_t maxContextSize = 1)
       : AbstractMarkov(graph), maxContextSize_(maxContextSize) {
     CHECK(maxContextSize_ > 0) << "Maximum context size must be greater than 0.";
 
     rebuildModels();
   }
 
-  void train(const std::vector<std::vector<graph::Node *>> &sequences) override;
+  void train(const std::vector<std::vector<NodeId>> &sequences) override;
 
-  graph::Node *nextNode(const std::vector<graph::Node *> &context) const override;
+  std::optional<NodeId> nextNode(const std::vector<NodeId> &context) const override;
 
   void serialize(google::protobuf::Any &out) const override;
 

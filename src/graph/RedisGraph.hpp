@@ -2,9 +2,11 @@
 
 #include "AbstractGraph.hpp"
 
-class MemoryGraph : public AbstractGraph {
+#include <sw/redis++/redis++.h>
+
+class RedisGraph : public AbstractGraph {
 public:
-  explicit MemoryGraph() : AbstractGraph() {}
+  explicit RedisGraph(sw::redis::Redis &redis) : AbstractGraph(), redis_(redis) {}
 
   bool hasNode(NodeId id) override;
 
@@ -43,6 +45,21 @@ public:
   void clearEdges() override;
 
 private:
-  absl::flat_hash_map<NodeId, std::unique_ptr<graph::Node>> nodes_;
-  absl::flat_hash_map<EdgeId, std::unique_ptr<graph::Edge>> edges_;
+  sw::redis::Redis &redis_;
+
+  std::vector<std::string> getAllKeys(const std::string &pattern) const;
+
+  std::vector<graph::Node> getNodesByKeys(const std::vector<std::string> &keys) const;
+
+  std::vector<graph::Edge> getEdgesByKeys(const std::vector<std::string> &keys) const;
+
+  static std::string makeNodeKey(NodeId id);
+
+  static std::string makeEdgeKey(EdgeId id);
+
+  static std::pair<std::string, std::string> makeEdgePattern(NodeId id);
+
+  static NodeId parseNodeKey(const std::string &key);
+
+  static EdgeId parseEdgeKey(const std::string &key);
 };

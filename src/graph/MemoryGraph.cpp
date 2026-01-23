@@ -4,32 +4,28 @@ bool MemoryGraph::hasNode(const NodeId id) { return nodes_.contains(id); }
 
 bool MemoryGraph::hasEdge(const EdgeId id) { return edges_.contains(id); }
 
-NodeId MemoryGraph::ensureNode(const NodeId id) {
-  if (!hasNode(id)) {
-    auto node = std::make_unique<graph::Node>();
-    node->set_id(id);
+NodeId MemoryGraph::addNode(const NodeId id) {
+  auto node = std::make_unique<graph::Node>();
+  node->set_id(id);
 
-    nodes_.emplace(id, std::move(node));
-  }
+  nodes_.emplace(id, std::move(node));
 
   return id;
 }
 
-EdgeId MemoryGraph::ensureEdge(const EdgeId id) {
-  if (!hasEdge(id)) {
-    const auto [source, target] = splitEdgeId(id);
+EdgeId MemoryGraph::addEdge(const EdgeId id) {
+  const auto [source, target] = splitEdgeId(id);
 
-    auto edge = std::make_unique<graph::Edge>();
-    edge->set_source(source);
-    edge->set_target(target);
+  auto edge = std::make_unique<graph::Edge>();
+  edge->set_source(source);
+  edge->set_target(target);
 
-    edges_.emplace(id, std::move(edge));
-  }
+  edges_.emplace(id, std::move(edge));
 
   return id;
 }
 
-std::optional<graph::Node> MemoryGraph::getNode(const NodeId id) {
+std::optional<graph::Node> MemoryGraph::getNode(const NodeId id) const {
   if (const auto it = nodes_.find(id); it != nodes_.end()) {
     return *it->second;
   }
@@ -37,7 +33,7 @@ std::optional<graph::Node> MemoryGraph::getNode(const NodeId id) {
   return std::nullopt;
 }
 
-std::optional<graph::Edge> MemoryGraph::getEdge(const EdgeId id) {
+std::optional<graph::Edge> MemoryGraph::getEdge(const EdgeId id) const {
   if (const auto it = edges_.find(id); it != edges_.end()) {
     return *it->second;
   }
@@ -77,6 +73,14 @@ std::vector<EdgeId> MemoryGraph::getAllEdgeIds() const {
   return {view.begin(), view.end()};
 }
 
+std::vector<EdgeId> MemoryGraph::getIncomingEdgeIds(NodeId target) const {
+  auto view = edges_ | std::views::values |
+              std::views::filter([target](const auto &e) { return e->target() == target; }) |
+              std::views::transform([](const auto &e) { return makeEdgeId(e->source(), e->target()); });
+
+  return {view.begin(), view.end()};
+}
+
 std::vector<EdgeId> MemoryGraph::getOutgoingEdgeIds(NodeId source) const {
   auto view = edges_ | std::views::values |
               std::views::filter([source](const auto &e) { return e->source() == source; }) |
@@ -93,6 +97,14 @@ std::vector<graph::Node> MemoryGraph::getAllNodes() const {
 
 std::vector<graph::Edge> MemoryGraph::getAllEdges() const {
   const auto view = std::views::values(edges_) | std::views::transform([](const auto &p) { return *p; });
+
+  return {view.begin(), view.end()};
+}
+
+std::vector<graph::Edge> MemoryGraph::getIncomingEdges(NodeId target) const {
+  auto view = edges_ | std::views::values |
+              std::views::filter([target](const auto &e) { return e->target() == target; }) |
+              std::views::transform([](const auto &p) { return *p; });
 
   return {view.begin(), view.end()};
 }

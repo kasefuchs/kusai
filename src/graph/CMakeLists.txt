@@ -3,6 +3,8 @@ add_library(graph SHARED
   AbstractGraph.hpp
   MemoryGraph.cpp
   MemoryGraph.hpp
+  RedisGraph.cpp
+  RedisGraph.hpp
 )
 
 target_include_directories(graph
@@ -13,4 +15,6 @@ target_link_libraries(graph
   PUBLIC proto
   PUBLIC absl::numeric
   PUBLIC absl::flat_hash_map
+  PUBLIC redis++::redis++
+  PUBLIC hiredis::hiredis
 )

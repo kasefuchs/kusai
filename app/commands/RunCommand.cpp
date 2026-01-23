@@ -1,6 +1,6 @@
 #include "RunCommand.hpp"
 
-#include "Graph.hpp"
+#include "MemoryGraph.hpp"
 #include "TextChain.hpp"
 
 RunCommand::RunCommand(CLI::App &app) : AbstractCommand(app) {
@@ -13,7 +13,7 @@ RunCommand::RunCommand(CLI::App &app) : AbstractCommand(app) {
 }
 
 void RunCommand::execute() {
-  Graph graph;
+  MemoryGraph graph;
   auto markov = makeModel(modelType_, graph);
 
   std::ifstream in(inputFile_, std::ios::binary);

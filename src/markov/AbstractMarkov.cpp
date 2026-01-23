@@ -1,7 +1,5 @@
 #include "AbstractMarkov.hpp"
 
-#include <fstream>
-
 void AbstractMarkov::serializeToOstream(std::ostream &out) const {
   google::protobuf::Any container;
   serialize(container);
@@ -16,16 +14,16 @@ void AbstractMarkov::deserializeFromIstream(std::istream &in) {
   deserialize(container);
 }
 
-std::vector<graph::Node *> AbstractMarkov::generateNodes(const std::vector<graph::Node *> &context,
-                                                         uint32_t limit) const {
-  std::vector<graph::Node *> result = context;
+std::vector<NodeId> AbstractMarkov::generateNodes(const std::vector<NodeId> &context, uint32_t limit) const {
+  std::vector<NodeId> result = context;
 
   while (limit--) {
-    graph::Node *node = nextNode(result);
-    if (!node)
+    auto node = nextNode(result);
+    if (!node.has_value()) {
       break;
+    }
 
-    result.push_back(node);
+    result.push_back(*node);
   }
 
   return result;

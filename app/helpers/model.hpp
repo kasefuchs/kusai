@@ -5,7 +5,6 @@
 
 #include "AbstractMarkov.hpp"
 #include "BackoffMarkov.hpp"
-#include "Graph.hpp"
 #include "Markov.hpp"
 #include "NGramMarkov.hpp"
 
@@ -18,7 +17,7 @@ inline CLI::CheckedTransformer modelTypeTransformer() {
   return CLI::CheckedTransformer(mapping, CLI::ignore_case);
 }
 
-inline std::unique_ptr<AbstractMarkov> makeModel(const ModelType type, Graph &graph, int contextSize = 1) {
+inline std::unique_ptr<AbstractMarkov> makeModel(const ModelType type, AbstractGraph &graph, int contextSize = 1) {
   switch (type) {
   case ModelType::Markov:
     return std::make_unique<Markov>(graph);

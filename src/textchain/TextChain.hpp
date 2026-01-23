@@ -8,25 +8,23 @@ public:
 
   AbstractMarkov &markov;
 
-  [[nodiscard]] graph::Node *addNode(const std::string &token) const;
+  [[nodiscard]] NodeId ensureNode(const std::string &token) const;
 
-  [[nodiscard]] graph::Node *getNode(const std::string &token) const;
+  [[nodiscard]] std::optional<std::string> getNodeToken(const NodeId &id) const;
 
-  [[nodiscard]] graph::Node *getOrAddNode(const std::string &token) const;
-
-  [[nodiscard]] std::vector<graph::Node *> contextNodes(const std::string &context) const;
+  [[nodiscard]] std::vector<NodeId> contextNodes(const std::string &context) const;
 
   void train(const std::vector<std::string> &sequences) const;
 
-  [[nodiscard]] graph::Node *nextNode(const std::string &context) const;
+  [[nodiscard]] std::optional<NodeId> nextNode(const std::string &context) const;
 
-  [[nodiscard]] std::vector<graph::Node *> generateNodes(const std::string &context, uint32_t limit = INT8_MAX) const;
+  [[nodiscard]] std::vector<NodeId> generateNodes(const std::string &context, uint32_t limit = INT8_MAX) const;
 
-  [[nodiscard]] std::string nextToken(const std::string &context) const;
+  [[nodiscard]] std::optional<std::string> nextToken(const std::string &context) const;
 
   [[nodiscard]] std::string generateTokens(const std::string &context, uint32_t limit = INT8_MAX,
                                            const std::string &breakValue = "") const;
 
 private:
-  static uint64_t makeTokenId(const std::string &token);
+  static NodeId makeTokenId(const std::string &token);
 };

@@ -9,10 +9,12 @@ grpc::Status TextChainService::Train(grpc::ServerContext *context, const service
 
 grpc::Status TextChainService::NextToken(grpc::ServerContext *context, const service::NextTokenRequest *request,
                                          service::NextTokenResponse *response) {
-  const auto text = chain_.nextToken(request->context());
-  response->set_token(text);
+  if (const auto text = chain_.nextToken(request->context()); text.has_value()) {
+    response->set_token(*text);
+    return grpc::Status::OK;
+  }
 
-  return grpc::Status::OK;
+  return grpc::Status::CANCELLED;
 }
 
 grpc::Status TextChainService::GenerateTokens(grpc::ServerContext *context,

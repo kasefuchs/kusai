@@ -1,38 +1,44 @@
 #include "TextChain.hpp"
 
+#include <absl/strings/str_join.h>
 #include <xxhash.h>
 
 #include "textchain.pb.h"
 
-graph::Node *TextChain::addNode(const std::string &token) const {
+NodeId TextChain::ensureNode(const std::string &token) const {
   const auto id = makeTokenId(token);
-  auto *node = markov.graph.addNode(id);
+  if (!markov.graph.hasNode(id)) {
+    markov.graph.modifyNode(markov.graph.ensureNode(id), [&](graph::Node &node) {
+      textchain::NodeMetadata meta;
+      meta.set_value(token);
+      node.mutable_metadata()->PackFrom(meta);
+    });
+  }
+
+  return id;
+}
+
+std::optional<std::string> TextChain::getNodeToken(const NodeId &id) const {
+  const auto node = markov.graph.getNode(id);
+  if (!node) {
+    return std::nullopt;
+  }
 
   textchain::NodeMetadata meta;
-  meta.set_value(token);
-  node->mutable_metadata()->PackFrom(meta);
+  if (!node->metadata().UnpackTo(&meta)) {
+    return std::nullopt;
+  }
 
-  return node;
+  return meta.value();
 }
 
-graph::Node *TextChain::getNode(const std::string &token) const {
-  const auto id = makeTokenId(token);
-  return markov.graph.getNode(id);
-}
-
-graph::Node *TextChain::getOrAddNode(const std::string &token) const {
-  if (auto *node = getNode(token))
-    return node;
-  return addNode(token);
-}
-
-std::vector<graph::Node *> TextChain::contextNodes(const std::string &context) const {
-  std::vector<graph::Node *> seq;
+std::vector<NodeId> TextChain::contextNodes(const std::string &context) const {
+  std::vector<NodeId> seq;
   std::istringstream stream(context);
   std::string token;
 
   while (stream >> token) {
-    auto *node = getOrAddNode(token);
+    auto node = ensureNode(token);
     seq.push_back(node);
   }
 
@@ -40,7 +46,7 @@ std::vector<graph::Node *> TextChain::contextNodes(const std::string &context) c
 }
 
 void TextChain::train(const std::vector<std::string> &sequences) const {
-  std::vector<std::vector<graph::Node *>> nodeSequences;
+  std::vector<std::vector<NodeId>> nodeSequences;
   nodeSequences.reserve(sequences.size());
 
   for (const auto &text : sequences) {
@@ -52,46 +58,41 @@ void TextChain::train(const std::vector<std::string> &sequences) const {
   markov.train(nodeSequences);
 }
 
-graph::Node *TextChain::nextNode(const std::string &context) const {
+std::optional<NodeId> TextChain::nextNode(const std::string &context) const {
   const auto seq = contextNodes(context);
+
   return markov.nextNode(seq);
 }
 
-std::vector<graph::Node *> TextChain::generateNodes(const std::string &context, const uint32_t limit) const {
+std::vector<NodeId> TextChain::generateNodes(const std::string &context, const uint32_t limit) const {
   const auto seq = contextNodes(context);
+
   return markov.generateNodes(seq, limit);
 }
 
-std::string TextChain::nextToken(const std::string &context) const {
-  const auto *node = nextNode(context);
-  if (!node)
-    return "";
+std::optional<std::string> TextChain::nextToken(const std::string &context) const {
+  if (const auto id = nextNode(context)) {
+    if (auto tok = getNodeToken(*id)) {
+      return tok;
+    }
+  }
 
-  textchain::NodeMetadata meta;
-  if (!node->metadata().UnpackTo(&meta))
-    return "";
-
-  return meta.value();
+  return std::nullopt;
 }
 
 std::string TextChain::generateTokens(const std::string &context, const uint32_t limit,
                                       const std::string &breakValue) const {
-  std::string result;
-  for (const auto nodes = generateNodes(context, limit); const auto *node : nodes) {
-    textchain::NodeMetadata meta;
-    if (!node || !node->metadata().UnpackTo(&meta))
-      continue;
-
-    if (!result.empty())
-      result += ' ';
-
-    result += meta.value();
-
-    if (meta.value() == breakValue)
+  std::vector<std::string> tokens;
+  for (NodeId id : generateNodes(context, limit)) {
+    const auto tok = getNodeToken(id);
+    if (!tok || *tok == breakValue) {
       break;
+    }
+
+    tokens.push_back(*tok);
   }
 
-  return result;
+  return absl::StrJoin(tokens, " ");
 }
 
-uint64_t TextChain::makeTokenId(const std::string &token) { return XXH64(&token[0], token.size(), 0); }
+NodeId TextChain::makeTokenId(const std::string &token) { return XXH64(&token[0], token.size(), 0); }

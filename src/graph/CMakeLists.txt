@@ -1,6 +1,8 @@
 add_library(graph SHARED
-  Graph.cpp
-  Graph.hpp
+  AbstractGraph.cpp
+  AbstractGraph.hpp
+  MemoryGraph.cpp
+  MemoryGraph.hpp
 )
 
 target_include_directories(graph
@@ -11,5 +13,4 @@ target_link_libraries(graph
   PUBLIC proto
   PUBLIC absl::numeric
   PUBLIC absl::flat_hash_map
-  PUBLIC pugixml::pugixml
 )

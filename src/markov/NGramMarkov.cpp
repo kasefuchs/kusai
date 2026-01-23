@@ -4,48 +4,49 @@
 
 #include <span>
 
-void NGramMarkov::train(const std::vector<std::vector<graph::Node *>> &sequences) {
+void NGramMarkov::train(const std::vector<std::vector<NodeId>> &sequences) {
   const size_t windowSize = contextSize_ + 1;
   for (const auto &seq : sequences) {
-    if (seq.size() < windowSize)
+    if (seq.size() < windowSize) {
       continue;
+    }
 
     for (size_t i = 0; i + windowSize <= seq.size(); ++i) {
       std::span window(seq.data() + i, windowSize);
 
       std::vector<uint64_t> ctx;
       ctx.reserve(contextSize_);
-      for (const auto *node : window.first(contextSize_))
-        ctx.push_back(node->id());
+      for (const auto node : window.first(contextSize_)) {
+        ctx.push_back(node);
+      }
 
       const auto id = makeContextId(ctx);
-      auto *node = graph.getOrAddNode(id);
 
-      auto metadata = markov::NGramNodeMetadata();
-      metadata.mutable_context()->Assign(ctx.begin(), ctx.end());
-      node->mutable_metadata()->PackFrom(metadata);
+      graph.modifyNode(graph.ensureNode(id), [&](graph::Node &node) {
+        auto metadata = markov::NGramNodeMetadata();
+        metadata.mutable_context()->Assign(ctx.begin(), ctx.end());
+        node.mutable_metadata()->PackFrom(metadata);
+      });
 
-      const auto *next = window.back();
-      auto *edge = graph.getOrAddEdge(*node, *next);
-      edge->set_weight(edge->weight() + 1);
+      graph.modifyEdge(graph.ensureEdge(id, window.back()),
+                       [](graph::Edge &edge) { edge.set_weight(edge.weight() + 1); });
     }
   }
 }
 
-graph::Node *NGramMarkov::nextNode(const std::vector<graph::Node *> &context) const {
-  if (context.size() < contextSize_)
-    return nullptr;
+std::optional<NodeId> NGramMarkov::nextNode(const std::vector<NodeId> &context) const {
+  if (context.size() < contextSize_) {
+    return std::nullopt;
+  }
 
   std::vector<uint64_t> ctx;
   ctx.reserve(contextSize_);
-  for (const std::span window(context); const auto *node : window.last(contextSize_))
-    ctx.push_back(node->id());
+  for (const std::span window(context); const auto node : window.last(contextSize_)) {
+    ctx.push_back(node);
+  }
 
   const auto ctxId = makeContextId(ctx);
-  if (const auto *it = graph.getNode(ctxId); it != nullptr)
-    return Markov::nextNode(*it);
-
-  return nullptr;
+  return Markov::nextNode(ctxId);
 }
 
 void NGramMarkov::serialize(google::protobuf::Any &out) const {
@@ -65,6 +66,6 @@ void NGramMarkov::deserialize(const google::protobuf::Any &in) {
   graph.deserialize(container.graph());
 }
 
-uint64_t NGramMarkov::makeContextId(const std::vector<uint64_t> &ids) {
-  return XXH64(ids.data(), ids.size() * sizeof(uint64_t), 0);
+NodeId NGramMarkov::makeContextId(const std::vector<NodeId> &ids) {
+  return XXH64(ids.data(), ids.size() * sizeof(NodeId), 0);
 }

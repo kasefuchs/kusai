@@ -11,5 +11,6 @@ target_link_libraries(textchain
   PUBLIC proto
   PUBLIC graph
   PUBLIC markov
+  PUBLIC absl::strings
   PUBLIC xxHash::xxhash
 )

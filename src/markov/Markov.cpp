@@ -3,14 +3,13 @@
 
 #include <random>
 
-void Markov::train(const std::vector<std::vector<graph::Node *>> &sequences) {
+void Markov::train(const std::vector<std::vector<NodeId>> &sequences) {
   for (auto &seq : sequences) {
-    const graph::Node *prev = nullptr;
+    NodeId prev = 0;
 
-    for (const auto *node : seq) {
+    for (const auto node : seq) {
       if (prev) {
-        auto *edge = graph.getOrAddEdge(*prev, *node);
-        edge->set_weight(edge->weight() + 1);
+        graph.modifyEdge(graph.ensureEdge(prev, node), [](graph::Edge &edge) { edge.set_weight(edge.weight() + 1); });
       }
 
       prev = node;
@@ -18,25 +17,28 @@ void Markov::train(const std::vector<std::vector<graph::Node *>> &sequences) {
   }
 }
 
-graph::Node *Markov::nextNode(const graph::Node &current) const {
+std::optional<NodeId> Markov::nextNode(const NodeId current) const {
   const auto outgoing = graph.getOutgoingEdges(current);
-  if (outgoing.empty())
-    return nullptr;
+  if (outgoing.empty()) {
+    return std::nullopt;
+  }
 
-  std::vector<uint32_t> weights;
-  for (const auto *edge : outgoing)
-    weights.push_back(edge->weight());
+  std::vector<double> weights;
+  weights.reserve(outgoing.size());
+  for (const auto &edge : outgoing) {
+    weights.push_back(edge.weight());
+  }
 
   std::discrete_distribution dist(weights.begin(), weights.end());
-  const auto *chosen = outgoing[dist(rng_)];
+  const auto &chosen = outgoing[dist(rng_)];
 
-  return graph.getNode(chosen->target());
+  return chosen.target();
 }
 
-graph::Node *Markov::nextNode(const std::vector<graph::Node *> &context) const {
-  const auto *current = context.back();
+std::optional<NodeId> Markov::nextNode(const std::vector<NodeId> &context) const {
+  const auto current = context.back();
 
-  return nextNode(*current);
+  return nextNode(current);
 }
 
 void Markov::serialize(google::protobuf::Any &out) const {

@@ -1,0 +1,7 @@
+---
+Checks: >-
+  misc-include-cleaner,
+  modernize-deprecated-headers
+SortIncludes: true
+WarningsAsErrors: ''
+HeaderFilterRegex: '.*'

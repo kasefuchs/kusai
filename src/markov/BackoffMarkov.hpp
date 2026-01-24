@@ -6,23 +6,23 @@
 #include "NGramMarkov.hpp"
 
 class BackoffMarkov : public AbstractMarkov {
-public:
-  explicit BackoffMarkov(AbstractGraph &graph, const uint32_t maxContextSize = 1)
+ public:
+  explicit BackoffMarkov(AbstractGraph& graph, const uint32_t maxContextSize = 1)
       : AbstractMarkov(graph), maxContextSize_(maxContextSize) {
     CHECK(maxContextSize_ > 0) << "Maximum context size must be greater than 0.";
 
     rebuildModels();
   }
 
-  void train(const std::vector<std::vector<NodeId>> &sequences) override;
+  void train(const std::vector<std::vector<NodeId>>& sequences) override;
 
-  std::optional<NodeId> nextNode(const std::vector<NodeId> &context) const override;
+  std::optional<NodeId> nextNode(const std::vector<NodeId>& context) const override;
 
-  void serialize(google::protobuf::Any &out) const override;
+  void serialize(google::protobuf::Any& out) const override;
 
-  void deserialize(const google::protobuf::Any &in) override;
+  void deserialize(const google::protobuf::Any& in) override;
 
-private:
+ private:
   uint32_t maxContextSize_;
   absl::flat_hash_map<uint32_t, std::unique_ptr<NGramMarkov>> models_;
 

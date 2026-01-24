@@ -1,13 +1,14 @@
 #pragma once
 
-#include "graph.pb.h"
 #include <absl/numeric/int128.h>
+
+#include "graph.pb.h"
 
 using NodeId = uint64_t;
 using EdgeId = absl::uint128;
 
 class AbstractGraph {
-public:
+ public:
   virtual ~AbstractGraph() = default;
 
   virtual bool hasNode(NodeId id) = 0;
@@ -34,11 +35,11 @@ public:
 
   std::optional<graph::Edge> getEdge(NodeId source, NodeId target) const;
 
-  virtual bool modifyNode(NodeId id, std::function<void(graph::Node &)> fn) = 0;
+  virtual bool modifyNode(NodeId id, std::function<void(graph::Node&)> fn) = 0;
 
-  virtual bool modifyEdge(EdgeId id, std::function<void(graph::Edge &)> fn) = 0;
+  virtual bool modifyEdge(EdgeId id, std::function<void(graph::Edge&)> fn) = 0;
 
-  bool modifyEdge(NodeId source, NodeId target, std::function<void(graph::Edge &)> fn);
+  bool modifyEdge(NodeId source, NodeId target, std::function<void(graph::Edge&)> fn);
 
   [[nodiscard]] virtual std::vector<NodeId> getAllNodeIds() const = 0;
 
@@ -62,14 +63,14 @@ public:
 
   void clear();
 
-  void serialize(graph::Graph &out) const;
+  void serialize(graph::Graph& out) const;
 
-  void deserialize(const graph::Graph &in);
+  void deserialize(const graph::Graph& in);
 
   static absl::uint128 makeEdgeId(NodeId source, NodeId target);
 
   static std::pair<NodeId, NodeId> splitEdgeId(EdgeId id);
 
-protected:
+ protected:
   explicit AbstractGraph() = default;
 };

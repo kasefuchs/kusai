@@ -2,12 +2,20 @@
 
 #include <absl/log/log.h>
 #include <grpcpp/grpcpp.h>
+#include <grpcpp/security/server_credentials.h>
 
+#include <fstream>
+#include <ios>
+#include <stdexcept>
+
+#include "CLI/CLI.hpp"
 #include "MemoryGraph.hpp"
 #include "TextChain.hpp"
 #include "TextChainService.hpp"
+#include "commands/AbstractCommand.hpp"
+#include "helpers/model.hpp"
 
-ServeCommand::ServeCommand(CLI::App &app) : AbstractCommand(app) {
+ServeCommand::ServeCommand(CLI::App& app) : AbstractCommand(app) {
   cmd_ = app.add_subcommand("serve", "Run gRPC server");
 
   cmd_->add_option("-b,--bind", bindAddr_, "The address to bind to");

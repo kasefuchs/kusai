@@ -15,6 +15,4 @@ repos:
     rev: v21.1.8
     hooks:
       - id: clang-format
-        args:
-          - --style=Google
-          - "--style={ColumnLimit: 120}"
+        args: [--style=file]

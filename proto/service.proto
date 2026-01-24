@@ -10,11 +10,17 @@ service TextChain {
   rpc GenerateTokens(GenerateTokensRequest) returns (GenerateTokensResponse);
 }
 
-message TrainRequest { repeated string sequences = 1; }
+message TrainRequest {
+  repeated string sequences = 1;
+}
 
-message NextTokenRequest { string context = 1; }
+message NextTokenRequest {
+  string context = 1;
+}
 
-message NextTokenResponse { string token = 1; }
+message NextTokenResponse {
+  string token = 1;
+}
 
 message GenerateTokensRequest {
   string context = 1;
@@ -22,4 +28,6 @@ message GenerateTokensRequest {
   optional string break_value = 3;
 }
 
-message GenerateTokensResponse { string text = 1; }
+message GenerateTokensResponse {
+  string text = 1;
+}

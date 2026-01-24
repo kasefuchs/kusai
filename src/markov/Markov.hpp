@@ -5,19 +5,19 @@
 #include "AbstractMarkov.hpp"
 
 class Markov : public AbstractMarkov {
-public:
-  explicit Markov(AbstractGraph &graph) : AbstractMarkov(graph) {}
+ public:
+  explicit Markov(AbstractGraph& graph) : AbstractMarkov(graph) {}
 
-  void train(const std::vector<std::vector<NodeId>> &sequences) override;
+  void train(const std::vector<std::vector<NodeId>>& sequences) override;
 
   std::optional<NodeId> nextNode(NodeId current) const;
 
-  std::optional<NodeId> nextNode(const std::vector<NodeId> &context) const override;
+  std::optional<NodeId> nextNode(const std::vector<NodeId>& context) const override;
 
-  void serialize(google::protobuf::Any &out) const override;
+  void serialize(google::protobuf::Any& out) const override;
 
-  void deserialize(const google::protobuf::Any &in) override;
+  void deserialize(const google::protobuf::Any& in) override;
 
-private:
+ private:
   mutable std::mt19937 rng_{std::random_device{}()};
 };

@@ -3,7 +3,7 @@
 #include "AbstractGraph.hpp"
 
 class MemoryGraph : public AbstractGraph {
-public:
+ public:
   explicit MemoryGraph() : AbstractGraph() {}
 
   bool hasNode(NodeId id) override;
@@ -18,9 +18,9 @@ public:
 
   std::optional<graph::Edge> getEdge(EdgeId id) const override;
 
-  bool modifyNode(NodeId id, std::function<void(graph::Node &)> fn) override;
+  bool modifyNode(NodeId id, std::function<void(graph::Node&)> fn) override;
 
-  bool modifyEdge(EdgeId id, std::function<void(graph::Edge &)> fn) override;
+  bool modifyEdge(EdgeId id, std::function<void(graph::Edge&)> fn) override;
 
   std::vector<NodeId> getAllNodeIds() const override;
 
@@ -42,7 +42,7 @@ public:
 
   void clearEdges() override;
 
-private:
+ private:
   absl::flat_hash_map<NodeId, std::unique_ptr<graph::Node>> nodes_;
   absl::flat_hash_map<EdgeId, std::unique_ptr<graph::Edge>> edges_;
 };

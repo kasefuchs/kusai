@@ -1,13 +1,19 @@
 #include "TrainCommand.hpp"
 
-#include "MemoryGraph.hpp"
-#include "TextChain.hpp"
-
 #include <fstream>
+#include <ios>
 #include <stdexcept>
+#include <string>
+#include <utility>
 #include <vector>
 
-TrainCommand::TrainCommand(CLI::App &app) : AbstractCommand(app) {
+#include "CLI/CLI.hpp"
+#include "MemoryGraph.hpp"
+#include "TextChain.hpp"
+#include "commands/AbstractCommand.hpp"
+#include "helpers/model.hpp"
+
+TrainCommand::TrainCommand(CLI::App& app) : AbstractCommand(app) {
   cmd_ = app.add_subcommand("train", "Train model");
 
   cmd_->add_option("-i,--input", inputFile_, "Input text file")->required();
@@ -29,8 +35,7 @@ void TrainCommand::execute() {
   std::string line;
 
   while (std::getline(in, line)) {
-    if (!line.empty())
-      data.push_back(std::move(line));
+    if (!line.empty()) data.push_back(std::move(line));
   }
 
   TextChain chain(*markov);

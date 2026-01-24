@@ -4,13 +4,13 @@
 #include "helpers/model.hpp"
 
 class RunCommand : public AbstractCommand {
-public:
-  explicit RunCommand(CLI::App &app);
+ public:
+  explicit RunCommand(CLI::App& app);
 
-protected:
+ protected:
   void execute() override;
 
-private:
+ private:
   ModelType modelType_ = ModelType::Backoff;
   std::string inputFile_ = "model.bin";
   std::string context_;

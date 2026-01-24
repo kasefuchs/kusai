@@ -4,13 +4,13 @@
 #include "helpers/model.hpp"
 
 class TrainCommand : public AbstractCommand {
-public:
-  explicit TrainCommand(CLI::App &app);
+ public:
+  explicit TrainCommand(CLI::App& app);
 
-protected:
+ protected:
   void execute() override;
 
-private:
+ private:
   ModelType modelType_ = ModelType::Backoff;
   std::string inputFile_;
   std::string outputFile_ = "model.bin";

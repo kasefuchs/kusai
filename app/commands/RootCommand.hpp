@@ -3,14 +3,14 @@
 #include "AbstractCommand.hpp"
 
 class RootCommand : public AbstractCommand {
-public:
-  explicit RootCommand(CLI::App &app);
+ public:
+  explicit RootCommand(CLI::App& app);
 
-  int main(int argc, char *argv[]);
+  int main(int argc, char* argv[]);
 
-protected:
+ protected:
   void execute() override;
 
-private:
+ private:
   std::vector<std::unique_ptr<AbstractCommand>> commands_;
 };

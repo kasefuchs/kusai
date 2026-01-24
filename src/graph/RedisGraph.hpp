@@ -1,12 +1,12 @@
 #pragma once
 
-#include "AbstractGraph.hpp"
-
 #include <sw/redis++/redis++.h>
 
+#include "AbstractGraph.hpp"
+
 class RedisGraph : public AbstractGraph {
-public:
-  explicit RedisGraph(sw::redis::Redis &redis) : AbstractGraph(), redis_(redis) {}
+ public:
+  explicit RedisGraph(sw::redis::Redis& redis) : AbstractGraph(), redis_(redis) {}
 
   bool hasNode(NodeId id) override;
 
@@ -20,9 +20,9 @@ public:
 
   std::optional<graph::Edge> getEdge(EdgeId id) const override;
 
-  bool modifyNode(NodeId id, std::function<void(graph::Node &)> fn) override;
+  bool modifyNode(NodeId id, std::function<void(graph::Node&)> fn) override;
 
-  bool modifyEdge(EdgeId id, std::function<void(graph::Edge &)> fn) override;
+  bool modifyEdge(EdgeId id, std::function<void(graph::Edge&)> fn) override;
 
   std::vector<NodeId> getAllNodeIds() const override;
 
@@ -44,14 +44,14 @@ public:
 
   void clearEdges() override;
 
-private:
-  sw::redis::Redis &redis_;
+ private:
+  sw::redis::Redis& redis_;
 
-  std::vector<std::string> getAllKeys(const std::string &pattern) const;
+  std::vector<std::string> getAllKeys(const std::string& pattern) const;
 
-  std::vector<graph::Node> getNodesByKeys(const std::vector<std::string> &keys) const;
+  std::vector<graph::Node> getNodesByKeys(const std::vector<std::string>& keys) const;
 
-  std::vector<graph::Edge> getEdgesByKeys(const std::vector<std::string> &keys) const;
+  std::vector<graph::Edge> getEdgesByKeys(const std::vector<std::string>& keys) const;
 
   static std::string makeNodeKey(NodeId id);
 
@@ -59,7 +59,7 @@ private:
 
   static std::pair<std::string, std::string> makeEdgePattern(NodeId id);
 
-  static NodeId parseNodeKey(const std::string &key);
+  static NodeId parseNodeKey(const std::string& key);
 
-  static EdgeId parseEdgeKey(const std::string &key);
+  static EdgeId parseEdgeKey(const std::string& key);
 };

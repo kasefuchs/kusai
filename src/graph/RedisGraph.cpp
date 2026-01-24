@@ -1,6 +1,20 @@
 #include "RedisGraph.hpp"
 
 #include <absl/log/check.h>
+#include <absl/strings/numbers.h>
+#include <absl/strings/str_format.h>
+#include <sw/redis++/utils.h>
+
+#include <cstdint>
+#include <functional>
+#include <iterator>
+#include <optional>
+#include <ranges>
+#include <utility>
+#include <vector>
+
+#include "AbstractGraph.hpp"
+#include "graph.pb.h"
 
 bool RedisGraph::hasNode(const NodeId id) {
   const auto key = makeNodeKey(id);
@@ -61,7 +75,7 @@ std::optional<graph::Edge> RedisGraph::getEdge(const EdgeId id) const {
   return std::nullopt;
 }
 
-bool RedisGraph::modifyNode(const NodeId id, const std::function<void(graph::Node &)> fn) {
+bool RedisGraph::modifyNode(const NodeId id, const std::function<void(graph::Node&)> fn) {
   const auto key = makeNodeKey(id);
   if (auto node = getNode(id)) {
     fn(*node);
@@ -72,7 +86,7 @@ bool RedisGraph::modifyNode(const NodeId id, const std::function<void(graph::Nod
   return false;
 }
 
-bool RedisGraph::modifyEdge(const EdgeId id, const std::function<void(graph::Edge &)> fn) {
+bool RedisGraph::modifyEdge(const EdgeId id, const std::function<void(graph::Edge&)> fn) {
   const auto key = makeEdgeKey(id);
   if (auto edge = getEdge(id)) {
     fn(*edge);
@@ -84,27 +98,27 @@ bool RedisGraph::modifyEdge(const EdgeId id, const std::function<void(graph::Edg
 }
 
 std::vector<NodeId> RedisGraph::getAllNodeIds() const {
-  const auto ids = getAllKeys("N:*") | std::views::transform([](const auto &e) { return parseNodeKey(e); });
+  const auto ids = getAllKeys("N:*") | std::views::transform([](const auto& e) { return parseNodeKey(e); });
 
   return {ids.begin(), ids.end()};
 }
 
 std::vector<EdgeId> RedisGraph::getAllEdgeIds() const {
-  const auto ids = getAllKeys("E:*") | std::views::transform([](const auto &e) { return parseEdgeKey(e); });
+  const auto ids = getAllKeys("E:*") | std::views::transform([](const auto& e) { return parseEdgeKey(e); });
 
   return {ids.begin(), ids.end()};
 }
 
 std::vector<EdgeId> RedisGraph::getIncomingEdgeIds(const NodeId target) const {
   const auto [_, pattern] = makeEdgePattern(target);
-  const auto ids = getAllKeys(pattern) | std::views::transform([](const auto &e) { return parseEdgeKey(e); });
+  const auto ids = getAllKeys(pattern) | std::views::transform([](const auto& e) { return parseEdgeKey(e); });
 
   return {ids.begin(), ids.end()};
 }
 
 std::vector<EdgeId> RedisGraph::getOutgoingEdgeIds(const NodeId source) const {
   const auto [pattern, _] = makeEdgePattern(source);
-  const auto ids = getAllKeys(pattern) | std::views::transform([](const auto &e) { return parseEdgeKey(e); });
+  const auto ids = getAllKeys(pattern) | std::views::transform([](const auto& e) { return parseEdgeKey(e); });
 
   return {ids.begin(), ids.end()};
 }
@@ -155,7 +169,7 @@ void RedisGraph::clearEdges() {
   }
 }
 
-std::vector<std::string> RedisGraph::getAllKeys(const std::string &pattern) const {
+std::vector<std::string> RedisGraph::getAllKeys(const std::string& pattern) const {
   sw::redis::Cursor cursor = 0;
   std::vector<std::string> keys;
 
@@ -170,7 +184,7 @@ std::vector<std::string> RedisGraph::getAllKeys(const std::string &pattern) cons
   return keys;
 }
 
-std::vector<graph::Node> RedisGraph::getNodesByKeys(const std::vector<std::string> &keys) const {
+std::vector<graph::Node> RedisGraph::getNodesByKeys(const std::vector<std::string>& keys) const {
   std::vector<std::string> vals;
   vals.reserve(keys.size());
   redis_.mget(keys.begin(), keys.end(), std::back_inserter(vals));
@@ -178,7 +192,7 @@ std::vector<graph::Node> RedisGraph::getNodesByKeys(const std::vector<std::strin
   std::vector<graph::Node> result;
   result.reserve(vals.size());
 
-  for (const auto &val : vals) {
+  for (const auto& val : vals) {
     graph::Node node;
     node.ParseFromString(val);
     result.push_back(std::move(node));
@@ -187,7 +201,7 @@ std::vector<graph::Node> RedisGraph::getNodesByKeys(const std::vector<std::strin
   return result;
 }
 
-std::vector<graph::Edge> RedisGraph::getEdgesByKeys(const std::vector<std::string> &keys) const {
+std::vector<graph::Edge> RedisGraph::getEdgesByKeys(const std::vector<std::string>& keys) const {
   std::vector<std::string> vals;
   vals.reserve(keys.size());
   redis_.mget(keys.begin(), keys.end(), std::back_inserter(vals));
@@ -195,7 +209,7 @@ std::vector<graph::Edge> RedisGraph::getEdgesByKeys(const std::vector<std::strin
   std::vector<graph::Edge> result;
   result.reserve(vals.size());
 
-  for (const auto &val : vals) {
+  for (const auto& val : vals) {
     graph::Edge edge;
     edge.ParseFromString(val);
     result.push_back(std::move(edge));
@@ -210,12 +224,12 @@ std::string RedisGraph::makeEdgeKey(const EdgeId id) { return absl::StrFormat("E
 
 std::pair<std::string, std::string> RedisGraph::makeEdgePattern(const NodeId id) {
   return {
-      absl::StrFormat("E:%016X*", id), // source known
-      absl::StrFormat("E:*%016X", id), // target known
+      absl::StrFormat("E:%016X*", id),  // source known
+      absl::StrFormat("E:*%016X", id),  // target known
   };
 }
 
-NodeId RedisGraph::parseNodeKey(const std::string &key) {
+NodeId RedisGraph::parseNodeKey(const std::string& key) {
   NodeId id;
 
   const auto ok = absl::SimpleHexAtoi(key.substr(2), &id);
@@ -224,7 +238,7 @@ NodeId RedisGraph::parseNodeKey(const std::string &key) {
   return id;
 }
 
-EdgeId RedisGraph::parseEdgeKey(const std::string &key) {
+EdgeId RedisGraph::parseEdgeKey(const std::string& key) {
   EdgeId id;
 
   const auto ok = absl::SimpleHexAtoi(key.substr(2), &id);

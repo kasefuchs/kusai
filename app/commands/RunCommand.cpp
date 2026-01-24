@@ -1,9 +1,18 @@
 #include "RunCommand.hpp"
 
+#include <fstream>
+#include <ios>
+#include <iostream>
+#include <ostream>
+#include <stdexcept>
+
+#include "CLI/CLI.hpp"
 #include "MemoryGraph.hpp"
 #include "TextChain.hpp"
+#include "commands/AbstractCommand.hpp"
+#include "helpers/model.hpp"
 
-RunCommand::RunCommand(CLI::App &app) : AbstractCommand(app) {
+RunCommand::RunCommand(CLI::App& app) : AbstractCommand(app) {
   cmd_ = app.add_subcommand("run", "Run text generation");
 
   cmd_->add_option("-i,--input", inputFile_, "Input binary model");

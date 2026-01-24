@@ -2,11 +2,20 @@
 
 #include <xxhash.h>
 
+#include <cstddef>
+#include <cstdint>
+#include <optional>
 #include <span>
+#include <vector>
 
-void NGramMarkov::train(const std::vector<std::vector<NodeId>> &sequences) {
+#include "AbstractGraph.hpp"
+#include "Markov.hpp"
+#include "graph.pb.h"
+#include "markov.pb.h"
+
+void NGramMarkov::train(const std::vector<std::vector<NodeId>>& sequences) {
   const size_t windowSize = contextSize_ + 1;
-  for (const auto &seq : sequences) {
+  for (const auto& seq : sequences) {
     if (seq.size() < windowSize) {
       continue;
     }
@@ -22,19 +31,19 @@ void NGramMarkov::train(const std::vector<std::vector<NodeId>> &sequences) {
 
       const auto id = makeContextId(ctx);
 
-      graph.modifyNode(graph.ensureNode(id), [&](graph::Node &node) {
+      graph.modifyNode(graph.ensureNode(id), [&](graph::Node& node) {
         auto metadata = markov::NGramNodeMetadata();
         metadata.mutable_context()->Assign(ctx.begin(), ctx.end());
         node.mutable_metadata()->PackFrom(metadata);
       });
 
       graph.modifyEdge(graph.ensureEdge(id, window.back()),
-                       [](graph::Edge &edge) { edge.set_weight(edge.weight() + 1); });
+                       [](graph::Edge& edge) { edge.set_weight(edge.weight() + 1); });
     }
   }
 }
 
-std::optional<NodeId> NGramMarkov::nextNode(const std::vector<NodeId> &context) const {
+std::optional<NodeId> NGramMarkov::nextNode(const std::vector<NodeId>& context) const {
   if (context.size() < contextSize_) {
     return std::nullopt;
   }
@@ -49,7 +58,7 @@ std::optional<NodeId> NGramMarkov::nextNode(const std::vector<NodeId> &context) 
   return Markov::nextNode(ctxId);
 }
 
-void NGramMarkov::serialize(google::protobuf::Any &out) const {
+void NGramMarkov::serialize(google::protobuf::Any& out) const {
   markov::NGramMarkov container;
 
   container.set_context_size(contextSize_);
@@ -58,7 +67,7 @@ void NGramMarkov::serialize(google::protobuf::Any &out) const {
   out.PackFrom(container);
 }
 
-void NGramMarkov::deserialize(const google::protobuf::Any &in) {
+void NGramMarkov::deserialize(const google::protobuf::Any& in) {
   markov::NGramMarkov container;
   in.UnpackTo(&container);
 
@@ -66,6 +75,6 @@ void NGramMarkov::deserialize(const google::protobuf::Any &in) {
   graph.deserialize(container.graph());
 }
 
-NodeId NGramMarkov::makeContextId(const std::vector<NodeId> &ids) {
+NodeId NGramMarkov::makeContextId(const std::vector<NodeId>& ids) {
   return XXH64(ids.data(), ids.size() * sizeof(NodeId), 0);
 }

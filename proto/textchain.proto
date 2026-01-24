@@ -2,4 +2,6 @@ syntax = "proto3";
 
 package textchain;
 
-message NodeMetadata { string value = 1; }
+message NodeMetadata {
+  string value = 1;
+}

@@ -6,7 +6,6 @@
     "protobuf",
     "cli11",
     "xxhash",
-    "grpc",
-    "redis-plus-plus"
+    "grpc"
   ]
 }

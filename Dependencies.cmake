@@ -19,6 +19,3 @@ endif ()
 
 # xxHash
 find_package(xxHash CONFIG REQUIRED)
-
-# Redis++
-find_package(redis++ CONFIG REQUIRED)

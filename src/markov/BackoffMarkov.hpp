@@ -24,7 +24,7 @@ class BackoffMarkov : public AbstractMarkov {
 
  private:
   uint32_t maxContextSize_;
-  absl::flat_hash_map<uint32_t, std::unique_ptr<NGramMarkov>> models_;
+  std::vector<std::unique_ptr<NGramMarkov>> models_;
 
   void rebuildModels();
 };

@@ -14,32 +14,29 @@ bool AbstractGraph::hasEdge(const NodeId source, const NodeId target) {
   return hasEdge(id);
 }
 
-EdgeId AbstractGraph::addEdge(const NodeId source, const NodeId target) {
+EdgeId AbstractGraph::addEdge(const NodeId source, const NodeId target, const std::function<void(graph::Edge&)>& fn) {
   const auto id = makeEdgeId(source, target);
 
-  return addEdge(id);
+  return addEdge(id, fn);
 }
 
-NodeId AbstractGraph::ensureNode(const NodeId id) {
-  if (!hasNode(id)) {
-    addNode(id);
-  }
+NodeId AbstractGraph::ensureNode(const NodeId id, const std::function<void(graph::Node&)>& fn) {
+  if (!hasNode(id)) addNode(id, fn);
 
   return id;
 }
 
-EdgeId AbstractGraph::ensureEdge(const EdgeId id) {
-  if (!hasEdge(id)) {
-    addEdge(id);
-  }
+EdgeId AbstractGraph::ensureEdge(const EdgeId id, const std::function<void(graph::Edge&)>& fn) {
+  if (!hasEdge(id)) addEdge(id, fn);
 
   return id;
 }
 
-EdgeId AbstractGraph::ensureEdge(const NodeId source, const NodeId target) {
+EdgeId AbstractGraph::ensureEdge(const NodeId source, const NodeId target,
+                                 const std::function<void(graph::Edge&)>& fn) {
   const auto id = makeEdgeId(source, target);
 
-  return ensureEdge(id);
+  return ensureEdge(id, fn);
 }
 
 std::optional<graph::Edge> AbstractGraph::getEdge(const NodeId source, const NodeId target) const {
@@ -61,7 +58,6 @@ void AbstractGraph::clear() {
 
 void AbstractGraph::serialize(graph::Graph& out) const {
   for (const auto& node : getAllNodes()) out.add_nodes()->CopyFrom(node);
-
   for (const auto& edge : getAllEdges()) out.add_edges()->CopyFrom(edge);
 }
 
@@ -69,13 +65,11 @@ void AbstractGraph::deserialize(const graph::Graph& in) {
   clear();
 
   for (const auto& node : in.nodes()) {
-    ensureNode(node.id());
-    modifyNode(node.id(), [&](graph::Node& n) { n.CopyFrom(node); });
+    addNode(node.id(), [&](graph::Node& n) { n.CopyFrom(node); });
   }
 
   for (const auto& edge : in.edges()) {
-    ensureEdge(edge.source(), edge.target());
-    modifyEdge(edge.source(), edge.target(), [&](graph::Edge& e) { e.CopyFrom(edge); });
+    addEdge(edge.source(), edge.target(), [&](graph::Edge& e) { e.CopyFrom(edge); });
   }
 }
 

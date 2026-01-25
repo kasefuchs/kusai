@@ -19,9 +19,7 @@ void BackoffMarkov::train(const std::vector<std::vector<NodeId>>& sequences) {
   std::ranges::copy_if(sequences, std::back_inserter(filtered),
                        [this](const auto& seq) { return seq.size() >= maxContextSize_ + 1; });
 
-  for (const auto& model : models_) {
-    model->train(filtered);
-  }
+  for (const auto& model : models_) model->train(filtered);
 }
 
 std::optional<NodeId> BackoffMarkov::nextNode(const std::vector<NodeId>& context) const {

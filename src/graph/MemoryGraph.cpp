@@ -14,22 +14,24 @@ bool MemoryGraph::hasNode(const NodeId id) { return nodes_.contains(id); }
 
 bool MemoryGraph::hasEdge(const EdgeId id) { return edges_.contains(id); }
 
-NodeId MemoryGraph::addNode(const NodeId id) {
+NodeId MemoryGraph::addNode(const NodeId id, const std::function<void(graph::Node&)> fn) {
   auto node = std::make_unique<graph::Node>();
   node->set_id(id);
 
+  if (fn) fn(*node);
   nodes_.emplace(id, std::move(node));
 
   return id;
 }
 
-EdgeId MemoryGraph::addEdge(const EdgeId id) {
+EdgeId MemoryGraph::addEdge(const EdgeId id, const std::function<void(graph::Edge&)> fn) {
   const auto [source, target] = splitEdgeId(id);
 
   auto edge = std::make_unique<graph::Edge>();
   edge->set_source(source);
   edge->set_target(target);
 
+  if (fn) fn(*edge);
   edges_.emplace(id, std::move(edge));
 
   return id;
@@ -84,16 +86,14 @@ std::vector<EdgeId> MemoryGraph::getAllEdgeIds() const {
 }
 
 std::vector<EdgeId> MemoryGraph::getIncomingEdgeIds(NodeId target) const {
-  auto view = edges_ | std::views::values |
-              std::views::filter([target](const auto& e) { return e->target() == target; }) |
+  auto view = edges_ | std::views::values | std::views::filter([&](const auto& e) { return e->target() == target; }) |
               std::views::transform([](const auto& e) { return makeEdgeId(e->source(), e->target()); });
 
   return {view.begin(), view.end()};
 }
 
 std::vector<EdgeId> MemoryGraph::getOutgoingEdgeIds(NodeId source) const {
-  auto view = edges_ | std::views::values |
-              std::views::filter([source](const auto& e) { return e->source() == source; }) |
+  auto view = edges_ | std::views::values | std::views::filter([&](const auto& e) { return e->source() == source; }) |
               std::views::transform([](const auto& e) { return makeEdgeId(e->source(), e->target()); });
 
   return {view.begin(), view.end()};
@@ -112,16 +112,14 @@ std::vector<graph::Edge> MemoryGraph::getAllEdges() const {
 }
 
 std::vector<graph::Edge> MemoryGraph::getIncomingEdges(NodeId target) const {
-  auto view = edges_ | std::views::values |
-              std::views::filter([target](const auto& e) { return e->target() == target; }) |
+  auto view = edges_ | std::views::values | std::views::filter([&](const auto& e) { return e->target() == target; }) |
               std::views::transform([](const auto& p) { return *p; });
 
   return {view.begin(), view.end()};
 }
 
 std::vector<graph::Edge> MemoryGraph::getOutgoingEdges(NodeId source) const {
-  auto view = edges_ | std::views::values |
-              std::views::filter([source](const auto& e) { return e->source() == source; }) |
+  auto view = edges_ | std::views::values | std::views::filter([&](const auto& e) { return e->source() == source; }) |
               std::views::transform([](const auto& p) { return *p; });
 
   return {view.begin(), view.end()};

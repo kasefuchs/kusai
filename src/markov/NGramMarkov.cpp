@@ -16,9 +16,7 @@
 void NGramMarkov::train(const std::vector<std::vector<NodeId>>& sequences) {
   const size_t windowSize = contextSize_ + 1;
   for (const auto& seq : sequences) {
-    if (seq.size() < windowSize) {
-      continue;
-    }
+    if (seq.size() < windowSize) continue;
 
     for (size_t i = 0; i + windowSize <= seq.size(); ++i) {
       std::span window(seq.data() + i, windowSize);
@@ -31,7 +29,7 @@ void NGramMarkov::train(const std::vector<std::vector<NodeId>>& sequences) {
 
       const auto id = makeContextId(ctx);
 
-      graph.modifyNode(graph.ensureNode(id), [&](graph::Node& node) {
+      graph.ensureNode(id, [&](graph::Node& node) {
         auto metadata = markov::NGramNodeMetadata();
         metadata.mutable_context()->Assign(ctx.begin(), ctx.end());
         node.mutable_metadata()->PackFrom(metadata);
@@ -44,9 +42,7 @@ void NGramMarkov::train(const std::vector<std::vector<NodeId>>& sequences) {
 }
 
 std::optional<NodeId> NGramMarkov::nextNode(const std::vector<NodeId>& context) const {
-  if (context.size() < contextSize_) {
-    return std::nullopt;
-  }
+  if (context.size() < contextSize_) return std::nullopt;
 
   std::vector<uint64_t> ctx;
   ctx.reserve(contextSize_);

@@ -13,7 +13,6 @@
 void Markov::train(const std::vector<std::vector<NodeId>>& sequences) {
   for (auto& seq : sequences) {
     NodeId prev = 0;
-
     for (const auto node : seq) {
       if (prev) {
         graph.modifyEdge(graph.ensureEdge(prev, node), [](graph::Edge& edge) { edge.set_weight(edge.weight() + 1); });
@@ -26,9 +25,7 @@ void Markov::train(const std::vector<std::vector<NodeId>>& sequences) {
 
 std::optional<NodeId> Markov::nextNode(const NodeId current) const {
   const auto outgoing = graph.getOutgoingEdges(current);
-  if (outgoing.empty()) {
-    return std::nullopt;
-  }
+  if (outgoing.empty()) return std::nullopt;
 
   std::vector<double> weights;
   weights.reserve(outgoing.size());

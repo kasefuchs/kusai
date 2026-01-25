@@ -28,9 +28,7 @@ std::vector<NodeId> AbstractMarkov::generateNodes(const std::vector<NodeId>& con
 
   while (limit--) {
     auto node = nextNode(result);
-    if (!node.has_value()) {
-      break;
-    }
+    if (!node.has_value()) break;
 
     result.push_back(*node);
   }

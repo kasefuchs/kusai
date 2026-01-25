@@ -8,8 +8,6 @@ class TextChain {
 
   AbstractMarkov& markov;
 
-  [[nodiscard]] NodeId ensureNode(const std::string& token) const;
-
   [[nodiscard]] std::optional<std::string> getNodeToken(const NodeId& id) const;
 
   [[nodiscard]] std::vector<NodeId> contextNodes(const std::string& context) const;

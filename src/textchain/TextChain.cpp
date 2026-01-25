@@ -14,29 +14,12 @@
 #include "graph.pb.h"
 #include "textchain.pb.h"
 
-NodeId TextChain::ensureNode(const std::string& token) const {
-  const auto id = makeTokenId(token);
-  if (!markov.graph.hasNode(id)) {
-    markov.graph.modifyNode(markov.graph.ensureNode(id), [&](graph::Node& node) {
-      textchain::NodeMetadata meta;
-      meta.set_value(token);
-      node.mutable_metadata()->PackFrom(meta);
-    });
-  }
-
-  return id;
-}
-
 std::optional<std::string> TextChain::getNodeToken(const NodeId& id) const {
   const auto node = markov.graph.getNode(id);
-  if (!node) {
-    return std::nullopt;
-  }
+  if (!node) return std::nullopt;
 
   textchain::NodeMetadata meta;
-  if (!node->metadata().UnpackTo(&meta)) {
-    return std::nullopt;
-  }
+  if (!node->metadata().UnpackTo(&meta)) return std::nullopt;
 
   return meta.value();
 }
@@ -47,15 +30,20 @@ std::vector<NodeId> TextChain::contextNodes(const std::string& context) const {
   std::string token;
 
   while (stream >> token) {
-    auto node = ensureNode(token);
-    seq.push_back(node);
+    auto id = markov.graph.ensureNode(makeTokenId(token), [&](graph::Node& node) {
+      textchain::NodeMetadata meta;
+      meta.set_value(token);
+      node.mutable_metadata()->PackFrom(meta);
+    });
+
+    seq.push_back(id);
   }
 
   return seq;
 }
 
 void TextChain::train(const std::vector<std::string>& sequences) const {
-  std::vector<std::vector<NodeId>> nodeSequences;
+  std::vector<std::vector<NodeId> > nodeSequences;
   nodeSequences.reserve(sequences.size());
 
   for (const auto& text : sequences) {
@@ -81,9 +69,7 @@ std::vector<NodeId> TextChain::generateNodes(const std::string& context, const u
 
 std::optional<std::string> TextChain::nextToken(const std::string& context) const {
   if (const auto id = nextNode(context)) {
-    if (auto tok = getNodeToken(*id)) {
-      return tok;
-    }
+    if (auto tok = getNodeToken(*id)) return tok;
   }
 
   return std::nullopt;
@@ -94,9 +80,7 @@ std::string TextChain::generateTokens(const std::string& context, const uint32_t
   std::vector<std::string> tokens;
   for (NodeId id : generateNodes(context, limit)) {
     const auto tok = getNodeToken(id);
-    if (!tok || *tok == breakValue) {
-      break;
-    }
+    if (!tok || *tok == breakValue) break;
 
     tokens.push_back(*tok);
   }

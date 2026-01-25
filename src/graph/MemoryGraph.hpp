@@ -12,9 +12,9 @@ class MemoryGraph : public AbstractGraph {
 
   bool hasEdge(EdgeId id) override;
 
-  NodeId addNode(NodeId id) override;
+  NodeId addNode(NodeId id, std::function<void(graph::Node&)> fn) override;
 
-  EdgeId addEdge(EdgeId id) override;
+  EdgeId addEdge(EdgeId id, std::function<void(graph::Edge&)> fn) override;
 
   std::optional<graph::Node> getNode(NodeId id) const override;
 
@@ -45,6 +45,6 @@ class MemoryGraph : public AbstractGraph {
   void clearEdges() override;
 
  private:
-  absl::flat_hash_map<NodeId, std::unique_ptr<graph::Node>> nodes_;
-  absl::flat_hash_map<EdgeId, std::unique_ptr<graph::Edge>> edges_;
+  absl::flat_hash_map<NodeId, std::unique_ptr<graph::Node> > nodes_;
+  absl::flat_hash_map<EdgeId, std::unique_ptr<graph::Edge> > edges_;
 };

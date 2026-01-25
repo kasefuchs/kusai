@@ -19,17 +19,17 @@ class AbstractGraph {
 
   bool hasEdge(NodeId source, NodeId target);
 
-  virtual NodeId addNode(NodeId id) = 0;
+  virtual NodeId addNode(NodeId id, std::function<void(graph::Node&)> fn = nullptr) = 0;
 
-  virtual EdgeId addEdge(EdgeId id) = 0;
+  virtual EdgeId addEdge(EdgeId id, std::function<void(graph::Edge&)> fn = nullptr) = 0;
 
-  EdgeId addEdge(NodeId source, NodeId target);
+  EdgeId addEdge(NodeId source, NodeId target, const std::function<void(graph::Edge&)>& fn = nullptr);
 
-  NodeId ensureNode(NodeId id);
+  NodeId ensureNode(NodeId id, const std::function<void(graph::Node&)>& fn = nullptr);
 
-  EdgeId ensureEdge(EdgeId id);
+  EdgeId ensureEdge(EdgeId id, const std::function<void(graph::Edge&)>& fn = nullptr);
 
-  EdgeId ensureEdge(NodeId source, NodeId target);
+  EdgeId ensureEdge(NodeId source, NodeId target, const std::function<void(graph::Edge&)>& fn = nullptr);
 
   virtual std::optional<graph::Node> getNode(NodeId id) const = 0;
 

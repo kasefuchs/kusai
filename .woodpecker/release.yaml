@@ -9,8 +9,8 @@ steps:
       VCPKG_OVERLAY_PORTS: /tmp/overlay-ports
     commands: # language="sh"
       # Install dependencies
-      - apt-get update
-      - apt-get install libabsl-dev libcli11-dev libgrpc++-dev libgrpc-dev libprotobuf-dev protobuf-compiler protobuf-compiler-grpc
+      - apt-get update --assume-yes
+      - apt-get install --assume-yes libabsl-dev libcli11-dev libgrpc++-dev libgrpc-dev libprotobuf-dev protobuf-compiler protobuf-compiler-grpc
       - tools/vcpkg/gen-overlay.sh abseil cli11 grpc protobuf
 
       # Compile app

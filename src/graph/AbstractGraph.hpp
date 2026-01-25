@@ -2,6 +2,8 @@
 
 #include <absl/numeric/int128.h>
 
+#include <optional>
+
 #include "graph.pb.h"
 
 using NodeId = uint64_t;

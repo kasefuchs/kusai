@@ -1,0 +1,36 @@
+---
+when:
+  - event: tag
+
+steps:
+  - name: build
+    image: ghcr.io/kasefuchs/vcpkg
+    environment:
+      VCPKG_OVERLAY_PORTS: /tmp/overlay-ports
+    commands: # language="sh"
+      # Install dependencies
+      - apt-get update
+      - apt-get install libabsl-dev libcli11-dev libgrpc++-dev libgrpc-dev libprotobuf-dev protobuf-compiler protobuf-compiler-grpc
+      - tools/vcpkg/gen-overlay.sh abseil cli11 grpc protobuf
+
+      # Compile app
+      - >-
+        cmake -G Ninja -B cmake-build-release
+        -DCMAKE_TOOLCHAIN_FILE=$${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake
+        -DVCPKG_TARGET_TRIPLET=x64-linux-dynamic
+        -DCMAKE_BUILD_TYPE=Release
+        -DKUSAI_BUILD_APP=ON
+      - cmake --build cmake-build-release --config Release
+
+      # Package build
+      - cd cmake-build-release
+      - cpack
+
+  - name: publish
+    image: woodpeckerci/plugin-release
+    settings:
+      title: ${CI_COMMIT_TAG}
+      files:
+        - cmake-build-release/kusai-*-Linux.tar.gz
+      api_key:
+        from_secret: CODEBERG_RELEASE_API_TOKEN

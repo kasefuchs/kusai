@@ -1,5 +1,8 @@
 # Protobuf
-find_package(protobuf CONFIG REQUIRED)
+find_package(protobuf CONFIG QUIET)
+if (NOT protobuf_FOUND)
+  find_package(Protobuf REQUIRED)
+endif()
 
 # gRPC
 if (KUSAI_BUILD_SERVICE)

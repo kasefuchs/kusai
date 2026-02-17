@@ -16,5 +16,6 @@ target_include_directories(markov
 target_link_libraries(markov
   PUBLIC proto
   PUBLIC graph
+  PUBLIC absl::log_internal_check_op
   PUBLIC xxHash::xxhash
 )

@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+package tokenizer;
+
+message SimpleTokenizer {
+  map<uint64, string> vocabulary = 1;
+}

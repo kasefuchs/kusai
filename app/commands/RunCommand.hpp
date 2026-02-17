@@ -14,5 +14,5 @@ class RunCommand : public AbstractCommand {
   ModelType modelType_ = ModelType::Backoff;
   std::string inputFile_ = "model.bin";
   std::string context_;
-  int limit_ = INT32_MAX;
+  int limit_ = INT8_MAX;
 };

@@ -11,4 +11,3 @@ set(CPACK_GENERATOR "TGZ")
 
 include(CMakeDependentOption)
 option(KUSAI_BUILD_APP "Build CLI app" OFF)
-cmake_dependent_option(KUSAI_BUILD_SERVICE "Build grpc service" ON KUSAI_BUILD_APP OFF)

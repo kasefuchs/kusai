@@ -7,13 +7,11 @@
 #include <ostream>
 
 #include "RunCommand.hpp"
-#include "ServeCommand.hpp"
 #include "TrainCommand.hpp"
 #include "commands/AbstractCommand.hpp"
 
 RootCommand::RootCommand(CLI::App& app) : AbstractCommand(app) {
   commands_.push_back(std::make_unique<RunCommand>(app));
-  commands_.push_back(std::make_unique<ServeCommand>(app));
   commands_.push_back(std::make_unique<TrainCommand>(app));
 }
 

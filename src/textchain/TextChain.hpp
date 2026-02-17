@@ -1,28 +1,23 @@
 #pragma once
 
-#include "Markov.hpp"
+#include "AbstractMarkov.hpp"
+#include "AbstractTokenizer.hpp"
 
 class TextChain {
  public:
-  explicit TextChain(AbstractMarkov& markov) : markov(markov) {}
+  explicit TextChain(AbstractMarkov& markov, AbstractTokenizer& tokenizer) : markov(markov), tokenizer(tokenizer) {}
 
   AbstractMarkov& markov;
-
-  [[nodiscard]] std::optional<std::string> getNodeToken(const NodeId& id) const;
-
-  [[nodiscard]] std::vector<NodeId> contextNodes(const std::string& context) const;
+  AbstractTokenizer& tokenizer;
 
   void train(const std::vector<std::string>& sequences) const;
 
-  [[nodiscard]] std::optional<NodeId> nextNode(const std::string& context) const;
-
   [[nodiscard]] std::vector<NodeId> generateNodes(const std::string& context, uint32_t limit = INT8_MAX) const;
+  [[nodiscard]] std::string generateTokens(const std::string& context, uint32_t limit = INT8_MAX) const;
 
-  [[nodiscard]] std::optional<std::string> nextToken(const std::string& context) const;
+  void serialize(google::protobuf::Any& out) const;
+  void deserialize(const google::protobuf::Any& in) const;
 
-  [[nodiscard]] std::string generateTokens(const std::string& context, uint32_t limit = INT8_MAX,
-                                           const std::string& breakValue = "") const;
-
- private:
-  static NodeId makeTokenId(const std::string& token);
+  void serializeToOstream(std::ostream& out) const;
+  void deserializeFromIstream(std::istream& in) const;
 };

@@ -5,7 +5,6 @@
     "abseil",
     "protobuf",
     "cli11",
-    "xxhash",
-    "grpc"
+    "xxhash"
   ]
 }

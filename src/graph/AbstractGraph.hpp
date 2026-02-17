@@ -6,7 +6,7 @@
 
 #include "graph.pb.h"
 
-using NodeId = uint64_t;
+using NodeId = std::uint64_t;
 using EdgeId = absl::uint128;
 
 class AbstractGraph {

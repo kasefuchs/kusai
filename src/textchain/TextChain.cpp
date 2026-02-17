@@ -1,6 +1,5 @@
 #include "TextChain.hpp"
 
-#include <absl/strings/str_join.h>
 #include <xxhash.h>
 
 #include <cstdint>
@@ -11,81 +10,59 @@
 #include <vector>
 
 #include "AbstractGraph.hpp"
-#include "graph.pb.h"
 #include "textchain.pb.h"
-
-std::optional<std::string> TextChain::getNodeToken(const NodeId& id) const {
-  const auto node = markov.graph.getNode(id);
-  if (!node) return std::nullopt;
-
-  textchain::NodeMetadata meta;
-  if (!node->metadata().UnpackTo(&meta)) return std::nullopt;
-
-  return meta.value();
-}
-
-std::vector<NodeId> TextChain::contextNodes(const std::string& context) const {
-  std::vector<NodeId> seq;
-  std::istringstream stream(context);
-  std::string token;
-
-  while (stream >> token) {
-    auto id = markov.graph.ensureNode(makeTokenId(token), [&](graph::Node& node) {
-      textchain::NodeMetadata meta;
-      meta.set_value(token);
-      node.mutable_metadata()->PackFrom(meta);
-    });
-
-    seq.push_back(id);
-  }
-
-  return seq;
-}
 
 void TextChain::train(const std::vector<std::string>& sequences) const {
   std::vector<std::vector<NodeId> > nodeSequences;
   nodeSequences.reserve(sequences.size());
 
   for (const auto& text : sequences) {
-    if (auto seq = contextNodes(text); !seq.empty()) {
-      nodeSequences.push_back(std::move(seq));
-    }
+    const auto tokens = tokenizer.encode(text);
+
+    nodeSequences.push_back(std::move(tokens));
   }
 
   markov.train(nodeSequences);
 }
 
-std::optional<NodeId> TextChain::nextNode(const std::string& context) const {
-  const auto seq = contextNodes(context);
-
-  return markov.nextNode(seq);
-}
-
 std::vector<NodeId> TextChain::generateNodes(const std::string& context, const uint32_t limit) const {
-  const auto seq = contextNodes(context);
+  const auto seq = tokenizer.encode(context);
 
   return markov.generateNodes(seq, limit);
 }
 
-std::optional<std::string> TextChain::nextToken(const std::string& context) const {
-  if (const auto id = nextNode(context)) {
-    if (auto tok = getNodeToken(*id)) return tok;
-  }
+std::string TextChain::generateTokens(const std::string& context, const uint32_t limit) const {
+  const auto seq = generateNodes(context, limit);
 
-  return std::nullopt;
+  return tokenizer.decode(seq);
 }
 
-std::string TextChain::generateTokens(const std::string& context, const uint32_t limit,
-                                      const std::string& breakValue) const {
-  std::vector<std::string> tokens;
-  for (NodeId id : generateNodes(context, limit)) {
-    const auto tok = getNodeToken(id);
-    if (!tok || *tok == breakValue) break;
+void TextChain::serialize(google::protobuf::Any& out) const {
+  textchain::TextChain container;
+  markov.serialize(*container.mutable_markov());
+  tokenizer.serialize(*container.mutable_tokenizer());
 
-    tokens.push_back(*tok);
-  }
-
-  return absl::StrJoin(tokens, " ");
+  out.PackFrom(container);
 }
 
-NodeId TextChain::makeTokenId(const std::string& token) { return XXH64(&token[0], token.size(), 0); }
+void TextChain::deserialize(const google::protobuf::Any& in) const {
+  textchain::TextChain container;
+  in.UnpackTo(&container);
+
+  markov.deserialize(container.markov());
+  tokenizer.deserialize(container.tokenizer());
+}
+
+void TextChain::serializeToOstream(std::ostream& out) const {
+  google::protobuf::Any container;
+  serialize(container);
+
+  container.SerializeToOstream(&out);
+}
+
+void TextChain::deserializeFromIstream(std::istream& in) const {
+  google::protobuf::Any container;
+  container.ParseFromIstream(&in);
+
+  deserialize(container);
+}

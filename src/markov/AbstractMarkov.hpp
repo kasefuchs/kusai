@@ -21,10 +21,6 @@ class AbstractMarkov {
 
   [[nodiscard]] std::vector<NodeId> generateNodes(const std::vector<NodeId>& context, uint32_t limit = INT8_MAX) const;
 
-  void serializeToOstream(std::ostream& out) const;
-
-  void deserializeFromIstream(std::istream& in);
-
  protected:
   explicit AbstractMarkov(AbstractGraph& graph) : graph(graph) {}
 };

@@ -4,8 +4,6 @@ add_executable(${PROJECT_NAME}
   commands/AbstractCommand.hpp
   commands/RunCommand.cpp
   commands/RunCommand.hpp
-  commands/ServeCommand.cpp
-  commands/ServeCommand.hpp
   commands/TrainCommand.cpp
   commands/TrainCommand.hpp
   commands/RootCommand.cpp
@@ -18,7 +16,6 @@ target_include_directories(${PROJECT_NAME}
 )
 
 target_link_libraries(${PROJECT_NAME}
-  PUBLIC service
   PUBLIC textchain
   PUBLIC CLI11::CLI11
 )

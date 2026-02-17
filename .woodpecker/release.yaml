@@ -10,8 +10,8 @@ steps:
     commands: # language="sh"
       # Install dependencies
       - apt-get update --assume-yes
-      - apt-get install --assume-yes libabsl-dev libcli11-dev libgrpc++-dev libgrpc-dev libprotobuf-dev protobuf-compiler protobuf-compiler-grpc
-      - tools/vcpkg/gen-overlay.sh abseil cli11 grpc protobuf
+      - apt-get install --assume-yes libabsl-dev libcli11-dev libprotobuf-dev protobuf-compiler
+      - tools/vcpkg/gen-overlay.sh abseil cli11 protobuf
 
       # Compile app
       - >-

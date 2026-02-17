@@ -8,6 +8,7 @@
 
 #include "CLI/CLI.hpp"
 #include "MemoryGraph.hpp"
+#include "SimpleTokenizer.hpp"
 #include "TextChain.hpp"
 #include "commands/AbstractCommand.hpp"
 #include "helpers/model.hpp"
@@ -30,9 +31,9 @@ void RunCommand::execute() {
     throw std::runtime_error("Cannot open input file: " + inputFile_);
   }
 
-  markov->deserializeFromIstream(in);
-
-  TextChain chain(*markov);
+  SimpleTokenizer tokenizer;
+  TextChain chain(*markov, tokenizer);
+  chain.deserializeFromIstream(in);
 
   std::cout << chain.generateTokens(context_, limit_) << std::endl;
 }

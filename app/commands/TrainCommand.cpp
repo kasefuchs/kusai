@@ -9,6 +9,7 @@
 
 #include "CLI/CLI.hpp"
 #include "MemoryGraph.hpp"
+#include "SimpleTokenizer.hpp"
 #include "TextChain.hpp"
 #include "commands/AbstractCommand.hpp"
 #include "helpers/model.hpp"
@@ -38,7 +39,8 @@ void TrainCommand::execute() {
     if (!line.empty()) data.push_back(std::move(line));
   }
 
-  TextChain chain(*markov);
+  SimpleTokenizer tokenizer;
+  TextChain chain(*markov, tokenizer);
   chain.train(data);
 
   std::ofstream out(outputFile_, std::ios::binary);
@@ -46,5 +48,5 @@ void TrainCommand::execute() {
     throw std::runtime_error("Cannot open output file: " + outputFile_);
   }
 
-  markov->serializeToOstream(out);
+  chain.serializeToOstream(out);
 }

@@ -1,8 +1,14 @@
 #include "SimpleTokenizer.hpp"
 
 #include <absl/strings/str_join.h>
+#include <google/protobuf/any.pb.h>
 #include <xxhash.h>
 
+#include <sstream>
+#include <string>
+#include <vector>
+
+#include "AbstractTokenizer.hpp"
 #include "tokenizer.pb.h"
 
 std::vector<TokenId> SimpleTokenizer::encode(const std::string& context) {

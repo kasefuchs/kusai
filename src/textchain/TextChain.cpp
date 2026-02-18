@@ -1,12 +1,12 @@
 #include "TextChain.hpp"
 
+#include <google/protobuf/any.pb.h>
 #include <xxhash.h>
 
 #include <cstdint>
-#include <optional>
-#include <sstream>
+#include <istream>
+#include <ostream>
 #include <string>
-#include <utility>
 #include <vector>
 
 #include "AbstractGraph.hpp"
@@ -19,7 +19,7 @@ void TextChain::train(const std::vector<std::string>& sequences) const {
   for (const auto& text : sequences) {
     const auto tokens = tokenizer.encode(text);
 
-    nodeSequences.push_back(std::move(tokens));
+    nodeSequences.push_back(tokens);
   }
 
   markov.train(nodeSequences);

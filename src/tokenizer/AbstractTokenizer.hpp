@@ -12,9 +12,9 @@ class AbstractTokenizer {
  public:
   virtual ~AbstractTokenizer() = default;
 
-  virtual std::vector<TokenId> encode(const std::string& text) = 0;
+  [[nodiscard]] virtual std::vector<TokenId> encode(const std::string& text) = 0;
 
-  virtual std::string decode(const std::vector<TokenId>& text) = 0;
+  [[nodiscard]] virtual std::string decode(const std::vector<TokenId>& text) = 0;
 
   virtual void serialize(google::protobuf::Any& out) const = 0;
 

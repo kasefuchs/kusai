@@ -16,7 +16,7 @@ class BackoffMarkov : public AbstractMarkov {
 
   void train(const std::vector<std::vector<NodeId>>& sequences) override;
 
-  std::optional<NodeId> nextNode(const std::vector<NodeId>& context) const override;
+  [[nodiscard]] std::optional<NodeId> nextNode(const std::vector<NodeId>& context) const override;
 
   void serialize(google::protobuf::Any& out) const override;
 

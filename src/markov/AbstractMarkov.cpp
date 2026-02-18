@@ -1,10 +1,6 @@
 #include "AbstractMarkov.hpp"
 
-#include <google/protobuf/any.pb.h>
-
 #include <cstdint>
-#include <istream>
-#include <ostream>
 #include <vector>
 
 #include "AbstractGraph.hpp"

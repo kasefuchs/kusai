@@ -3,6 +3,7 @@
 #include <google/protobuf/any.pb.h>
 
 #include <algorithm>
+#include <cstdint>
 #include <iterator>
 #include <memory>
 #include <optional>

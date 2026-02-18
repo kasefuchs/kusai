@@ -16,29 +16,29 @@ class MemoryGraph : public AbstractGraph {
 
   EdgeId addEdge(EdgeId id, std::function<void(graph::Edge&)> fn) override;
 
-  std::optional<graph::Node> getNode(NodeId id) const override;
+  [[nodiscard]] std::optional<graph::Node> getNode(NodeId id) const override;
 
-  std::optional<graph::Edge> getEdge(EdgeId id) const override;
+  [[nodiscard]] std::optional<graph::Edge> getEdge(EdgeId id) const override;
 
   bool modifyNode(NodeId id, std::function<void(graph::Node&)> fn) override;
 
   bool modifyEdge(EdgeId id, std::function<void(graph::Edge&)> fn) override;
 
-  std::vector<NodeId> getAllNodeIds() const override;
+  [[nodiscard]] std::vector<NodeId> getAllNodeIds() const override;
 
-  std::vector<EdgeId> getAllEdgeIds() const override;
+  [[nodiscard]] std::vector<EdgeId> getAllEdgeIds() const override;
 
-  std::vector<EdgeId> getIncomingEdgeIds(NodeId target) const override;
+  [[nodiscard]] std::vector<EdgeId> getIncomingEdgeIds(NodeId target) const override;
 
-  std::vector<EdgeId> getOutgoingEdgeIds(NodeId source) const override;
+  [[nodiscard]] std::vector<EdgeId> getOutgoingEdgeIds(NodeId source) const override;
 
-  std::vector<graph::Node> getAllNodes() const override;
+  [[nodiscard]] std::vector<graph::Node> getAllNodes() const override;
 
-  std::vector<graph::Edge> getAllEdges() const override;
+  [[nodiscard]] std::vector<graph::Edge> getAllEdges() const override;
 
-  std::vector<graph::Edge> getIncomingEdges(NodeId target) const override;
+  [[nodiscard]] std::vector<graph::Edge> getIncomingEdges(NodeId target) const override;
 
-  std::vector<graph::Edge> getOutgoingEdges(NodeId source) const override;
+  [[nodiscard]] std::vector<graph::Edge> getOutgoingEdges(NodeId source) const override;
 
   void clearNodes() override;
 

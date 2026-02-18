@@ -15,11 +15,11 @@ class AbstractMarkov {
 
   [[nodiscard]] virtual std::optional<NodeId> nextNode(const std::vector<NodeId>& context) const = 0;
 
+  [[nodiscard]] std::vector<NodeId> generateNodes(const std::vector<NodeId>& context, uint32_t limit = INT8_MAX) const;
+
   virtual void serialize(google::protobuf::Any& out) const = 0;
 
   virtual void deserialize(const google::protobuf::Any& in) = 0;
-
-  [[nodiscard]] std::vector<NodeId> generateNodes(const std::vector<NodeId>& context, uint32_t limit = INT8_MAX) const;
 
  protected:
   explicit AbstractMarkov(AbstractGraph& graph) : graph(graph) {}

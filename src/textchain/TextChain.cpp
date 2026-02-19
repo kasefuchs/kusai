@@ -1,4 +1,4 @@
-#include "TextChain.hpp"
+#include "kusai/textchain/TextChain.hpp"
 
 #include <google/protobuf/any.pb.h>
 #include <xxhash.h>
@@ -9,8 +9,8 @@
 #include <string>
 #include <vector>
 
-#include "AbstractGraph.hpp"
-#include "textchain.pb.h"
+#include "kusai/graph/AbstractGraph.hpp"
+#include "kusai/proto/textchain.pb.h"
 
 void TextChain::train(const std::vector<std::string>& sequences) const {
   std::vector<std::vector<NodeId> > nodeSequences;

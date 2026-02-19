@@ -3,10 +3,10 @@
 #include <CLI/CLI.hpp>
 #include <memory>
 
-#include "AbstractMarkov.hpp"
-#include "BackoffMarkov.hpp"
-#include "Markov.hpp"
-#include "NGramMarkov.hpp"
+#include "kusai/markov/AbstractMarkov.hpp"
+#include "kusai/markov/BackoffMarkov.hpp"
+#include "kusai/markov/Markov.hpp"
+#include "kusai/markov/NGramMarkov.hpp"
 
 enum class ModelType { Markov, NGram, Backoff };
 

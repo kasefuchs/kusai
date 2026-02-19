@@ -1,9 +1,9 @@
-#include "AbstractMarkov.hpp"
+#include "kusai/markov/AbstractMarkov.hpp"
 
 #include <cstdint>
 #include <vector>
 
-#include "AbstractGraph.hpp"
+#include "kusai/graph/AbstractGraph.hpp"
 
 std::vector<NodeId> AbstractMarkov::generateNodes(const std::vector<NodeId>& context, uint32_t limit) const {
   std::vector<NodeId> result = context;

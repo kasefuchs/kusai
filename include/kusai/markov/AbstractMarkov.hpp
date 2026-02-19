@@ -2,8 +2,8 @@
 
 #include <vector>
 
-#include "AbstractGraph.hpp"
-#include "graph.pb.h"
+#include "../graph/AbstractGraph.hpp"
+#include "kusai/proto/graph.pb.h"
 
 class AbstractMarkov {
  public:

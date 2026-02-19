@@ -1,4 +1,4 @@
-#include "NGramMarkov.hpp"
+#include "kusai/markov/NGramMarkov.hpp"
 
 #include <xxhash.h>
 
@@ -8,10 +8,10 @@
 #include <span>
 #include <vector>
 
-#include "AbstractGraph.hpp"
-#include "Markov.hpp"
-#include "graph.pb.h"
-#include "markov.pb.h"
+#include "kusai/graph/AbstractGraph.hpp"
+#include "kusai/markov/Markov.hpp"
+#include "kusai/proto/graph.pb.h"
+#include "kusai/proto/markov.pb.h"
 
 void NGramMarkov::train(const std::vector<std::vector<NodeId>>& sequences) {
   const size_t windowSize = contextSize_ + 1;

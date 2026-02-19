@@ -1,4 +1,4 @@
-#include "BackoffMarkov.hpp"
+#include "kusai/markov/BackoffMarkov.hpp"
 
 #include <google/protobuf/any.pb.h>
 
@@ -10,8 +10,8 @@
 #include <ranges>
 #include <vector>
 
-#include "AbstractGraph.hpp"
-#include "markov.pb.h"
+#include "kusai/graph/AbstractGraph.hpp"
+#include "kusai/proto/markov.pb.h"
 
 void BackoffMarkov::train(const std::vector<std::vector<NodeId>>& sequences) {
   std::vector<std::vector<NodeId>> filtered;

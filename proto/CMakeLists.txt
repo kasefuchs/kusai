@@ -8,6 +8,7 @@ add_library(proto SHARED
 protobuf_generate(
   LANGUAGE cpp
   TARGET proto
+  PROTOC_OUT_DIR "${CMAKE_CURRENT_BINARY_DIR}/kusai/proto"
 )
 
 target_link_libraries(proto
@@ -16,6 +17,6 @@ target_link_libraries(proto
 )
 
 target_include_directories(proto
-  PUBLIC ${CMAKE_CURRENT_BINARY_DIR}
-  PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
+  PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+  PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
 )

@@ -1,4 +1,4 @@
-#include "AbstractGraph.hpp"
+#include "kusai/graph/AbstractGraph.hpp"
 
 #include <absl/numeric/int128.h>
 
@@ -6,7 +6,7 @@
 #include <optional>
 #include <utility>
 
-#include "graph.pb.h"
+#include "kusai/proto/graph.pb.h"
 
 bool AbstractGraph::hasEdge(const NodeId source, const NodeId target) {
   const auto id = makeEdgeId(source, target);

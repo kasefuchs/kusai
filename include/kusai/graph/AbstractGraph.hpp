@@ -4,7 +4,7 @@
 
 #include <optional>
 
-#include "graph.pb.h"
+#include "kusai/proto/graph.pb.h"
 
 using NodeId = std::uint64_t;
 using EdgeId = absl::uint128;

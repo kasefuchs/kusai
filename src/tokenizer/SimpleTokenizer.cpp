@@ -1,4 +1,4 @@
-#include "SimpleTokenizer.hpp"
+#include "kusai/tokenizer/SimpleTokenizer.hpp"
 
 #include <absl/strings/str_join.h>
 #include <google/protobuf/any.pb.h>
@@ -8,8 +8,8 @@
 #include <string>
 #include <vector>
 
-#include "AbstractTokenizer.hpp"
-#include "tokenizer.pb.h"
+#include "kusai/tokenizer/AbstractTokenizer.hpp"
+#include "kusai/proto/tokenizer.pb.h"
 
 std::vector<TokenId> SimpleTokenizer::encode(const std::string& context) {
   std::vector<TokenId> seq;

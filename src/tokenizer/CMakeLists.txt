@@ -1,12 +1,20 @@
-add_library(tokenizer SHARED
-  AbstractTokenizer.cpp
-  AbstractTokenizer.hpp
-  SimpleTokenizer.cpp
-  SimpleTokenizer.hpp
+add_library(tokenizer SHARED)
+
+target_sources(tokenizer
+  PRIVATE
+    AbstractTokenizer.cpp
+    SimpleTokenizer.cpp
+  PUBLIC
+  FILE_SET HEADERS
+  TYPE HEADERS
+  BASE_DIRS ${CMAKE_SOURCE_DIR}/include
+  FILES
+    ${CMAKE_SOURCE_DIR}/include/kusai/tokenizer/AbstractTokenizer.hpp
+    ${CMAKE_SOURCE_DIR}/include/kusai/tokenizer/SimpleTokenizer.hpp
 )
 
 target_include_directories(tokenizer
-  PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
+  PUBLIC $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include/kusai>
 )
 
 target_link_libraries(tokenizer

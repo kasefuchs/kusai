@@ -2,7 +2,7 @@
 
 #include "Markov.hpp"
 #include "absl/log/check.h"
-#include "markov.pb.h"
+#include "kusai/proto/markov.pb.h"
 
 class NGramMarkov : public Markov {
  public:

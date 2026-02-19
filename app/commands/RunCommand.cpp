@@ -7,9 +7,9 @@
 #include <stdexcept>
 
 #include "CLI/CLI.hpp"
-#include "MemoryGraph.hpp"
-#include "SimpleTokenizer.hpp"
-#include "TextChain.hpp"
+#include "kusai/graph/MemoryGraph.hpp"
+#include "kusai/tokenizer/SimpleTokenizer.hpp"
+#include "kusai/textchain/TextChain.hpp"
 #include "commands/AbstractCommand.hpp"
 #include "helpers/model.hpp"
 

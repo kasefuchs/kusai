@@ -1,4 +1,4 @@
-#include "Markov.hpp"
+#include "kusai/markov/Markov.hpp"
 
 #include <google/protobuf/any.pb.h>
 
@@ -6,9 +6,9 @@
 #include <random>
 #include <vector>
 
-#include "AbstractGraph.hpp"
-#include "graph.pb.h"
-#include "markov.pb.h"
+#include "kusai/graph/AbstractGraph.hpp"
+#include "kusai/proto/graph.pb.h"
+#include "kusai/proto/markov.pb.h"
 
 void Markov::train(const std::vector<std::vector<NodeId>>& sequences) {
   for (auto& seq : sequences) {

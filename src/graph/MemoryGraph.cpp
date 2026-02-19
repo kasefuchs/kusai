@@ -1,4 +1,4 @@
-#include "MemoryGraph.hpp"
+#include "kusai/graph/MemoryGraph.hpp"
 
 #include <functional>
 #include <memory>
@@ -7,8 +7,8 @@
 #include <utility>
 #include <vector>
 
-#include "AbstractGraph.hpp"
-#include "graph.pb.h"
+#include "kusai/graph/AbstractGraph.hpp"
+#include "kusai/proto/graph.pb.h"
 
 bool MemoryGraph::hasNode(const NodeId id) { return nodes_.contains(id); }
 

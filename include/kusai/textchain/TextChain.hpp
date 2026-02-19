@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../markov/AbstractMarkov.hpp"
-#include "../tokenizer/AbstractTokenizer.hpp"
+#include "kusai/markov/AbstractMarkov.hpp"
+#include "kusai/tokenizer/AbstractTokenizer.hpp"
 
 class TextChain {
  public:

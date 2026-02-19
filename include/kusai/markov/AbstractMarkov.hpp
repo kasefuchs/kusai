@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include "../graph/AbstractGraph.hpp"
+#include "kusai/graph/AbstractGraph.hpp"
 #include "kusai/proto/graph.pb.h"
 
 class AbstractMarkov {

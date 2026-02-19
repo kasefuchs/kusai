@@ -5,8 +5,10 @@ project(kusai
   LANGUAGES CXX
 )
 
-include(Settings.cmake)
-include(Dependencies.cmake)
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
+
+include(Settings)
+include(Dependencies)
 
 if (KUSAI_BUILD_APP)
   add_subdirectory(app)
@@ -15,4 +17,4 @@ endif ()
 add_subdirectory(proto)
 add_subdirectory(src)
 
-include(Install.cmake)
+include(Install)

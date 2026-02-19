@@ -1,17 +1,16 @@
 #include "RunCommand.hpp"
 
 #include <fstream>
-#include <ios>
 #include <iostream>
 #include <ostream>
 #include <stdexcept>
 
 #include "CLI/CLI.hpp"
-#include "kusai/graph/MemoryGraph.hpp"
-#include "kusai/tokenizer/SimpleTokenizer.hpp"
-#include "kusai/textchain/TextChain.hpp"
 #include "commands/AbstractCommand.hpp"
 #include "helpers/model.hpp"
+#include "kusai/graph/MemoryGraph.hpp"
+#include "kusai/textchain/TextChain.hpp"
+#include "kusai/tokenizer/SimpleTokenizer.hpp"
 
 RunCommand::RunCommand(CLI::App& app) : AbstractCommand(app) {
   cmd_ = app.add_subcommand("run", "Run text generation");

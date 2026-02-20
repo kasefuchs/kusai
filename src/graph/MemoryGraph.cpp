@@ -128,3 +128,27 @@ std::vector<graph::Edge> MemoryGraph::getOutgoingEdges(NodeId source) const {
 void MemoryGraph::clearNodes() { nodes_.clear(); }
 
 void MemoryGraph::clearEdges() { edges_.clear(); }
+
+void MemoryGraph::serialize(google::protobuf::Any& out) const {
+  graph::MemoryGraph container;
+
+  for (const auto& node : getAllNodes()) container.add_nodes()->CopyFrom(node);
+  for (const auto& edge : getAllEdges()) container.add_edges()->CopyFrom(edge);
+
+  out.PackFrom(container);
+}
+
+void MemoryGraph::deserialize(const google::protobuf::Any& in) {
+  graph::MemoryGraph container;
+  in.UnpackTo(&container);
+
+  clear();
+
+  for (const auto& node : container.nodes()) {
+    addNode(node.id(), [&](graph::Node& n) { n.CopyFrom(node); });
+  }
+
+  for (const auto& edge : container.edges()) {
+    AbstractGraph::addEdge(edge.source(), edge.target(), [&](graph::Edge& e) { e.CopyFrom(edge); });
+  }
+}

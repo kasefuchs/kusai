@@ -44,6 +44,10 @@ class MemoryGraph : public AbstractGraph {
 
   void clearEdges() override;
 
+  void serialize(google::protobuf::Any& out) const override;
+
+  void deserialize(const google::protobuf::Any& in) override;
+
  private:
   absl::flat_hash_map<NodeId, std::unique_ptr<graph::Node> > nodes_;
   absl::flat_hash_map<EdgeId, std::unique_ptr<graph::Edge> > edges_;

@@ -2,6 +2,11 @@
 when:
   - event: tag
 
+matrix:
+  LINKAGE:
+    - dynamic
+    - static
+
 steps:
   - name: build
     image: ghcr.io/kasefuchs/vcpkg
@@ -15,15 +20,16 @@ steps:
 
       # Compile app
       - >-
-        cmake -G Ninja -B cmake-build-release
+        cmake -G Ninja -B cmake-build-${LINKAGE}
         -DCMAKE_TOOLCHAIN_FILE=$${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake
-        -DVCPKG_TARGET_TRIPLET=x64-linux-dynamic
+        -DVCPKG_TARGET_TRIPLET=$([ "${LINKAGE}" = "static" ] && echo x64-linux || echo x64-linux-dynamic)
+        -DBUILD_SHARED_LIBS=$([ "${LINKAGE}" = "static" ] && echo OFF || echo ON)
         -DCMAKE_BUILD_TYPE=Release
         -DKUSAI_BUILD_APP=ON
-      - cmake --build cmake-build-release --config Release
+      - cmake --build cmake-build-${LINKAGE} --config Release
 
       # Package build
-      - cd cmake-build-release
+      - cd cmake-build-${LINKAGE}
       - cpack
 
   - name: publish
@@ -31,6 +37,6 @@ steps:
     settings:
       title: ${CI_COMMIT_TAG}
       files:
-        - cmake-build-release/kusai-*-Linux.*
+        - cmake-build-*/dist/*
       api_key:
         from_secret: CODEBERG_RELEASE_API_TOKEN

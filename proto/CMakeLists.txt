@@ -1,4 +1,4 @@
-add_library(proto SHARED
+add_library(proto
   graph.proto
   markov.proto
   textchain.proto
@@ -18,5 +18,5 @@ target_link_libraries(proto
 
 target_include_directories(proto
   PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
-  PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+  PUBLIC $<INSTALL_INTERFACE:include>
 )

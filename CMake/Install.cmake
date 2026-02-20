@@ -7,8 +7,7 @@ install(TARGETS proto graph markov textchain tokenizer
 )
 
 if (KUSAI_BUILD_APP)
-  install(TARGETS ${PROJECT_NAME}
-    EXPORT kusai
+  install(TARGETS kusai
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
   )
 endif ()

@@ -65,9 +65,9 @@ class AbstractGraph {
 
   void clear();
 
-  void serialize(graph::Graph& out) const;
+  virtual void serialize(google::protobuf::Any& out) const = 0;
 
-  void deserialize(const graph::Graph& in);
+  virtual void deserialize(const google::protobuf::Any& in) = 0;
 
   static absl::uint128 makeEdgeId(NodeId source, NodeId target);
 

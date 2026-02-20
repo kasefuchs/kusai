@@ -16,7 +16,7 @@ message Edge {
   google.protobuf.Any metadata = 4;
 }
 
-message Graph {
+message MemoryGraph {
   repeated Node nodes = 1;
   repeated Edge edges = 2;
 }

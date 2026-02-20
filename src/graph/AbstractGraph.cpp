@@ -56,23 +56,6 @@ void AbstractGraph::clear() {
   clearEdges();
 }
 
-void AbstractGraph::serialize(graph::Graph& out) const {
-  for (const auto& node : getAllNodes()) out.add_nodes()->CopyFrom(node);
-  for (const auto& edge : getAllEdges()) out.add_edges()->CopyFrom(edge);
-}
-
-void AbstractGraph::deserialize(const graph::Graph& in) {
-  clear();
-
-  for (const auto& node : in.nodes()) {
-    addNode(node.id(), [&](graph::Node& n) { n.CopyFrom(node); });
-  }
-
-  for (const auto& edge : in.edges()) {
-    addEdge(edge.source(), edge.target(), [&](graph::Edge& e) { e.CopyFrom(edge); });
-  }
-}
-
 absl::uint128 AbstractGraph::makeEdgeId(const NodeId source, const NodeId target) {
   return absl::MakeUint128(source, target);
 }

@@ -1,26 +1,14 @@
-add_library(textchain
-  TextChain.cpp
-)
-
-target_sources(textchain
-  PUBLIC
-    FILE_SET HEADERS
-      TYPE HEADERS
-      BASE_DIRS ${CMAKE_SOURCE_DIR}/include
-      FILES
-        ${CMAKE_SOURCE_DIR}/include/kusai/textchain/TextChain.hpp
-)
-
-target_include_directories(textchain
-  PUBLIC $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
-  PUBLIC $<INSTALL_INTERFACE:include>
-)
-
-target_link_libraries(textchain
-  PUBLIC proto
-  PUBLIC graph
-  PUBLIC markov
-  PUBLIC tokenizer
-  PUBLIC absl::strings
-  PUBLIC xxHash::xxhash
+kusai_add_library(
+  NAME textchain
+  SRCS
+    TextChain.cpp
+  HDRS
+    TextChain.hpp
+  DEPS
+    proto
+    graph
+    markov
+    tokenizer
+    absl::strings
+    xxHash::xxhash
 )

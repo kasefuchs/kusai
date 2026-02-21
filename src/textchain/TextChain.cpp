@@ -20,14 +20,14 @@ void TextChain::train(const std::vector<std::string>& sequences) const {
   markov.train(nodeSequences);
 }
 
-std::vector<NodeId> TextChain::generateNodes(const std::string& context, const uint32_t limit) const {
+std::vector<TokenId> TextChain::generateSequence(const std::string& context, const uint32_t limit) const {
   const auto seq = tokenizer.encode(context);
 
-  return markov.generateNodes(seq, limit);
+  return markov.generateSequence(seq, limit);
 }
 
-std::string TextChain::generateTokens(const std::string& context, const uint32_t limit) const {
-  const auto seq = generateNodes(context, limit);
+std::string TextChain::generateText(const std::string& context, const uint32_t limit) const {
+  const auto seq = generateSequence(context, limit);
 
   return tokenizer.decode(seq);
 }

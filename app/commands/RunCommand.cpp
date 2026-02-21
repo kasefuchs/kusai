@@ -34,5 +34,5 @@ void RunCommand::execute() {
   TextChain chain(*markov, tokenizer);
   chain.deserializeFromIstream(in);
 
-  std::cout << chain.generateTokens(context_, limit_) << std::endl;
+  std::cout << chain.generateText(context_, limit_) << std::endl;
 }

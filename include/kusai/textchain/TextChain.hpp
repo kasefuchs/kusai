@@ -12,9 +12,9 @@ class TextChain : public Serializable {
 
   void train(const std::vector<std::string>& sequences) const;
 
-  [[nodiscard]] std::vector<NodeId> generateNodes(const std::string& context, uint32_t limit = INT8_MAX) const;
+  [[nodiscard]] std::vector<TokenId> generateSequence(const std::string& context, uint32_t limit = INT8_MAX) const;
 
-  [[nodiscard]] std::string generateTokens(const std::string& context, uint32_t limit = INT8_MAX) const;
+  [[nodiscard]] std::string generateText(const std::string& context, uint32_t limit = INT8_MAX) const;
 
   void serialize(pugi::xml_node& self) const override;
 

@@ -12,17 +12,17 @@ class MemoryGraph : public AbstractGraph {
 
   bool hasEdge(EdgeId id) override;
 
-  NodeId addNode(NodeId id, std::function<void(graph::Node&)> fn) override;
+  NodeId addNode(NodeId id, std::function<void(Node&)> fn) override;
 
-  EdgeId addEdge(EdgeId id, std::function<void(graph::Edge&)> fn) override;
+  EdgeId addEdge(EdgeId id, std::function<void(Edge&)> fn) override;
 
-  [[nodiscard]] std::optional<graph::Node> getNode(NodeId id) const override;
+  [[nodiscard]] std::optional<Node> getNode(NodeId id) const override;
 
-  [[nodiscard]] std::optional<graph::Edge> getEdge(EdgeId id) const override;
+  [[nodiscard]] std::optional<Edge> getEdge(EdgeId id) const override;
 
-  bool modifyNode(NodeId id, std::function<void(graph::Node&)> fn) override;
+  bool modifyNode(NodeId id, std::function<void(Node&)> fn) override;
 
-  bool modifyEdge(EdgeId id, std::function<void(graph::Edge&)> fn) override;
+  bool modifyEdge(EdgeId id, std::function<void(Edge&)> fn) override;
 
   [[nodiscard]] std::vector<NodeId> getAllNodeIds() const override;
 
@@ -32,23 +32,19 @@ class MemoryGraph : public AbstractGraph {
 
   [[nodiscard]] std::vector<EdgeId> getOutgoingEdgeIds(NodeId source) const override;
 
-  [[nodiscard]] std::vector<graph::Node> getAllNodes() const override;
+  [[nodiscard]] std::vector<Node> getAllNodes() const override;
 
-  [[nodiscard]] std::vector<graph::Edge> getAllEdges() const override;
+  [[nodiscard]] std::vector<Edge> getAllEdges() const override;
 
-  [[nodiscard]] std::vector<graph::Edge> getIncomingEdges(NodeId target) const override;
+  [[nodiscard]] std::vector<Edge> getIncomingEdges(NodeId target) const override;
 
-  [[nodiscard]] std::vector<graph::Edge> getOutgoingEdges(NodeId source) const override;
+  [[nodiscard]] std::vector<Edge> getOutgoingEdges(NodeId source) const override;
 
   void clearNodes() override;
 
   void clearEdges() override;
 
-  void serialize(google::protobuf::Any& out) const override;
-
-  void deserialize(const google::protobuf::Any& in) override;
-
  private:
-  absl::flat_hash_map<NodeId, std::unique_ptr<graph::Node> > nodes_;
-  absl::flat_hash_map<EdgeId, std::unique_ptr<graph::Edge> > edges_;
+  absl::flat_hash_map<NodeId, std::unique_ptr<Node> > nodes_;
+  absl::flat_hash_map<EdgeId, std::unique_ptr<Edge> > edges_;
 };

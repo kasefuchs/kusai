@@ -6,14 +6,15 @@
 #include <cstdint>
 #include <optional>
 #include <span>
+#include <string>
 #include <vector>
 
 #include "kusai/graph/AbstractGraph.hpp"
+#include "kusai/graph/Edge.hpp"
+#include "kusai/graph/Node.hpp"
 #include "kusai/markov/Markov.hpp"
-#include "kusai/proto/graph.pb.h"
-#include "kusai/proto/markov.pb.h"
 
-void NGramMarkov::train(const std::vector<std::vector<NodeId>>& sequences) {
+void NGramMarkov::train(const std::vector<std::vector<NodeId> >& sequences) {
   const size_t windowSize = contextSize_ + 1;
   for (const auto& seq : sequences) {
     if (seq.size() < windowSize) continue;
@@ -29,14 +30,8 @@ void NGramMarkov::train(const std::vector<std::vector<NodeId>>& sequences) {
 
       const auto id = makeContextId(ctx);
 
-      graph.ensureNode(id, [&](graph::Node& node) {
-        auto metadata = markov::NGramNodeMetadata();
-        metadata.mutable_context()->Assign(ctx.begin(), ctx.end());
-        node.mutable_metadata()->PackFrom(metadata);
-      });
-
-      graph.modifyEdge(graph.ensureEdge(id, window.back()),
-                       [](graph::Edge& edge) { edge.set_weight(edge.weight() + 1); });
+      graph.ensureNode(id);
+      graph.modifyEdge(graph.ensureEdge(id, window.back()), [](Edge& edge) { edge.weight++; });
     }
   }
 }
@@ -54,22 +49,19 @@ std::optional<NodeId> NGramMarkov::nextNode(const std::vector<NodeId>& context) 
   return Markov::nextNode(ctxId);
 }
 
-void NGramMarkov::serialize(google::protobuf::Any& out) const {
-  markov::NGramMarkov container;
+void NGramMarkov::serialize(pugi::xml_node& self) const {
+  graph.serializeToParent(self);
 
-  container.set_context_size(contextSize_);
-  graph.serialize(*container.mutable_graph());
-
-  out.PackFrom(container);
+  self.append_attribute("context_size").set_value(contextSize_);
 }
 
-void NGramMarkov::deserialize(const google::protobuf::Any& in) {
-  markov::NGramMarkov container;
-  in.UnpackTo(&container);
+void NGramMarkov::deserialize(const pugi::xml_node& self) {
+  graph.deserializeFromParent(self);
 
-  contextSize_ = container.context_size();
-  graph.deserialize(container.graph());
+  contextSize_ = self.attribute("context_size").as_uint();
 }
+
+std::string NGramMarkov::tagName() const { return "NGramMarkov"; }
 
 NodeId NGramMarkov::makeContextId(const std::vector<NodeId>& ids) {
   return XXH64(ids.data(), ids.size() * sizeof(NodeId), 0);

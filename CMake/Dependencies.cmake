@@ -1,9 +1,3 @@
-# Protobuf
-find_package(protobuf CONFIG QUIET)
-if (NOT protobuf_FOUND)
-  find_package(Protobuf REQUIRED)
-endif()
-
 # Abseil
 find_package(absl CONFIG REQUIRED)
 
@@ -11,6 +5,9 @@ find_package(absl CONFIG REQUIRED)
 if (KUSAI_BUILD_APP)
   find_package(CLI11 CONFIG REQUIRED)
 endif ()
+
+# pugixml
+find_package(pugixml CONFIG REQUIRED)
 
 # xxHash
 find_package(xxHash CONFIG REQUIRED)

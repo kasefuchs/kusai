@@ -15,8 +15,8 @@ steps:
     commands: # language="sh"
       # Install dependencies
       - apt-get update --assume-yes
-      - apt-get install --assume-yes libabsl-dev libcli11-dev libprotobuf-dev protobuf-compiler
-      - tools/vcpkg/gen-overlay.sh abseil cli11 protobuf
+      - apt-get install --assume-yes libabsl-dev libcli11-dev libpugixml-dev
+      - tools/vcpkg/gen-overlay.sh abseil cli11 pugixml
 
       # Compile app
       - >-

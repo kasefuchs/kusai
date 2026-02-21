@@ -1,14 +1,12 @@
 #include "kusai/tokenizer/SimpleTokenizer.hpp"
 
 #include <absl/strings/str_join.h>
-#include <google/protobuf/any.pb.h>
 #include <xxhash.h>
 
 #include <sstream>
 #include <string>
 #include <vector>
 
-#include "kusai/proto/tokenizer.pb.h"
 #include "kusai/tokenizer/AbstractTokenizer.hpp"
 
 std::vector<TokenId> SimpleTokenizer::encode(const std::string& context) {
@@ -39,24 +37,24 @@ std::string SimpleTokenizer::decode(const std::vector<TokenId>& context) {
   return absl::StrJoin(tokens, " ");
 }
 
-void SimpleTokenizer::serialize(google::protobuf::Any& out) const {
-  tokenizer::SimpleTokenizer container;
-  for (const auto& [id, token] : vocabulary_) {
-    container.mutable_vocabulary()->emplace(id, token);
-  }
+void SimpleTokenizer::serialize(pugi::xml_node& self) const {
+  for (auto vocabNode = self.append_child("Vocabulary"); const auto& [id, token] : vocabulary_) {
+    auto tokenNode = vocabNode.append_child("Token");
 
-  out.PackFrom(container);
-}
-
-void SimpleTokenizer::deserialize(const google::protobuf::Any& in) {
-  tokenizer::SimpleTokenizer container;
-  in.UnpackTo(&container);
-
-  vocabulary_.clear();
-  vocabulary_.reserve(container.vocabulary().size());
-  for (const auto& [id, token] : container.vocabulary()) {
-    vocabulary_.emplace(id, token);
+    tokenNode.append_attribute("id") = id;
+    tokenNode.text() = token.c_str();
   }
 }
+
+void SimpleTokenizer::deserialize(const pugi::xml_node& self) {
+  for (const auto& tokenNode : self.child("Vocabulary").children("Token")) {
+    const auto id = tokenNode.attribute("id").as_ullong();
+    const auto text = tokenNode.text().as_string();
+
+    vocabulary_.emplace(id, text);
+  }
+}
+
+std::string SimpleTokenizer::tagName() const { return "SimpleTokenizer"; }
 
 TokenId SimpleTokenizer::makeTokenId(const std::string& token) { return XXH64(&token[0], token.size(), 0); }

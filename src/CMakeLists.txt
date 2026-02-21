@@ -1,3 +1,4 @@
+add_subdirectory(common)
 add_subdirectory(graph)
 add_subdirectory(markov)
 add_subdirectory(textchain)

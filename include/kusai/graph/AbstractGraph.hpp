@@ -3,15 +3,15 @@
 #include <absl/numeric/int128.h>
 
 #include <optional>
+#include <pugixml.hpp>
 
-#include "kusai/proto/graph.pb.h"
+#include "Edge.hpp"
+#include "Node.hpp"
+#include "kusai/common/Serializable.hpp"
 
-using NodeId = std::uint64_t;
-using EdgeId = absl::uint128;
-
-class AbstractGraph {
+class AbstractGraph : public Serializable {
  public:
-  virtual ~AbstractGraph() = default;
+  ~AbstractGraph() override = default;
 
   virtual bool hasNode(NodeId id) = 0;
 
@@ -19,29 +19,29 @@ class AbstractGraph {
 
   bool hasEdge(NodeId source, NodeId target);
 
-  virtual NodeId addNode(NodeId id, std::function<void(graph::Node&)> fn) = 0;
+  virtual NodeId addNode(NodeId id, std::function<void(Node&)> fn) = 0;
 
-  virtual EdgeId addEdge(EdgeId id, std::function<void(graph::Edge&)> fn) = 0;
+  virtual EdgeId addEdge(EdgeId id, std::function<void(Edge&)> fn) = 0;
 
-  EdgeId addEdge(NodeId source, NodeId target, const std::function<void(graph::Edge&)>& fn = nullptr);
+  EdgeId addEdge(NodeId source, NodeId target, const std::function<void(Edge&)>& fn = nullptr);
 
-  NodeId ensureNode(NodeId id, const std::function<void(graph::Node&)>& fn = nullptr);
+  NodeId ensureNode(NodeId id, const std::function<void(Node&)>& fn = nullptr);
 
-  EdgeId ensureEdge(EdgeId id, const std::function<void(graph::Edge&)>& fn = nullptr);
+  EdgeId ensureEdge(EdgeId id, const std::function<void(Edge&)>& fn = nullptr);
 
-  EdgeId ensureEdge(NodeId source, NodeId target, const std::function<void(graph::Edge&)>& fn = nullptr);
+  EdgeId ensureEdge(NodeId source, NodeId target, const std::function<void(Edge&)>& fn = nullptr);
 
-  [[nodiscard]] virtual std::optional<graph::Node> getNode(NodeId id) const = 0;
+  [[nodiscard]] virtual std::optional<Node> getNode(NodeId id) const = 0;
 
-  [[nodiscard]] virtual std::optional<graph::Edge> getEdge(EdgeId id) const = 0;
+  [[nodiscard]] virtual std::optional<Edge> getEdge(EdgeId id) const = 0;
 
-  [[nodiscard]] std::optional<graph::Edge> getEdge(NodeId source, NodeId target) const;
+  [[nodiscard]] std::optional<Edge> getEdge(NodeId source, NodeId target) const;
 
-  virtual bool modifyNode(NodeId id, std::function<void(graph::Node&)> fn) = 0;
+  virtual bool modifyNode(NodeId id, std::function<void(Node&)> fn) = 0;
 
-  virtual bool modifyEdge(EdgeId id, std::function<void(graph::Edge&)> fn) = 0;
+  virtual bool modifyEdge(EdgeId id, std::function<void(Edge&)> fn) = 0;
 
-  bool modifyEdge(NodeId source, NodeId target, std::function<void(graph::Edge&)> fn);
+  bool modifyEdge(NodeId source, NodeId target, std::function<void(Edge&)> fn);
 
   [[nodiscard]] virtual std::vector<NodeId> getAllNodeIds() const = 0;
 
@@ -51,13 +51,13 @@ class AbstractGraph {
 
   [[nodiscard]] virtual std::vector<EdgeId> getOutgoingEdgeIds(NodeId source) const = 0;
 
-  [[nodiscard]] virtual std::vector<graph::Node> getAllNodes() const = 0;
+  [[nodiscard]] virtual std::vector<Node> getAllNodes() const = 0;
 
-  [[nodiscard]] virtual std::vector<graph::Edge> getAllEdges() const = 0;
+  [[nodiscard]] virtual std::vector<Edge> getAllEdges() const = 0;
 
-  [[nodiscard]] virtual std::vector<graph::Edge> getIncomingEdges(NodeId target) const = 0;
+  [[nodiscard]] virtual std::vector<Edge> getIncomingEdges(NodeId target) const = 0;
 
-  [[nodiscard]] virtual std::vector<graph::Edge> getOutgoingEdges(NodeId source) const = 0;
+  [[nodiscard]] virtual std::vector<Edge> getOutgoingEdges(NodeId source) const = 0;
 
   virtual void clearNodes() = 0;
 
@@ -65,13 +65,11 @@ class AbstractGraph {
 
   void clear();
 
-  virtual void serialize(google::protobuf::Any& out) const = 0;
+  void serialize(pugi::xml_node& self) const override;
 
-  virtual void deserialize(const google::protobuf::Any& in) = 0;
+  void deserialize(const pugi::xml_node& self) override;
 
-  static absl::uint128 makeEdgeId(NodeId source, NodeId target);
-
-  static std::pair<NodeId, NodeId> splitEdgeId(EdgeId id);
+  [[nodiscard]] std::string tagName() const override;
 
  protected:
   explicit AbstractGraph() = default;

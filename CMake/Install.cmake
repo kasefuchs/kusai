@@ -1,7 +1,7 @@
 include(GNUInstallDirs)
 
 install(
-  TARGETS proto graph markov textchain tokenizer
+  TARGETS common graph markov textchain tokenizer
   EXPORT kusai
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
   FILE_SET HEADERS DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
@@ -30,12 +30,6 @@ install(
   FILE kusai-targets.cmake
   NAMESPACE kusai::
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/kusai
-)
-
-install(
-  DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/proto/kusai/proto
-  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/kusai
-  FILES_MATCHING PATTERN "*.pb.h"
 )
 
 include(CPack)

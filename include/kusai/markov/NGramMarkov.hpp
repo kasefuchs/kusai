@@ -2,7 +2,6 @@
 
 #include "Markov.hpp"
 #include "absl/log/check.h"
-#include "kusai/proto/markov.pb.h"
 
 class NGramMarkov : public Markov {
  public:
@@ -11,13 +10,15 @@ class NGramMarkov : public Markov {
     CHECK(contextSize_ > 0) << "Context size must be greater than 0.";
   }
 
-  void train(const std::vector<std::vector<NodeId>>& sequences) override;
+  void train(const std::vector<std::vector<NodeId> >& sequences) override;
 
   [[nodiscard]] std::optional<NodeId> nextNode(const std::vector<NodeId>& context) const override;
 
-  void serialize(google::protobuf::Any& out) const override;
+  void serialize(pugi::xml_node& self) const override;
 
-  void deserialize(const google::protobuf::Any& in) override;
+  void deserialize(const pugi::xml_node& self) override;
+
+  [[nodiscard]] std::string tagName() const override;
 
  private:
   uint32_t contextSize_;

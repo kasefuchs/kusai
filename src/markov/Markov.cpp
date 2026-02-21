@@ -1,21 +1,21 @@
 #include "kusai/markov/Markov.hpp"
 
-#include <google/protobuf/any.pb.h>
-
 #include <optional>
 #include <random>
+#include <string>
 #include <vector>
 
 #include "kusai/graph/AbstractGraph.hpp"
-#include "kusai/proto/graph.pb.h"
-#include "kusai/proto/markov.pb.h"
+#include "kusai/graph/Edge.hpp"
+#include "kusai/graph/Node.hpp"
 
-void Markov::train(const std::vector<std::vector<NodeId>>& sequences) {
+void Markov::train(const std::vector<std::vector<NodeId> >& sequences) {
   for (auto& seq : sequences) {
     NodeId prev = 0;
     for (const auto node : seq) {
+      graph.ensureNode(node);
       if (prev) {
-        graph.modifyEdge(graph.ensureEdge(prev, node), [](graph::Edge& edge) { edge.set_weight(edge.weight() + 1); });
+        graph.modifyEdge(graph.ensureEdge(prev, node), [](Edge& edge) { edge.weight++; });
       }
 
       prev = node;
@@ -30,13 +30,13 @@ std::optional<NodeId> Markov::nextNode(const NodeId current) const {
   std::vector<double> weights;
   weights.reserve(outgoing.size());
   for (const auto& edge : outgoing) {
-    weights.push_back(edge.weight());
+    weights.push_back(edge.weight);
   }
 
   std::discrete_distribution dist(weights.begin(), weights.end());
   const auto& chosen = outgoing[dist(rng_)];
 
-  return chosen.target();
+  return chosen.target;
 }
 
 std::optional<NodeId> Markov::nextNode(const std::vector<NodeId>& context) const {
@@ -45,17 +45,8 @@ std::optional<NodeId> Markov::nextNode(const std::vector<NodeId>& context) const
   return nextNode(current);
 }
 
-void Markov::serialize(google::protobuf::Any& out) const {
-  markov::Markov container;
+void Markov::serialize(pugi::xml_node& self) const { graph.serializeToParent(self); }
 
-  graph.serialize(*container.mutable_graph());
+void Markov::deserialize(const pugi::xml_node& self) { graph.deserializeFromParent(self); }
 
-  out.PackFrom(container);
-}
-
-void Markov::deserialize(const google::protobuf::Any& in) {
-  markov::Markov container;
-  in.UnpackTo(&container);
-
-  graph.deserialize(container.graph());
-}
+std::string Markov::tagName() const { return "Markov"; }

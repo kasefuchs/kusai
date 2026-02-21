@@ -17,16 +17,17 @@ inline CLI::CheckedTransformer modelTypeTransformer() {
   return CLI::CheckedTransformer(mapping, CLI::ignore_case);
 }
 
-inline std::unique_ptr<AbstractMarkov> makeModel(const ModelType type, AbstractGraph& graph, int contextSize = 1) {
+inline std::unique_ptr<kusai::AbstractMarkov> makeModel(const ModelType type, kusai::AbstractGraph& graph,
+                                                        int contextSize = 1) {
   switch (type) {
     case ModelType::Markov:
-      return std::make_unique<Markov>(graph);
+      return std::make_unique<kusai::Markov>(graph);
 
     case ModelType::NGram:
-      return std::make_unique<NGramMarkov>(graph, contextSize);
+      return std::make_unique<kusai::NGramMarkov>(graph, contextSize);
 
     case ModelType::Backoff:
-      return std::make_unique<BackoffMarkov>(graph, contextSize);
+      return std::make_unique<kusai::BackoffMarkov>(graph, contextSize);
   }
 
   throw std::logic_error("Unknown model type");

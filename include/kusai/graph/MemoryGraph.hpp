@@ -4,6 +4,7 @@
 
 #include "AbstractGraph.hpp"
 
+namespace kusai {
 class MemoryGraph : public AbstractGraph {
  public:
   explicit MemoryGraph() : AbstractGraph() {}
@@ -48,3 +49,4 @@ class MemoryGraph : public AbstractGraph {
   absl::flat_hash_map<NodeId, std::unique_ptr<Node> > nodes_;
   absl::flat_hash_map<EdgeId, std::unique_ptr<Edge> > edges_;
 };
+}  // namespace kusai

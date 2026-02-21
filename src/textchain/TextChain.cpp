@@ -7,6 +7,7 @@
 #include "kusai/graph/AbstractGraph.hpp"
 #include "kusai/graph/Node.hpp"
 
+namespace kusai {
 void TextChain::train(const std::vector<std::string>& sequences) const {
   std::vector<std::vector<NodeId> > nodeSequences;
   nodeSequences.reserve(sequences.size());
@@ -43,3 +44,4 @@ void TextChain::deserialize(const pugi::xml_node& self) {
 }
 
 std::string TextChain::tagName() const { return "TextChain"; }
+}  // namespace kusai

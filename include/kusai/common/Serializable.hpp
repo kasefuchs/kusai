@@ -4,6 +4,7 @@
 
 #include "pugixml.hpp"
 
+namespace kusai {
 class Serializable {
  public:
   virtual ~Serializable() = default;
@@ -25,3 +26,4 @@ class Serializable {
  protected:
   explicit Serializable() = default;
 };
+}  // namespace kusai

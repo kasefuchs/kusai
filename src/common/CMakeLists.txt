@@ -1,9 +1,9 @@
 kusai_add_library(
   NAME common
   SRCS
-  Serializable.cpp
+    Serializable.cpp
   HDRS
-  Serializable.hpp
+    Serializable.hpp
   DEPS
-  pugixml::pugixml
+    pugixml::pugixml
 )

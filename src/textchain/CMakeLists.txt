@@ -1,14 +1,14 @@
 kusai_add_library(
   NAME textchain
   SRCS
-  TextChain.cpp
+    TextChain.cpp
   HDRS
-  TextChain.hpp
+    TextChain.hpp
   DEPS
-  common
-  graph
-  markov
-  tokenizer
-  absl::strings
-  pugixml::pugixml
+    common
+    graph
+    markov
+    tokenizer
+    absl::strings
+    pugixml::pugixml
 )

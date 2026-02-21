@@ -12,6 +12,7 @@
 #include "kusai/graph/AbstractGraph.hpp"
 #include "kusai/graph/Node.hpp"
 
+namespace kusai {
 void BackoffMarkov::train(const std::vector<std::vector<NodeId> >& sequences) {
   std::vector<std::vector<NodeId> > filtered;
   filtered.reserve(sequences.size());
@@ -56,3 +57,4 @@ void BackoffMarkov::rebuildModels() {
     models_.push_back(std::make_unique<NGramMarkov>(graph, n));
   }
 }
+}  // namespace kusai

@@ -5,6 +5,7 @@
 
 #include "kusai/graph/Node.hpp"
 
+namespace kusai {
 std::vector<NodeId> AbstractMarkov::generateSequence(const std::vector<NodeId>& context, uint32_t limit) const {
   std::vector<NodeId> result = context;
 
@@ -17,3 +18,4 @@ std::vector<NodeId> AbstractMarkov::generateSequence(const std::vector<NodeId>& 
 
   return result;
 }
+}  // namespace kusai

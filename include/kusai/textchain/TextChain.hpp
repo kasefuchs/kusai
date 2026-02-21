@@ -3,6 +3,7 @@
 #include "kusai/markov/AbstractMarkov.hpp"
 #include "kusai/tokenizer/AbstractTokenizer.hpp"
 
+namespace kusai {
 class TextChain : public Serializable {
  public:
   explicit TextChain(AbstractMarkov& markov, AbstractTokenizer& tokenizer) : markov(markov), tokenizer(tokenizer) {}
@@ -22,3 +23,4 @@ class TextChain : public Serializable {
 
   [[nodiscard]] std::string tagName() const override;
 };
+}  // namespace kusai

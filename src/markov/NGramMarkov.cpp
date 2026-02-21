@@ -14,6 +14,7 @@
 #include "kusai/graph/Node.hpp"
 #include "kusai/markov/Markov.hpp"
 
+namespace kusai {
 void NGramMarkov::train(const std::vector<std::vector<NodeId> >& sequences) {
   const size_t windowSize = contextSize_ + 1;
   for (const auto& seq : sequences) {
@@ -66,3 +67,4 @@ std::string NGramMarkov::tagName() const { return "NGramMarkov"; }
 NodeId NGramMarkov::makeContextId(const std::vector<NodeId>& ids) {
   return XXH64(ids.data(), ids.size() * sizeof(NodeId), 0);
 }
+}  // namespace kusai

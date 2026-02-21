@@ -10,6 +10,7 @@
 #include "kusai/graph/Edge.hpp"
 #include "kusai/graph/Node.hpp"
 
+namespace kusai {
 bool MemoryGraph::hasNode(const NodeId id) { return nodes_.contains(id); }
 
 bool MemoryGraph::hasEdge(const EdgeId id) { return edges_.contains(id); }
@@ -128,3 +129,4 @@ std::vector<Edge> MemoryGraph::getOutgoingEdges(NodeId source) const {
 void MemoryGraph::clearNodes() { nodes_.clear(); }
 
 void MemoryGraph::clearEdges() { edges_.clear(); }
+}  // namespace kusai

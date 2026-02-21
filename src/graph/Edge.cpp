@@ -7,6 +7,7 @@
 
 #include "kusai/graph/Node.hpp"
 
+namespace kusai {
 void Edge::serialize(pugi::xml_node& self) const {
   self.append_attribute("source") = source;
   self.append_attribute("target") = target;
@@ -29,3 +30,4 @@ std::pair<NodeId, NodeId> Edge::splitId(const EdgeId id) {
       absl::Uint128Low64(id)    // target
   };
 }
+}  // namespace kusai

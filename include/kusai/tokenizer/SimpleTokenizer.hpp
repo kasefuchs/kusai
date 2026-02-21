@@ -4,6 +4,7 @@
 
 #include "AbstractTokenizer.hpp"
 
+namespace kusai {
 class SimpleTokenizer : public AbstractTokenizer {
  public:
   [[nodiscard]] std::vector<TokenId> encode(const std::string& context) override;
@@ -21,3 +22,4 @@ class SimpleTokenizer : public AbstractTokenizer {
 
   [[nodiscard]] static TokenId makeTokenId(const std::string& token);
 };
+}  // namespace kusai

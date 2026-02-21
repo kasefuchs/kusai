@@ -4,6 +4,7 @@
 
 #include "AbstractMarkov.hpp"
 
+namespace kusai {
 class Markov : public AbstractMarkov {
  public:
   explicit Markov(AbstractGraph& graph) : AbstractMarkov(graph) {}
@@ -23,3 +24,4 @@ class Markov : public AbstractMarkov {
  private:
   mutable std::mt19937 rng_{std::random_device{}()};
 };
+}  // namespace kusai

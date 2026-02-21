@@ -3,6 +3,7 @@
 #include "Markov.hpp"
 #include "absl/log/check.h"
 
+namespace kusai {
 class NGramMarkov : public Markov {
  public:
   explicit NGramMarkov(AbstractGraph& graph, const uint32_t contextSize = 1)
@@ -25,3 +26,4 @@ class NGramMarkov : public Markov {
 
   static NodeId makeContextId(const std::vector<NodeId>& ids);
 };
+}  // namespace kusai

@@ -8,6 +8,7 @@
 #include "kusai/graph/Edge.hpp"
 #include "kusai/graph/Node.hpp"
 
+namespace kusai {
 bool AbstractGraph::hasEdge(const NodeId source, const NodeId target) {
   const auto id = Edge::makeId(source, target);
 
@@ -84,3 +85,4 @@ void AbstractGraph::deserialize(const pugi::xml_node& self) {
 }
 
 std::string AbstractGraph::tagName() const { return "AbstractGraph"; }
+}  // namespace kusai

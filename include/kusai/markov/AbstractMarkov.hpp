@@ -4,6 +4,7 @@
 
 #include "kusai/graph/AbstractGraph.hpp"
 
+namespace kusai {
 class AbstractMarkov : public Serializable {
  public:
   ~AbstractMarkov() override = default;
@@ -20,3 +21,4 @@ class AbstractMarkov : public Serializable {
  protected:
   explicit AbstractMarkov(AbstractGraph& graph) : graph(graph) {}
 };
+}  // namespace kusai

@@ -1,20 +1,19 @@
 #include "kusai/markov/BackoffMarkov.hpp"
 
-#include <google/protobuf/any.pb.h>
-
 #include <algorithm>
 #include <cstdint>
 #include <iterator>
 #include <memory>
 #include <optional>
 #include <ranges>
+#include <string>
 #include <vector>
 
 #include "kusai/graph/AbstractGraph.hpp"
-#include "kusai/proto/markov.pb.h"
+#include "kusai/graph/Node.hpp"
 
-void BackoffMarkov::train(const std::vector<std::vector<NodeId>>& sequences) {
-  std::vector<std::vector<NodeId>> filtered;
+void BackoffMarkov::train(const std::vector<std::vector<NodeId> >& sequences) {
+  std::vector<std::vector<NodeId> > filtered;
   filtered.reserve(sequences.size());
 
   std::ranges::copy_if(sequences, std::back_inserter(filtered),
@@ -33,24 +32,21 @@ std::optional<NodeId> BackoffMarkov::nextNode(const std::vector<NodeId>& context
   return std::nullopt;
 }
 
-void BackoffMarkov::serialize(google::protobuf::Any& out) const {
-  markov::BackoffMarkov container;
+void BackoffMarkov::serialize(pugi::xml_node& self) const {
+  graph.serializeToParent(self);
 
-  container.set_max_context_size(maxContextSize_);
-  graph.serialize(*container.mutable_graph());
-
-  out.PackFrom(container);
+  self.append_attribute("max_context_size") = maxContextSize_;
 }
 
-void BackoffMarkov::deserialize(const google::protobuf::Any& in) {
-  markov::BackoffMarkov container;
-  in.UnpackTo(&container);
+void BackoffMarkov::deserialize(const pugi::xml_node& self) {
+  graph.deserializeFromParent(self);
 
-  maxContextSize_ = container.max_context_size();
-  graph.deserialize(container.graph());
+  maxContextSize_ = self.attribute("max_context_size").as_uint();
 
   rebuildModels();
 }
+
+std::string BackoffMarkov::tagName() const { return "BackoffMarkov"; }
 
 void BackoffMarkov::rebuildModels() {
   models_.clear();

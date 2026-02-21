@@ -1,16 +1,11 @@
 #include "kusai/textchain/TextChain.hpp"
 
-#include <google/protobuf/any.pb.h>
-#include <xxhash.h>
-
 #include <cstdint>
-#include <istream>
-#include <ostream>
 #include <string>
 #include <vector>
 
 #include "kusai/graph/AbstractGraph.hpp"
-#include "kusai/proto/textchain.pb.h"
+#include "kusai/graph/Node.hpp"
 
 void TextChain::train(const std::vector<std::string>& sequences) const {
   std::vector<std::vector<NodeId> > nodeSequences;
@@ -37,32 +32,14 @@ std::string TextChain::generateTokens(const std::string& context, const uint32_t
   return tokenizer.decode(seq);
 }
 
-void TextChain::serialize(google::protobuf::Any& out) const {
-  textchain::TextChain container;
-  markov.serialize(*container.mutable_markov());
-  tokenizer.serialize(*container.mutable_tokenizer());
-
-  out.PackFrom(container);
+void TextChain::serialize(pugi::xml_node& self) const {
+  markov.serializeToParent(self);
+  tokenizer.serializeToParent(self);
 }
 
-void TextChain::deserialize(const google::protobuf::Any& in) const {
-  textchain::TextChain container;
-  in.UnpackTo(&container);
-
-  markov.deserialize(container.markov());
-  tokenizer.deserialize(container.tokenizer());
+void TextChain::deserialize(const pugi::xml_node& self) {
+  markov.deserializeFromParent(self);
+  tokenizer.deserializeFromParent(self);
 }
 
-void TextChain::serializeToOstream(std::ostream& out) const {
-  google::protobuf::Any container;
-  serialize(container);
-
-  container.SerializeToOstream(&out);
-}
-
-void TextChain::deserializeFromIstream(std::istream& in) const {
-  google::protobuf::Any container;
-  container.ParseFromIstream(&in);
-
-  deserialize(container);
-}
+std::string TextChain::tagName() const { return "TextChain"; }

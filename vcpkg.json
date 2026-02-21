@@ -1,10 +1,10 @@
 {
   "name": "kusai",
-  "version-string": "1.0.0",
+  "version-string": "0.5.0",
   "dependencies": [
     "abseil",
-    "protobuf",
     "cli11",
+    "pugixml",
     "xxhash"
   ]
 }

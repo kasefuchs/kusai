@@ -1,52 +1,51 @@
 #include "kusai/graph/AbstractGraph.hpp"
 
-#include <absl/numeric/int128.h>
-
 #include <functional>
 #include <optional>
+#include <string>
 #include <utility>
 
-#include "kusai/proto/graph.pb.h"
+#include "kusai/graph/Edge.hpp"
+#include "kusai/graph/Node.hpp"
 
 bool AbstractGraph::hasEdge(const NodeId source, const NodeId target) {
-  const auto id = makeEdgeId(source, target);
+  const auto id = Edge::makeId(source, target);
 
   return hasEdge(id);
 }
 
-EdgeId AbstractGraph::addEdge(const NodeId source, const NodeId target, const std::function<void(graph::Edge&)>& fn) {
-  const auto id = makeEdgeId(source, target);
+EdgeId AbstractGraph::addEdge(const NodeId source, const NodeId target, const std::function<void(Edge&)>& fn) {
+  const auto id = Edge::makeId(source, target);
 
   return addEdge(id, fn);
 }
 
-NodeId AbstractGraph::ensureNode(const NodeId id, const std::function<void(graph::Node&)>& fn) {
+NodeId AbstractGraph::ensureNode(const NodeId id, const std::function<void(Node&)>& fn) {
   if (!hasNode(id)) addNode(id, fn);
 
   return id;
 }
 
-EdgeId AbstractGraph::ensureEdge(const EdgeId id, const std::function<void(graph::Edge&)>& fn) {
+EdgeId AbstractGraph::ensureEdge(const EdgeId id, const std::function<void(Edge&)>& fn) {
   if (!hasEdge(id)) addEdge(id, fn);
 
   return id;
 }
 
-EdgeId AbstractGraph::ensureEdge(const NodeId source, const NodeId target,
-                                 const std::function<void(graph::Edge&)>& fn) {
-  const auto id = makeEdgeId(source, target);
+EdgeId AbstractGraph::ensureEdge(const NodeId source, const NodeId target, const std::function<void(Edge&)>& fn) {
+  const auto id = Edge::makeId(source, target);
 
   return ensureEdge(id, fn);
 }
 
-std::optional<graph::Edge> AbstractGraph::getEdge(const NodeId source, const NodeId target) const {
-  const auto id = makeEdgeId(source, target);
+std::optional<Edge> AbstractGraph::getEdge(const NodeId source, const NodeId target) const {
+  const auto id = Edge::makeId(source, target);
 
   return getEdge(id);
 }
 
-bool AbstractGraph::modifyEdge(const NodeId source, const NodeId target, std::function<void(graph::Edge&)> fn) {
-  const auto id = makeEdgeId(source, target);
+bool AbstractGraph::modifyEdge(const NodeId source, const NodeId target, std::function<void(Edge&)> fn) {
+  const auto id = Edge::makeId(source, target);
 
   return modifyEdge(id, std::move(fn));
 }
@@ -56,13 +55,32 @@ void AbstractGraph::clear() {
   clearEdges();
 }
 
-absl::uint128 AbstractGraph::makeEdgeId(const NodeId source, const NodeId target) {
-  return absl::MakeUint128(source, target);
+void AbstractGraph::serialize(pugi::xml_node& self) const {
+  for (auto nodesNode = self.append_child("Nodes"); const auto& node : getAllNodes()) {
+    node.serializeToParent(nodesNode);
+  }
+
+  for (auto edgesNode = self.append_child("Edges"); const auto& edge : getAllEdges()) {
+    edge.serializeToParent(edgesNode);
+  }
 }
 
-std::pair<NodeId, NodeId> AbstractGraph::splitEdgeId(const EdgeId id) {
-  return {
-      absl::Uint128High64(id),  // source
-      absl::Uint128Low64(id)    // target
-  };
+void AbstractGraph::deserialize(const pugi::xml_node& self) {
+  clear();
+
+  for (auto& nodeNode : self.child("Nodes").children()) {
+    Node node;
+    node.deserialize(nodeNode);
+
+    ensureNode(node.id, [&](Node& n) { n = node; });
+  }
+
+  for (auto& edgeNode : self.child("Edges").children("Edge")) {
+    Edge edge;
+    edge.deserialize(edgeNode);
+
+    ensureEdge(edge.source, edge.target, [&](Edge& e) { e = edge; });
+  }
 }
+
+std::string AbstractGraph::tagName() const { return "AbstractGraph"; }

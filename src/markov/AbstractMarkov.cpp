@@ -3,7 +3,7 @@
 #include <cstdint>
 #include <vector>
 
-#include "kusai/graph/AbstractGraph.hpp"
+#include "kusai/graph/Node.hpp"
 
 std::vector<NodeId> AbstractMarkov::generateNodes(const std::vector<NodeId>& context, uint32_t limit) const {
   std::vector<NodeId> result = context;

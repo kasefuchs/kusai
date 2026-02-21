@@ -9,6 +9,7 @@
 #include "Node.hpp"
 #include "kusai/common/Serializable.hpp"
 
+namespace kusai {
 class AbstractGraph : public Serializable {
  public:
   ~AbstractGraph() override = default;
@@ -74,3 +75,4 @@ class AbstractGraph : public Serializable {
  protected:
   explicit AbstractGraph() = default;
 };
+}  // namespace kusai

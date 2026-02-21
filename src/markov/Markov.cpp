@@ -9,6 +9,7 @@
 #include "kusai/graph/Edge.hpp"
 #include "kusai/graph/Node.hpp"
 
+namespace kusai {
 void Markov::train(const std::vector<std::vector<NodeId> >& sequences) {
   for (auto& seq : sequences) {
     NodeId prev = 0;
@@ -50,3 +51,4 @@ void Markov::serialize(pugi::xml_node& self) const { graph.serializeToParent(sel
 void Markov::deserialize(const pugi::xml_node& self) { graph.deserializeFromParent(self); }
 
 std::string Markov::tagName() const { return "Markov"; }
+}  // namespace kusai

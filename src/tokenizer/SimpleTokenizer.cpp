@@ -9,6 +9,7 @@
 
 #include "kusai/tokenizer/AbstractTokenizer.hpp"
 
+namespace kusai {
 std::vector<TokenId> SimpleTokenizer::encode(const std::string& context) {
   std::vector<TokenId> seq;
   std::istringstream stream(context);
@@ -58,3 +59,4 @@ void SimpleTokenizer::deserialize(const pugi::xml_node& self) {
 std::string SimpleTokenizer::tagName() const { return "SimpleTokenizer"; }
 
 TokenId SimpleTokenizer::makeTokenId(const std::string& token) { return XXH64(&token[0], token.size(), 0); }
+}  // namespace kusai

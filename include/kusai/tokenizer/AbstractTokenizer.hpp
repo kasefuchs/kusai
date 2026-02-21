@@ -6,8 +6,10 @@
 #include <vector>
 
 #include "kusai/common/Serializable.hpp"
+#include "kusai/graph/Node.hpp"
 
-using TokenId = std::uint64_t;
+namespace kusai {
+using TokenId = NodeId;
 
 class AbstractTokenizer : public Serializable {
  public:
@@ -20,3 +22,4 @@ class AbstractTokenizer : public Serializable {
  protected:
   explicit AbstractTokenizer() = default;
 };
+}  // namespace kusai

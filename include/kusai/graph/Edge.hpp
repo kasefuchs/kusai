@@ -5,6 +5,7 @@
 #include "Node.hpp"
 #include "kusai/common/Serializable.hpp"
 
+namespace kusai {
 using EdgeId = absl::uint128;
 
 struct Edge final : Serializable {
@@ -22,3 +23,4 @@ struct Edge final : Serializable {
 
   static std::pair<NodeId, NodeId> splitId(EdgeId id);
 };
+}  // namespace kusai

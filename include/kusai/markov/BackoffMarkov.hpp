@@ -5,6 +5,7 @@
 #include "AbstractMarkov.hpp"
 #include "NGramMarkov.hpp"
 
+namespace kusai {
 class BackoffMarkov : public AbstractMarkov {
  public:
   explicit BackoffMarkov(AbstractGraph& graph, const uint32_t maxContextSize = 1)
@@ -30,3 +31,4 @@ class BackoffMarkov : public AbstractMarkov {
 
   void rebuildModels();
 };
+}  // namespace kusai

@@ -3,6 +3,7 @@
 #include <istream>
 #include <ostream>
 
+namespace kusai {
 void Serializable::serializeToParent(pugi::xml_node& parent) const {
   auto node = parent.append_child(tagName().c_str());
 
@@ -27,3 +28,4 @@ void Serializable::deserializeFromIstream(std::istream& in) {
 
   deserializeFromParent(doc);
 }
+}  // namespace kusai

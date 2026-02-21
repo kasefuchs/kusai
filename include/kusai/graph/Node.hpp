@@ -5,6 +5,7 @@
 
 #include "kusai/common/Serializable.hpp"
 
+namespace kusai {
 using NodeId = std::uint64_t;
 
 struct Node final : Serializable {
@@ -16,3 +17,4 @@ struct Node final : Serializable {
 
   [[nodiscard]] std::string tagName() const override;
 };
+}  // namespace kusai

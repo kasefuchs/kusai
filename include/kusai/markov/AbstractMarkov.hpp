@@ -14,7 +14,8 @@ class AbstractMarkov : public Serializable {
 
   [[nodiscard]] virtual std::optional<NodeId> nextNode(const std::vector<NodeId>& context) const = 0;
 
-  [[nodiscard]] std::vector<NodeId> generateNodes(const std::vector<NodeId>& context, uint32_t limit = INT8_MAX) const;
+  [[nodiscard]] std::vector<NodeId> generateSequence(const std::vector<NodeId>& context,
+                                                     uint32_t limit = INT8_MAX) const;
 
  protected:
   explicit AbstractMarkov(AbstractGraph& graph) : graph(graph) {}

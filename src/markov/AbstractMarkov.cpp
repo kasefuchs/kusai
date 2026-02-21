@@ -5,7 +5,7 @@
 
 #include "kusai/graph/Node.hpp"
 
-std::vector<NodeId> AbstractMarkov::generateNodes(const std::vector<NodeId>& context, uint32_t limit) const {
+std::vector<NodeId> AbstractMarkov::generateSequence(const std::vector<NodeId>& context, uint32_t limit) const {
   std::vector<NodeId> result = context;
 
   while (limit--) {

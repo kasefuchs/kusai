@@ -6,10 +6,11 @@
 namespace kusai {
 class TextChain : public Serializable {
  public:
-  explicit TextChain(AbstractMarkov& markov, AbstractTokenizer& tokenizer) : markov(markov), tokenizer(tokenizer) {}
+  explicit TextChain(const std::shared_ptr<AbstractMarkov>& markov, const std::shared_ptr<AbstractTokenizer>& tokenizer)
+      : markov(markov), tokenizer(tokenizer) {}
 
-  AbstractMarkov& markov;
-  AbstractTokenizer& tokenizer;
+  std::shared_ptr<AbstractMarkov> markov;
+  std::shared_ptr<AbstractTokenizer> tokenizer;
 
   void train(const std::vector<std::string>& sequences) const;
 

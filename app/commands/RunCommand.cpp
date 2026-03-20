@@ -22,7 +22,7 @@ RunCommand::RunCommand(CLI::App& app) : AbstractCommand(app) {
 }
 
 void RunCommand::execute() {
-  kusai::MemoryGraph graph;
+  auto graph = std::make_shared<kusai::MemoryGraph>();
   auto markov = makeModel(modelType_, graph);
 
   std::ifstream in(inputFile_, std::ios::binary);
@@ -30,8 +30,9 @@ void RunCommand::execute() {
     throw std::runtime_error("Cannot open input file: " + inputFile_);
   }
 
-  kusai::SimpleTokenizer tokenizer;
-  kusai::TextChain chain(*markov, tokenizer);
+  auto tokenizer = std::make_shared<kusai::SimpleTokenizer>();
+
+  kusai::TextChain chain(markov, tokenizer);
   chain.deserializeFromIstream(in);
 
   std::cout << chain.generateText(context_, limit_) << std::endl;

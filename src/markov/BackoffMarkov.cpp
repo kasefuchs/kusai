@@ -34,13 +34,13 @@ std::optional<NodeId> BackoffMarkov::nextNode(const std::vector<NodeId>& context
 }
 
 void BackoffMarkov::serialize(pugi::xml_node& self) const {
-  graph.serializeToParent(self);
+  graph->serializeToParent(self);
 
   self.append_attribute("max_context_size") = maxContextSize_;
 }
 
 void BackoffMarkov::deserialize(const pugi::xml_node& self) {
-  graph.deserializeFromParent(self);
+  graph->deserializeFromParent(self);
 
   maxContextSize_ = self.attribute("max_context_size").as_uint();
 

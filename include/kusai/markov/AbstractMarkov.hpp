@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <vector>
 
 #include "kusai/graph/AbstractGraph.hpp"
@@ -9,7 +10,7 @@ class AbstractMarkov : public Serializable {
  public:
   ~AbstractMarkov() override = default;
 
-  AbstractGraph& graph;
+  std::shared_ptr<AbstractGraph> graph;
 
   virtual void train(const std::vector<std::vector<NodeId> >& sequences) = 0;
 
@@ -19,6 +20,6 @@ class AbstractMarkov : public Serializable {
                                                      uint32_t limit = INT8_MAX) const;
 
  protected:
-  explicit AbstractMarkov(AbstractGraph& graph) : graph(graph) {}
+  explicit AbstractMarkov(const std::shared_ptr<AbstractGraph>& graph) : graph(graph) {}
 };
 }  // namespace kusai

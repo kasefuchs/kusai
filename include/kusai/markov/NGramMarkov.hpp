@@ -6,7 +6,7 @@
 namespace kusai {
 class NGramMarkov : public Markov {
  public:
-  explicit NGramMarkov(AbstractGraph& graph, const uint32_t contextSize = 1)
+  explicit NGramMarkov(const std::shared_ptr<AbstractGraph>& graph, const uint32_t contextSize = 1)
       : Markov(graph), contextSize_(contextSize) {
     CHECK(contextSize_ > 0) << "Context size must be greater than 0.";
   }

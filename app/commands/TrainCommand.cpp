@@ -24,7 +24,7 @@ TrainCommand::TrainCommand(CLI::App& app) : AbstractCommand(app) {
 }
 
 void TrainCommand::execute() {
-  kusai::MemoryGraph graph;
+  auto graph = std::make_shared<kusai::MemoryGraph>();
   auto markov = makeModel(modelType_, graph, contextSize_);
 
   std::ifstream in(inputFile_);
@@ -39,8 +39,8 @@ void TrainCommand::execute() {
     if (!line.empty()) data.push_back(std::move(line));
   }
 
-  kusai::SimpleTokenizer tokenizer;
-  kusai::TextChain chain(*markov, tokenizer);
+  auto tokenizer = std::make_shared<kusai::SimpleTokenizer>();
+  kusai::TextChain chain(markov, tokenizer);
   chain.train(data);
 
   std::ofstream out(outputFile_, std::ios::binary);

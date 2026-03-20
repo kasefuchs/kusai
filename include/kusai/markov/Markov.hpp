@@ -7,7 +7,7 @@
 namespace kusai {
 class Markov : public AbstractMarkov {
  public:
-  explicit Markov(AbstractGraph& graph) : AbstractMarkov(graph) {}
+  explicit Markov(const std::shared_ptr<AbstractGraph>& graph) : AbstractMarkov(graph) {}
 
   void train(const std::vector<std::vector<NodeId> >& sequences) override;
 

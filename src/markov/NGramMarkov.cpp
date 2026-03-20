@@ -31,8 +31,8 @@ void NGramMarkov::train(const std::vector<std::vector<NodeId> >& sequences) {
 
       const auto id = makeContextId(ctx);
 
-      graph.ensureNode(id);
-      graph.modifyEdge(graph.ensureEdge(id, window.back()), [](Edge& edge) { edge.weight++; });
+      graph->ensureNode(id);
+      graph->modifyEdge(graph->ensureEdge(id, window.back()), [](Edge& edge) { edge.weight++; });
     }
   }
 }
@@ -51,13 +51,13 @@ std::optional<NodeId> NGramMarkov::nextNode(const std::vector<NodeId>& context) 
 }
 
 void NGramMarkov::serialize(pugi::xml_node& self) const {
-  graph.serializeToParent(self);
+  graph->serializeToParent(self);
 
   self.append_attribute("context_size").set_value(contextSize_);
 }
 
 void NGramMarkov::deserialize(const pugi::xml_node& self) {
-  graph.deserializeFromParent(self);
+  graph->deserializeFromParent(self);
 
   contextSize_ = self.attribute("context_size").as_uint();
 }

@@ -3,12 +3,12 @@ kusai_add_library(
   SRCS
     AbstractMarkov.cpp
     BackoffMarkov.cpp
-    Markov.cpp
+    SimpleMarkov.cpp
     NGramMarkov.cpp
   HDRS
     AbstractMarkov.hpp
     BackoffMarkov.hpp
-    Markov.hpp
+    SimpleMarkov.hpp
     NGramMarkov.hpp
   DEPS
     common

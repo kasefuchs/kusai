@@ -5,9 +5,9 @@
 #include "AbstractMarkov.hpp"
 
 namespace kusai {
-class Markov : public AbstractMarkov {
+class SimpleMarkov : public AbstractMarkov {
  public:
-  explicit Markov(const std::shared_ptr<AbstractGraph>& graph) : AbstractMarkov(graph) {}
+  explicit SimpleMarkov(const std::shared_ptr<AbstractGraph>& graph) : AbstractMarkov(graph) {}
 
   void train(const std::vector<std::vector<NodeId> >& sequences) override;
 

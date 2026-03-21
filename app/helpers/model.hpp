@@ -5,14 +5,14 @@
 
 #include "kusai/markov/AbstractMarkov.hpp"
 #include "kusai/markov/BackoffMarkov.hpp"
-#include "kusai/markov/Markov.hpp"
 #include "kusai/markov/NGramMarkov.hpp"
+#include "kusai/markov/SimpleMarkov.hpp"
 
-enum class ModelType { Markov, NGram, Backoff };
+enum class ModelType { Simple, NGram, Backoff };
 
 inline CLI::CheckedTransformer modelTypeTransformer() {
   static const std::map<std::string, ModelType> mapping = {
-      {"markov", ModelType::Markov}, {"ngram", ModelType::NGram}, {"backoff", ModelType::Backoff}};
+      {"simple", ModelType::Simple}, {"ngram", ModelType::NGram}, {"backoff", ModelType::Backoff}};
 
   return CLI::CheckedTransformer(mapping, CLI::ignore_case);
 }
@@ -21,8 +21,8 @@ inline std::shared_ptr<kusai::AbstractMarkov> makeModel(const ModelType type,
                                                         const std::shared_ptr<kusai::AbstractGraph>& graph,
                                                         int contextSize = 1) {
   switch (type) {
-    case ModelType::Markov:
-      return std::make_shared<kusai::Markov>(graph);
+    case ModelType::Simple:
+      return std::make_shared<kusai::SimpleMarkov>(graph);
 
     case ModelType::NGram:
       return std::make_shared<kusai::NGramMarkov>(graph, contextSize);

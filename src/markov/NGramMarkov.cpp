@@ -12,7 +12,7 @@
 #include "kusai/graph/AbstractGraph.hpp"
 #include "kusai/graph/Edge.hpp"
 #include "kusai/graph/Node.hpp"
-#include "kusai/markov/Markov.hpp"
+#include "kusai/markov/SimpleMarkov.hpp"
 
 namespace kusai {
 void NGramMarkov::train(const std::vector<std::vector<NodeId> >& sequences) {
@@ -47,7 +47,7 @@ std::optional<NodeId> NGramMarkov::nextNode(const std::vector<NodeId>& context) 
   }
 
   const auto ctxId = makeContextId(ctx);
-  return Markov::nextNode(ctxId);
+  return SimpleMarkov::nextNode(ctxId);
 }
 
 void NGramMarkov::serialize(pugi::xml_node& self) const {

@@ -1,13 +1,13 @@
 #pragma once
 
-#include "Markov.hpp"
+#include "SimpleMarkov.hpp"
 #include "absl/log/check.h"
 
 namespace kusai {
-class NGramMarkov : public Markov {
+class NGramMarkov : public SimpleMarkov {
  public:
   explicit NGramMarkov(const std::shared_ptr<AbstractGraph>& graph, const uint32_t contextSize = 1)
-      : Markov(graph), contextSize_(contextSize) {
+      : SimpleMarkov(graph), contextSize_(contextSize) {
     CHECK(contextSize_ > 0) << "Context size must be greater than 0.";
   }
 

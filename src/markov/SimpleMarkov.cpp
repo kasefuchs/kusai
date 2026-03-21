@@ -1,4 +1,4 @@
-#include "kusai/markov/Markov.hpp"
+#include "kusai/markov/SimpleMarkov.hpp"
 
 #include <optional>
 #include <random>
@@ -10,7 +10,7 @@
 #include "kusai/graph/Node.hpp"
 
 namespace kusai {
-void Markov::train(const std::vector<std::vector<NodeId> >& sequences) {
+void SimpleMarkov::train(const std::vector<std::vector<NodeId> >& sequences) {
   for (auto& seq : sequences) {
     NodeId prev = 0;
     for (const auto node : seq) {
@@ -24,7 +24,7 @@ void Markov::train(const std::vector<std::vector<NodeId> >& sequences) {
   }
 }
 
-std::optional<NodeId> Markov::nextNode(const NodeId current) const {
+std::optional<NodeId> SimpleMarkov::nextNode(const NodeId current) const {
   const auto outgoing = graph->getOutgoingEdges(current);
   if (outgoing.empty()) return std::nullopt;
 
@@ -40,15 +40,15 @@ std::optional<NodeId> Markov::nextNode(const NodeId current) const {
   return chosen.target;
 }
 
-std::optional<NodeId> Markov::nextNode(const std::vector<NodeId>& context) const {
+std::optional<NodeId> SimpleMarkov::nextNode(const std::vector<NodeId>& context) const {
   const auto current = context.back();
 
   return nextNode(current);
 }
 
-void Markov::serialize(pugi::xml_node& self) const { graph->serializeToParent(self); }
+void SimpleMarkov::serialize(pugi::xml_node& self) const { graph->serializeToParent(self); }
 
-void Markov::deserialize(const pugi::xml_node& self) { graph->deserializeFromParent(self); }
+void SimpleMarkov::deserialize(const pugi::xml_node& self) { graph->deserializeFromParent(self); }
 
-std::string Markov::tagName() const { return "Markov"; }
+std::string SimpleMarkov::tagName() const { return "SimpleMarkov"; }
 }  // namespace kusai

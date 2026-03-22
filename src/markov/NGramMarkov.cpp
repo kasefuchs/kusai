@@ -4,6 +4,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <mutex>
 #include <optional>
 #include <span>
 #include <string>
@@ -15,7 +16,7 @@
 #include "kusai/markov/SimpleMarkov.hpp"
 
 namespace kusai {
-void NGramMarkov::train(const std::vector<std::vector<NodeId> >& sequences) {
+void NGramMarkov::trainUnlocked(const std::vector<std::vector<NodeId> >& sequences) {
   const size_t windowSize = contextSize_ + 1;
   for (const auto& seq : sequences) {
     if (seq.size() < windowSize) continue;
@@ -37,7 +38,7 @@ void NGramMarkov::train(const std::vector<std::vector<NodeId> >& sequences) {
   }
 }
 
-std::optional<NodeId> NGramMarkov::nextNode(const std::vector<NodeId>& context) const {
+std::optional<NodeId> NGramMarkov::nextNodeUnlocked(const std::vector<NodeId>& context) const {
   if (context.size() < contextSize_) return std::nullopt;
 
   std::vector<uint64_t> ctx;
@@ -47,16 +48,18 @@ std::optional<NodeId> NGramMarkov::nextNode(const std::vector<NodeId>& context) 
   }
 
   const auto ctxId = makeContextId(ctx);
-  return SimpleMarkov::nextNode(ctxId);
+  return SimpleMarkov::nextNodeUnlocked(ctxId);
 }
 
 void NGramMarkov::serialize(pugi::xml_node& self) const {
+  std::shared_lock lock(mutex_);
   graph->serializeToParent(self);
 
   self.append_attribute("context_size").set_value(contextSize_);
 }
 
 void NGramMarkov::deserialize(const pugi::xml_node& self) {
+  std::unique_lock lock(mutex_);
   graph->deserializeFromParent(self);
 
   contextSize_ = self.attribute("context_size").as_uint();

@@ -21,9 +21,9 @@ class Serializable {
 
   void deserializeFromIstream(std::istream& in);
 
-  [[nodiscard]] virtual std::string tagName() const = 0;
-
  protected:
   explicit Serializable() = default;
+
+  [[nodiscard]] virtual std::string tagName() const = 0;
 };
 }  // namespace kusai

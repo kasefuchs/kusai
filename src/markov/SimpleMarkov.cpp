@@ -1,5 +1,6 @@
 #include "kusai/markov/SimpleMarkov.hpp"
 
+#include <mutex>
 #include <optional>
 #include <random>
 #include <string>
@@ -10,7 +11,7 @@
 #include "kusai/graph/Node.hpp"
 
 namespace kusai {
-void SimpleMarkov::train(const std::vector<std::vector<NodeId> >& sequences) {
+void SimpleMarkov::trainUnlocked(const std::vector<std::vector<NodeId> >& sequences) {
   for (auto& seq : sequences) {
     NodeId prev = 0;
     for (const auto node : seq) {
@@ -24,11 +25,11 @@ void SimpleMarkov::train(const std::vector<std::vector<NodeId> >& sequences) {
   }
 }
 
-std::optional<NodeId> SimpleMarkov::nextNode(const NodeId current) const {
+std::optional<NodeId> SimpleMarkov::nextNodeUnlocked(const NodeId current) const {
   const auto outgoing = graph->getOutgoingEdges(current);
   if (outgoing.empty()) return std::nullopt;
 
-  std::vector<double> weights;
+  std::vector<std::uint32_t> weights;
   weights.reserve(outgoing.size());
   for (const auto& edge : outgoing) {
     weights.push_back(edge.weight);
@@ -40,15 +41,21 @@ std::optional<NodeId> SimpleMarkov::nextNode(const NodeId current) const {
   return chosen.target;
 }
 
-std::optional<NodeId> SimpleMarkov::nextNode(const std::vector<NodeId>& context) const {
+std::optional<NodeId> SimpleMarkov::nextNodeUnlocked(const std::vector<NodeId>& context) const {
   const auto current = context.back();
 
-  return nextNode(current);
+  return nextNodeUnlocked(current);
 }
 
-void SimpleMarkov::serialize(pugi::xml_node& self) const { graph->serializeToParent(self); }
+void SimpleMarkov::serialize(pugi::xml_node& self) const {
+  std::shared_lock lock(mutex_);
+  graph->serializeToParent(self);
+}
 
-void SimpleMarkov::deserialize(const pugi::xml_node& self) { graph->deserializeFromParent(self); }
+void SimpleMarkov::deserialize(const pugi::xml_node& self) {
+  std::unique_lock lock(mutex_);
+  graph->deserializeFromParent(self);
+}
 
 std::string SimpleMarkov::tagName() const { return "SimpleMarkov"; }
 }  // namespace kusai

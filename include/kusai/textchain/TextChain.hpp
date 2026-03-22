@@ -22,6 +22,12 @@ class TextChain : public Serializable {
 
   void deserialize(const pugi::xml_node& self) override;
 
+ private:
+  mutable std::shared_mutex mutex_;
+
+  [[nodiscard]] std::vector<TokenId> generateSequenceUnlocked(const std::string& context,
+                                                              uint32_t limit = INT8_MAX) const;
+
   [[nodiscard]] std::string tagName() const override;
 };
 }  // namespace kusai

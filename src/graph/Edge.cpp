@@ -17,7 +17,7 @@ void Edge::serialize(pugi::xml_node& self) const {
 void Edge::deserialize(const pugi::xml_node& self) {
   source = self.attribute("source").as_ullong();
   target = self.attribute("target").as_ullong();
-  weight = self.attribute("weight").as_double();
+  weight = self.attribute("weight").as_uint();
 }
 
 std::string Edge::tagName() const { return "Edge"; }

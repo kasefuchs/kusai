@@ -11,7 +11,7 @@ using EdgeId = absl::uint128;
 struct Edge final : Serializable {
   NodeId source{};
   NodeId target{};
-  double weight{};
+  std::uint32_t weight{};
 
   void serialize(pugi::xml_node& self) const override;
 

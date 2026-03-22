@@ -1,6 +1,7 @@
 kusai_add_library(
   NAME tokenizer
   SRCS
+    AbstractTokenizer.cpp
     SimpleTokenizer.cpp
   HDRS
     AbstractTokenizer.hpp

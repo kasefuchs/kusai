@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <iterator>
 #include <memory>
+#include <mutex>
 #include <optional>
 #include <ranges>
 #include <string>
@@ -13,7 +14,7 @@
 #include "kusai/graph/Node.hpp"
 
 namespace kusai {
-void BackoffMarkov::train(const std::vector<std::vector<NodeId> >& sequences) {
+void BackoffMarkov::trainUnlocked(const std::vector<std::vector<NodeId> >& sequences) {
   std::vector<std::vector<NodeId> > filtered;
   filtered.reserve(sequences.size());
 
@@ -23,7 +24,7 @@ void BackoffMarkov::train(const std::vector<std::vector<NodeId> >& sequences) {
   for (const auto& model : models_) model->train(filtered);
 }
 
-std::optional<NodeId> BackoffMarkov::nextNode(const std::vector<NodeId>& context) const {
+std::optional<NodeId> BackoffMarkov::nextNodeUnlocked(const std::vector<NodeId>& context) const {
   for (const auto& model : models_ | std::views::reverse) {
     if (auto node = model->nextNode(context); node.has_value()) {
       return node;
@@ -34,12 +35,13 @@ std::optional<NodeId> BackoffMarkov::nextNode(const std::vector<NodeId>& context
 }
 
 void BackoffMarkov::serialize(pugi::xml_node& self) const {
+  std::shared_lock lock(mutex_);
   graph->serializeToParent(self);
-
   self.append_attribute("max_context_size") = maxContextSize_;
 }
 
 void BackoffMarkov::deserialize(const pugi::xml_node& self) {
+  std::unique_lock lock(mutex_);
   graph->deserializeFromParent(self);
 
   maxContextSize_ = self.attribute("max_context_size").as_uint();

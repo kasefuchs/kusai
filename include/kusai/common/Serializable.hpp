@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 #include <string>
 
 #include "pugixml.hpp"
@@ -17,7 +18,8 @@ class Serializable {
 
   void deserializeFromParent(const pugi::xml_node& parent);
 
-  void serializeToOstream(std::ostream& out) const;
+  void serializeToOstream(std::ostream& out,
+                          std::uint32_t format = pugi::format_raw | pugi::format_no_declaration) const;
 
   void deserializeFromIstream(std::istream& in);
 

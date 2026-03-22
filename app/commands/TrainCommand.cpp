@@ -48,5 +48,5 @@ void TrainCommand::execute() {
     throw std::runtime_error("Cannot open output file: " + outputFile_);
   }
 
-  chain.serializeToOstream(out);
+  chain.serializeToOstream(out, pugi::format_raw);
 }

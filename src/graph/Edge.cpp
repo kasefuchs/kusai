@@ -1,7 +1,8 @@
 #include "kusai/graph/Edge.hpp"
 
-#include <absl/numeric/int128.h>
+#include <xxhash.h>
 
+#include <iostream>
 #include <string>
 #include <utility>
 
@@ -22,12 +23,8 @@ void Edge::deserialize(const pugi::xml_node& self) {
 
 std::string Edge::tagName() const { return "Edge"; }
 
-EdgeId Edge::makeId(const NodeId source, const NodeId target) { return absl::MakeUint128(source, target); }
-
-std::pair<NodeId, NodeId> Edge::splitId(const EdgeId id) {
-  return {
-      absl::Uint128High64(id),  // source
-      absl::Uint128Low64(id)    // target
-  };
+EdgeId Edge::makeId(const NodeId source, const NodeId target) {
+  const NodeId pair[2] = {source, target};
+  return XXH64(pair, sizeof(pair), 0);
 }
 }  // namespace kusai

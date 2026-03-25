@@ -14,7 +14,7 @@ class MemoryGraph : public AbstractGraph {
   bool hasEdgeUnlocked(EdgeId id) const override;
 
   NodeId addNodeUnlocked(NodeId id, const std::function<void(Node&)>& fn) override;
-  EdgeId addEdgeUnlocked(EdgeId id, const std::function<void(Edge&)>& fn) override;
+  EdgeId addEdgeUnlocked(NodeId source, NodeId target, const std::function<void(Edge&)>& fn) override;
 
   [[nodiscard]] std::optional<Node> getNodeUnlocked(NodeId id) const override;
   [[nodiscard]] std::optional<Edge> getEdgeUnlocked(EdgeId id) const override;

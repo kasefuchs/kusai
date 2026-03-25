@@ -12,7 +12,7 @@ kusai_add_library(
     MemoryGraph.hpp
   DEPS
     common
-    absl::numeric
     absl::flat_hash_map
     pugixml::pugixml
+    xxHash::xxhash
 )

@@ -25,8 +25,9 @@ NodeId MemoryGraph::addNodeUnlocked(const NodeId id, const std::function<void(No
   return id;
 }
 
-EdgeId MemoryGraph::addEdgeUnlocked(const EdgeId id, const std::function<void(Edge&)>& fn) {
-  const auto [source, target] = Edge::splitId(id);
+auto MemoryGraph::addEdgeUnlocked(const NodeId source, const NodeId target, const std::function<void(Edge&)>& fn)
+    -> EdgeId {
+  const auto id = Edge::makeId(source, target);
 
   auto edge = std::make_unique<Edge>();
   edge->source = source;

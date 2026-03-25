@@ -1,7 +1,6 @@
 #pragma once
 
-#include <absl/numeric/int128.h>
-
+#include <functional>
 #include <optional>
 #include <pugixml.hpp>
 #include <shared_mutex>
@@ -20,11 +19,9 @@ class AbstractGraph : public Serializable {
   bool hasEdge(NodeId source, NodeId target) const;
 
   NodeId addNode(NodeId id, const std::function<void(Node&)>& fn);
-  EdgeId addEdge(EdgeId id, const std::function<void(Edge&)>& fn);
   EdgeId addEdge(NodeId source, NodeId target, const std::function<void(Edge&)>& fn = nullptr);
 
   NodeId ensureNode(NodeId id, const std::function<void(Node&)>& fn = nullptr);
-  EdgeId ensureEdge(EdgeId id, const std::function<void(Edge&)>& fn = nullptr);
   EdgeId ensureEdge(NodeId source, NodeId target, const std::function<void(Edge&)>& fn = nullptr);
 
   [[nodiscard]] std::optional<Node> getNode(NodeId id) const;
@@ -62,8 +59,7 @@ class AbstractGraph : public Serializable {
   bool hasEdgeUnlocked(NodeId source, NodeId target) const;
 
   virtual NodeId addNodeUnlocked(NodeId id, const std::function<void(Node&)>& fn) = 0;
-  virtual EdgeId addEdgeUnlocked(EdgeId id, const std::function<void(Edge&)>& fn) = 0;
-  EdgeId addEdgeUnlocked(NodeId source, NodeId target, const std::function<void(Edge&)>& fn = nullptr);
+  virtual EdgeId addEdgeUnlocked(NodeId source, NodeId target, const std::function<void(Edge&)>& fn) = 0;
 
   [[nodiscard]] virtual std::optional<Node> getNodeUnlocked(NodeId id) const = 0;
   [[nodiscard]] virtual std::optional<Edge> getEdgeUnlocked(EdgeId id) const = 0;

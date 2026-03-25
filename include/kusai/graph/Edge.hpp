@@ -1,12 +1,10 @@
 #pragma once
 
-#include <absl/numeric/int128.h>
-
 #include "Node.hpp"
 #include "kusai/common/Serializable.hpp"
 
 namespace kusai {
-using EdgeId = absl::uint128;
+using EdgeId = std::uint64_t;
 
 struct Edge final : Serializable {
   NodeId source{};
@@ -20,7 +18,5 @@ struct Edge final : Serializable {
   [[nodiscard]] std::string tagName() const override;
 
   static EdgeId makeId(NodeId source, NodeId target);
-
-  static std::pair<NodeId, NodeId> splitId(EdgeId id);
 };
 }  // namespace kusai

@@ -30,11 +30,6 @@ NodeId AbstractGraph::addNode(const NodeId id, const std::function<void(Node&)>&
   return addNodeUnlocked(id, fn);
 }
 
-EdgeId AbstractGraph::addEdge(const EdgeId id, const std::function<void(Edge&)>& fn) {
-  std::unique_lock lock(mutex_);
-  return addEdgeUnlocked(id, fn);
-}
-
 EdgeId AbstractGraph::addEdge(const NodeId source, const NodeId target, const std::function<void(Edge&)>& fn) {
   std::unique_lock lock(mutex_);
   return addEdgeUnlocked(source, target, fn);
@@ -47,16 +42,11 @@ NodeId AbstractGraph::ensureNode(const NodeId id, const std::function<void(Node&
   return id;
 }
 
-EdgeId AbstractGraph::ensureEdge(const EdgeId id, const std::function<void(Edge&)>& fn) {
-  std::unique_lock lock(mutex_);
-  if (!hasEdgeUnlocked(id)) addEdgeUnlocked(id, fn);
-
-  return id;
-}
-
 EdgeId AbstractGraph::ensureEdge(const NodeId source, const NodeId target, const std::function<void(Edge&)>& fn) {
   const auto id = Edge::makeId(source, target);
-  return ensureEdge(id, fn);
+  if (!hasEdgeUnlocked(id)) addEdgeUnlocked(source, target, fn);
+
+  return id;
 }
 
 std::optional<Node> AbstractGraph::getNode(const NodeId id) const {
@@ -179,11 +169,6 @@ std::string AbstractGraph::tagName() const { return "AbstractGraph"; }
 bool AbstractGraph::hasEdgeUnlocked(const NodeId source, const NodeId target) const {
   const auto id = Edge::makeId(source, target);
   return hasEdgeUnlocked(id);
-}
-
-EdgeId AbstractGraph::addEdgeUnlocked(const NodeId source, const NodeId target, const std::function<void(Edge&)>& fn) {
-  const auto id = Edge::makeId(source, target);
-  return addEdgeUnlocked(id, fn);
 }
 
 std::optional<Edge> AbstractGraph::getEdgeUnlocked(const NodeId source, const NodeId target) const {

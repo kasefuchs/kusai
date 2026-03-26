@@ -6,9 +6,9 @@
 #include "pugixml.hpp"
 
 namespace kusai {
-class Serializable {
+class AbstractSerializable {
  public:
-  virtual ~Serializable() = default;
+  virtual ~AbstractSerializable() = default;
 
   virtual void serialize(pugi::xml_node& self) const = 0;
 
@@ -24,7 +24,7 @@ class Serializable {
   void deserializeFromIstream(std::istream& in);
 
  protected:
-  explicit Serializable() = default;
+  explicit AbstractSerializable() = default;
 
   [[nodiscard]] virtual std::string tagName() const = 0;
 };

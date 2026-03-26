@@ -7,10 +7,10 @@
 
 #include "Edge.hpp"
 #include "Node.hpp"
-#include "kusai/common/Serializable.hpp"
+#include "kusai/common/AbstractSerializable.hpp"
 
 namespace kusai {
-class AbstractGraph : public Serializable {
+class AbstractGraph : public AbstractSerializable {
  public:
   ~AbstractGraph() override = default;
 

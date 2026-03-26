@@ -1,12 +1,12 @@
 #pragma once
 
 #include "Node.hpp"
-#include "kusai/common/Serializable.hpp"
+#include "kusai/common/AbstractSerializable.hpp"
 
 namespace kusai {
 using EdgeId = std::uint64_t;
 
-struct Edge final : Serializable {
+struct Edge final : AbstractSerializable {
   NodeId source{};
   NodeId target{};
   std::uint32_t weight{};

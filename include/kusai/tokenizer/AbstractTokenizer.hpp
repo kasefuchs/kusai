@@ -6,13 +6,13 @@
 #include <string>
 #include <vector>
 
-#include "kusai/common/Serializable.hpp"
+#include "kusai/common/AbstractSerializable.hpp"
 #include "kusai/graph/Node.hpp"
 
 namespace kusai {
 using TokenId = NodeId;
 
-class AbstractTokenizer : public Serializable {
+class AbstractTokenizer : public AbstractSerializable {
  public:
   ~AbstractTokenizer() override = default;
 

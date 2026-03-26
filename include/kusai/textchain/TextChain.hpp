@@ -4,7 +4,7 @@
 #include "kusai/tokenizer/AbstractTokenizer.hpp"
 
 namespace kusai {
-class TextChain : public Serializable {
+class TextChain : public AbstractSerializable {
  public:
   explicit TextChain(const std::shared_ptr<AbstractMarkov>& markov, const std::shared_ptr<AbstractTokenizer>& tokenizer)
       : markov(markov), tokenizer(tokenizer) {}

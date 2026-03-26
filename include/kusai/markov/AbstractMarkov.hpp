@@ -6,7 +6,7 @@
 #include "kusai/graph/AbstractGraph.hpp"
 
 namespace kusai {
-class AbstractMarkov : public Serializable {
+class AbstractMarkov : public AbstractSerializable {
  public:
   ~AbstractMarkov() override = default;
 

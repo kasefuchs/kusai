@@ -3,12 +3,12 @@
 #include <cstdint>
 #include <pugixml.hpp>
 
-#include "kusai/common/Serializable.hpp"
+#include "kusai/common/AbstractSerializable.hpp"
 
 namespace kusai {
 using NodeId = std::uint64_t;
 
-struct Node final : Serializable {
+struct Node final : AbstractSerializable {
   NodeId id{};
 
   void serialize(pugi::xml_node& self) const override;

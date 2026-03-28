@@ -2,12 +2,11 @@
 
 #include <functional>
 #include <optional>
-#include <pugixml.hpp>
 #include <shared_mutex>
 
 #include "Edge.hpp"
 #include "Node.hpp"
-#include "kusai/common/AbstractSerializable.hpp"
+#include "kusai/serializable/AbstractSerializable.hpp"
 
 namespace kusai {
 class AbstractGraph : public AbstractSerializable {
@@ -46,8 +45,8 @@ class AbstractGraph : public AbstractSerializable {
   void clearEdges();
   void clear();
 
-  void serialize(pugi::xml_node& self) const override;
-  void deserialize(const pugi::xml_node& self) override;
+  [[nodiscard]] nlohmann::json serialize() const override;
+  void deserialize(const nlohmann::json& data) override;
 
  protected:
   mutable std::shared_mutex mutex_;
@@ -82,7 +81,5 @@ class AbstractGraph : public AbstractSerializable {
   virtual void clearNodesUnlocked() = 0;
   virtual void clearEdgesUnlocked() = 0;
   void clearUnlocked();
-
-  [[nodiscard]] std::string tagName() const override;
 };
 }  // namespace kusai

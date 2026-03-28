@@ -16,6 +16,18 @@
 #include "kusai/markov/SimpleMarkov.hpp"
 
 namespace kusai {
+nlohmann::json NGramMarkov::serialize() const {
+  std::shared_lock lock(mutex_);
+  return {{"graph", graph->serialize()}, {"context_size", contextSize_}};
+}
+
+void NGramMarkov::deserialize(const nlohmann::json& data) {
+  std::unique_lock lock(mutex_);
+  data.at("context_size").get_to(contextSize_);
+
+  graph->deserialize(data.at("graph"));
+}
+
 void NGramMarkov::trainUnlocked(const std::vector<std::vector<NodeId> >& sequences) {
   const size_t windowSize = contextSize_ + 1;
   for (const auto& seq : sequences) {
@@ -50,22 +62,6 @@ std::optional<NodeId> NGramMarkov::nextNodeUnlocked(const std::vector<NodeId>& c
   const auto ctxId = makeContextId(ctx);
   return SimpleMarkov::nextNodeUnlocked(ctxId);
 }
-
-void NGramMarkov::serialize(pugi::xml_node& self) const {
-  std::shared_lock lock(mutex_);
-  graph->serializeToParent(self);
-
-  self.append_attribute("context_size").set_value(contextSize_);
-}
-
-void NGramMarkov::deserialize(const pugi::xml_node& self) {
-  std::unique_lock lock(mutex_);
-  graph->deserializeFromParent(self);
-
-  contextSize_ = self.attribute("context_size").as_uint();
-}
-
-std::string NGramMarkov::tagName() const { return "NGramMarkov"; }
 
 NodeId NGramMarkov::makeContextId(const std::vector<NodeId>& ids) {
   return XXH64(ids.data(), ids.size() * sizeof(NodeId), 0);

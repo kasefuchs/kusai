@@ -6,8 +6,8 @@ if (KUSAI_BUILD_APP)
   find_package(CLI11 CONFIG REQUIRED)
 endif ()
 
-# pugixml
-find_package(pugixml CONFIG REQUIRED)
+# nlohmann json
+find_package(nlohmann_json CONFIG REQUIRED)
 
 # xxHash
 find_package(xxHash CONFIG REQUIRED)

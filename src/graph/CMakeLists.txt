@@ -11,8 +11,8 @@ kusai_add_library(
     AbstractGraph.hpp
     MemoryGraph.hpp
   DEPS
-    common
+    serializable
     absl::flat_hash_map
-    pugixml::pugixml
+    nlohmann_json::nlohmann_json
     xxHash::xxhash
 )

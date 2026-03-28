@@ -1,13 +1,12 @@
 #pragma once
 
 #include <cstdint>
-#include <pugixml.hpp>
 #include <shared_mutex>
 #include <string>
 #include <vector>
 
-#include "kusai/common/AbstractSerializable.hpp"
 #include "kusai/graph/Node.hpp"
+#include "kusai/serializable/AbstractSerializable.hpp"
 
 namespace kusai {
 using TokenId = NodeId;

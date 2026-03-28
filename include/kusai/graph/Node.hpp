@@ -1,9 +1,8 @@
 #pragma once
 
 #include <cstdint>
-#include <pugixml.hpp>
 
-#include "kusai/common/AbstractSerializable.hpp"
+#include "kusai/serializable/AbstractSerializable.hpp"
 
 namespace kusai {
 using NodeId = std::uint64_t;
@@ -11,10 +10,7 @@ using NodeId = std::uint64_t;
 struct Node final : AbstractSerializable {
   NodeId id{};
 
-  void serialize(pugi::xml_node& self) const override;
-
-  void deserialize(const pugi::xml_node& self) override;
-
-  [[nodiscard]] std::string tagName() const override;
+  [[nodiscard]] nlohmann::json serialize() const override;
+  void deserialize(const nlohmann::json& data) override;
 };
 }  // namespace kusai

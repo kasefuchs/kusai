@@ -1,7 +1,7 @@
 include(GNUInstallDirs)
 
 install(
-  TARGETS common graph markov textchain tokenizer
+  TARGETS graph markov textchain tokenizer serializable
   EXPORT kusai
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
   FILE_SET HEADERS DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}

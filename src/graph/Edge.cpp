@@ -9,19 +9,13 @@
 #include "kusai/graph/Node.hpp"
 
 namespace kusai {
-void Edge::serialize(pugi::xml_node& self) const {
-  self.append_attribute("source") = source;
-  self.append_attribute("target") = target;
-  self.append_attribute("weight") = weight;
-}
+nlohmann::json Edge::serialize() const { return {{"source", source}, {"target", target}, {"weight", weight}}; }
 
-void Edge::deserialize(const pugi::xml_node& self) {
-  source = self.attribute("source").as_ullong();
-  target = self.attribute("target").as_ullong();
-  weight = self.attribute("weight").as_uint();
+void Edge::deserialize(const nlohmann::json& data) {
+  data.at("source").get_to(source);
+  data.at("target").get_to(target);
+  data.at("weight").get_to(weight);
 }
-
-std::string Edge::tagName() const { return "Edge"; }
 
 EdgeId Edge::makeId(const NodeId source, const NodeId target) {
   const NodeId pair[2] = {source, target};

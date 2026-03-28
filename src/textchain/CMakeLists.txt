@@ -5,10 +5,10 @@ kusai_add_library(
   HDRS
     TextChain.hpp
   DEPS
-    common
     graph
     markov
     tokenizer
+    serializable
     absl::strings
-    pugixml::pugixml
+    nlohmann_json::nlohmann_json
 )

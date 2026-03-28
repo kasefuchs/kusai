@@ -11,6 +11,16 @@
 #include "kusai/graph/Node.hpp"
 
 namespace kusai {
+nlohmann::json SimpleMarkov::serialize() const {
+  std::shared_lock lock(mutex_);
+  return {{"graph", graph->serialize()}};
+}
+
+void SimpleMarkov::deserialize(const nlohmann::json& data) {
+  std::unique_lock lock(mutex_);
+  graph->deserialize(data.at("graph"));
+}
+
 void SimpleMarkov::trainUnlocked(const std::vector<std::vector<NodeId> >& sequences) {
   for (auto& seq : sequences) {
     NodeId prev = 0;
@@ -46,16 +56,4 @@ std::optional<NodeId> SimpleMarkov::nextNodeUnlocked(const std::vector<NodeId>& 
 
   return nextNodeUnlocked(current);
 }
-
-void SimpleMarkov::serialize(pugi::xml_node& self) const {
-  std::shared_lock lock(mutex_);
-  graph->serializeToParent(self);
-}
-
-void SimpleMarkov::deserialize(const pugi::xml_node& self) {
-  std::unique_lock lock(mutex_);
-  graph->deserializeFromParent(self);
-}
-
-std::string SimpleMarkov::tagName() const { return "SimpleMarkov"; }
 }  // namespace kusai

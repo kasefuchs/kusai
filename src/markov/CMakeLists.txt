@@ -11,9 +11,9 @@ kusai_add_library(
     SimpleMarkov.hpp
     NGramMarkov.hpp
   DEPS
-    common
     graph
+    serializable
     absl::log_internal_check_op
-    pugixml::pugixml
+    nlohmann_json::nlohmann_json
     xxHash::xxhash
 )

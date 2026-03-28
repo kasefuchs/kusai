@@ -3,9 +3,7 @@
 #include <string>
 
 namespace kusai {
-void Node::serialize(pugi::xml_node& self) const { self.append_attribute("id") = id; }
+nlohmann::json Node::serialize() const { return {{"id", id}}; }
 
-void Node::deserialize(const pugi::xml_node& self) { id = self.attribute("id").as_ullong(); }
-
-std::string Node::tagName() const { return "Node"; }
+void Node::deserialize(const nlohmann::json& data) { data.at("id").get_to(id); }
 }  // namespace kusai

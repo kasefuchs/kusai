@@ -134,37 +134,37 @@ void AbstractGraph::clear() {
   clearUnlocked();
 }
 
-void AbstractGraph::serialize(pugi::xml_node& self) const {
+nlohmann::json AbstractGraph::serialize() const {
   std::shared_lock lock(mutex_);
-  for (auto nodesNode = self.append_child("Nodes"); const auto& node : getAllNodes()) {
-    node.serializeToParent(nodesNode);
+  nlohmann::json nodes = nlohmann::json::array();
+  for (const auto& node : getAllNodes()) {
+    nodes.push_back(node.serialize());
   }
 
-  for (auto edgesNode = self.append_child("Edges"); const auto& edge : getAllEdges()) {
-    edge.serializeToParent(edgesNode);
+  nlohmann::json edges = nlohmann::json::array();
+  for (const auto& edge : getAllEdges()) {
+    edges.push_back(edge.serialize());
   }
+
+  return {{"nodes", nodes}, {"edges", edges}};
 }
 
-void AbstractGraph::deserialize(const pugi::xml_node& self) {
+void AbstractGraph::deserialize(const nlohmann::json& data) {
   std::unique_lock lock(mutex_);
   clearUnlocked();
 
-  for (auto& nodeNode : self.child("Nodes").children()) {
+  for (const auto& nodeJson : data["nodes"]) {
     Node node;
-    node.deserialize(nodeNode);
-
+    node.deserialize(nodeJson);
     addNodeUnlocked(node.id, [&](Node& n) { n = node; });
   }
 
-  for (auto& edgeNode : self.child("Edges").children("Edge")) {
+  for (const auto& edgeJson : data["edges"]) {
     Edge edge;
-    edge.deserialize(edgeNode);
-
+    edge.deserialize(edgeJson);
     addEdgeUnlocked(edge.source, edge.target, [&](Edge& e) { e = edge; });
   }
 }
-
-std::string AbstractGraph::tagName() const { return "AbstractGraph"; }
 
 bool AbstractGraph::hasEdgeUnlocked(const NodeId source, const NodeId target) const {
   const auto id = Edge::makeId(source, target);

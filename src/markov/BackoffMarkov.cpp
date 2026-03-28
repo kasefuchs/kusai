@@ -14,6 +14,22 @@
 #include "kusai/graph/Node.hpp"
 
 namespace kusai {
+nlohmann::json BackoffMarkov::serialize() const {
+  std::shared_lock lock(mutex_);
+  return {
+      {"graph", graph->serialize()},
+      {"max_context_size", maxContextSize_},
+  };
+}
+
+void BackoffMarkov::deserialize(const nlohmann::json& data) {
+  std::unique_lock lock(mutex_);
+  data.at("max_context_size").get_to(maxContextSize_);
+
+  graph->deserialize(data.at("graph"));
+  rebuildModels();
+}
+
 void BackoffMarkov::trainUnlocked(const std::vector<std::vector<NodeId> >& sequences) {
   std::vector<std::vector<NodeId> > filtered;
   filtered.reserve(sequences.size());
@@ -33,23 +49,6 @@ std::optional<NodeId> BackoffMarkov::nextNodeUnlocked(const std::vector<NodeId>&
 
   return std::nullopt;
 }
-
-void BackoffMarkov::serialize(pugi::xml_node& self) const {
-  std::shared_lock lock(mutex_);
-  graph->serializeToParent(self);
-  self.append_attribute("max_context_size") = maxContextSize_;
-}
-
-void BackoffMarkov::deserialize(const pugi::xml_node& self) {
-  std::unique_lock lock(mutex_);
-  graph->deserializeFromParent(self);
-
-  maxContextSize_ = self.attribute("max_context_size").as_uint();
-
-  rebuildModels();
-}
-
-std::string BackoffMarkov::tagName() const { return "BackoffMarkov"; }
 
 void BackoffMarkov::rebuildModels() {
   models_.clear();

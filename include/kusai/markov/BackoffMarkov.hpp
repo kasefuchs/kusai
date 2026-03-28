@@ -15,16 +15,13 @@ class BackoffMarkov : public AbstractMarkov {
     rebuildModels();
   }
 
-  void serialize(pugi::xml_node& self) const override;
-
-  void deserialize(const pugi::xml_node& self) override;
+  [[nodiscard]] nlohmann::json serialize() const override;
+  void deserialize(const nlohmann::json& data) override;
 
  protected:
   void trainUnlocked(const std::vector<std::vector<NodeId> >& sequences) override;
 
   [[nodiscard]] std::optional<NodeId> nextNodeUnlocked(const std::vector<NodeId>& context) const override;
-
-  [[nodiscard]] std::string tagName() const override;
 
  private:
   uint32_t maxContextSize_;

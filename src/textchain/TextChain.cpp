@@ -35,19 +35,16 @@ std::string TextChain::generateText(const std::string& context, const uint32_t l
   return tokenizer->decode(seq);
 }
 
-void TextChain::serialize(pugi::xml_node& self) const {
+nlohmann::json TextChain::serialize() const {
   std::shared_lock lock(mutex_);
-  markov->serializeToParent(self);
-  tokenizer->serializeToParent(self);
+  return {{"markov", markov->serialize()}, {"tokenizer", tokenizer->serialize()}};
 }
 
-void TextChain::deserialize(const pugi::xml_node& self) {
+void TextChain::deserialize(const nlohmann::json& data) {
   std::unique_lock lock(mutex_);
-  markov->deserializeFromParent(self);
-  tokenizer->deserializeFromParent(self);
+  markov->deserialize(data.at("markov"));
+  tokenizer->deserialize(data.at("tokenizer"));
 }
-
-std::string TextChain::tagName() const { return "TextChain"; }
 
 std::vector<TokenId> TextChain::generateSequenceUnlocked(const std::string& context, uint32_t limit) const {
   const auto seq = tokenizer->encode(context);

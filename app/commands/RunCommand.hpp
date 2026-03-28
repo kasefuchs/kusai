@@ -12,7 +12,7 @@ class RunCommand : public AbstractCommand {
 
  private:
   ModelType modelType_ = ModelType::Backoff;
-  std::string inputFile_ = "model.xml";
+  std::string inputFile_ = "model.json";
   std::string context_;
   int limit_ = INT8_MAX;
 };

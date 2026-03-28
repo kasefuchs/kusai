@@ -7,9 +7,9 @@ kusai_add_library(
     AbstractTokenizer.hpp
     SimpleTokenizer.hpp
   DEPS
-    common
+    serializable
     absl::strings
     absl::flat_hash_map
-    pugixml::pugixml
+    nlohmann_json::nlohmann_json
     xxHash::xxhash
 )

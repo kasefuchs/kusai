@@ -1,9 +1,9 @@
 kusai_add_library(
-  NAME common
+  NAME serializable
   SRCS
     AbstractSerializable.cpp
   HDRS
     AbstractSerializable.hpp
   DEPS
-    pugixml::pugixml
+    nlohmann_json::nlohmann_json
 )

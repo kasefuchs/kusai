@@ -13,6 +13,6 @@ class TrainCommand : public AbstractCommand {
  private:
   ModelType modelType_ = ModelType::Backoff;
   std::string inputFile_ = "input.txt";
-  std::string outputFile_ = "model.xml";
+  std::string outputFile_ = "model.json";
   int contextSize_ = 1;
 };

@@ -39,28 +39,25 @@ std::string SimpleTokenizer::decodeUnlocked(const std::vector<TokenId>& context)
   return absl::StrJoin(tokens, " ");
 }
 
-void SimpleTokenizer::serialize(pugi::xml_node& self) const {
+nlohmann::json SimpleTokenizer::serialize() const {
   std::shared_lock lock(mutex_);
-  for (auto vocabNode = self.append_child("Vocabulary"); const auto& [id, token] : vocabulary_) {
-    auto tokenNode = vocabNode.append_child("Token");
-
-    tokenNode.append_attribute("id") = id;
-    tokenNode.text() = token.c_str();
+  nlohmann::json vocabJson = nlohmann::json::object();
+  for (const auto& [id, token] : vocabulary_) {
+    vocabJson[std::to_string(id)] = token;
   }
+
+  return {{"vocabulary", vocabJson}};
 }
 
-void SimpleTokenizer::deserialize(const pugi::xml_node& self) {
+void SimpleTokenizer::deserialize(const nlohmann::json& data) {
   std::unique_lock lock(mutex_);
   vocabulary_.clear();
-  for (const auto& tokenNode : self.child("Vocabulary").children("Token")) {
-    const auto id = tokenNode.attribute("id").as_ullong();
-    const auto text = tokenNode.text().as_string();
 
-    vocabulary_.emplace(id, text);
+  for (const auto& vocabJson = data.at("vocabulary"); auto& [key, value] : vocabJson.items()) {
+    TokenId id;
+    if (absl::SimpleAtoi(key, &id)) vocabulary_.emplace(id, value.get<std::string>());
   }
 }
-
-std::string SimpleTokenizer::tagName() const { return "SimpleTokenizer"; }
 
 TokenId SimpleTokenizer::makeTokenId(const std::string& token) { return XXH64(&token[0], token.size(), 0); }
 }  // namespace kusai

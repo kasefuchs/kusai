@@ -11,15 +11,12 @@ class SimpleTokenizer : public AbstractTokenizer {
 
   [[nodiscard]] std::string decodeUnlocked(const std::vector<TokenId>& context) override;
 
-  void serialize(pugi::xml_node& self) const override;
-
-  void deserialize(const pugi::xml_node& self) override;
+  [[nodiscard]] nlohmann::json serialize() const override;
+  void deserialize(const nlohmann::json& data) override;
 
  private:
   absl::flat_hash_map<TokenId, std::string> vocabulary_;
 
   [[nodiscard]] static TokenId makeTokenId(const std::string& token);
-
-  [[nodiscard]] std::string tagName() const override;
 };
 }  // namespace kusai

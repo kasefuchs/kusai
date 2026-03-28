@@ -1,10 +1,10 @@
 {
   "name": "kusai",
-  "version-string": "0.6.0",
+  "version-string": "0.10.0",
   "dependencies": [
     "abseil",
     "cli11",
-    "pugixml",
-    "xxhash"
+    "xxhash",
+    "nlohmann-json"
   ]
 }

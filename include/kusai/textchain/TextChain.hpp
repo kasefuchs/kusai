@@ -19,7 +19,7 @@ class TextChain : public AbstractSerializable {
   [[nodiscard]] std::string generateText(const std::string& context, uint32_t limit = INT8_MAX) const;
 
   nlohmann::json serialize() const override;
-  void deserialize(const nlohmann::json& data) override;
+  bool deserialize(const nlohmann::json& data) override;
 
  private:
   mutable std::shared_mutex mutex_;

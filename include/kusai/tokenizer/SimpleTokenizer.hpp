@@ -12,7 +12,7 @@ class SimpleTokenizer : public AbstractTokenizer {
   [[nodiscard]] std::string decodeUnlocked(const std::vector<TokenId>& context) override;
 
   [[nodiscard]] nlohmann::json serialize() const override;
-  void deserialize(const nlohmann::json& data) override;
+  bool deserialize(const nlohmann::json& data) override;
 
  private:
   absl::flat_hash_map<TokenId, std::string> vocabulary_;

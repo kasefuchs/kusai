@@ -10,7 +10,7 @@ class SimpleMarkov : public AbstractMarkov {
   explicit SimpleMarkov(const std::shared_ptr<AbstractGraph>& graph) : AbstractMarkov(graph) {}
 
   [[nodiscard]] nlohmann::json serialize() const override;
-  void deserialize(const nlohmann::json& data) override;
+  bool deserialize(const nlohmann::json& data) override;
 
  protected:
   void trainUnlocked(const std::vector<std::vector<NodeId> >& sequences) override;

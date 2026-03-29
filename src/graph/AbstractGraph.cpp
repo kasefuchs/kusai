@@ -149,21 +149,25 @@ nlohmann::json AbstractGraph::serialize() const {
   return {{"nodes", nodes}, {"edges", edges}};
 }
 
-void AbstractGraph::deserialize(const nlohmann::json& data) {
+bool AbstractGraph::deserialize(const nlohmann::json& data) {
   std::unique_lock lock(mutex_);
   clearUnlocked();
 
-  for (const auto& nodeJson : data["nodes"]) {
+  for (const auto& nodeJson : data.at("nodes")) {
     Node node;
-    node.deserialize(nodeJson);
+    if (!node.deserialize(nodeJson)) return false;
+
     addNodeUnlocked(node.id, [&](Node& n) { n = node; });
   }
 
-  for (const auto& edgeJson : data["edges"]) {
+  for (const auto& edgeJson : data.at("edges")) {
     Edge edge;
-    edge.deserialize(edgeJson);
+    if (!edge.deserialize(edgeJson)) return false;
+
     addEdgeUnlocked(edge.source, edge.target, [&](Edge& e) { e = edge; });
   }
+
+  return true;
 }
 
 bool AbstractGraph::hasEdgeUnlocked(const NodeId source, const NodeId target) const {

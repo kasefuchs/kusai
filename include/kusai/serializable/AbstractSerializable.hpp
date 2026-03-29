@@ -10,11 +10,11 @@ class AbstractSerializable {
 
   [[nodiscard]] virtual nlohmann::json serialize() const = 0;
 
-  virtual void deserialize(const nlohmann::json& data) = 0;
+  [[nodiscard]] virtual bool deserialize(const nlohmann::json& data) = 0;
 
   void serializeToOstream(std::ostream& out) const;
 
-  void deserializeFromIstream(std::istream& in);
+  [[nodiscard]] bool deserializeFromIstream(std::istream& in);
 
  protected:
   explicit AbstractSerializable() = default;

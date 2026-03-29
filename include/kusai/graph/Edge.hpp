@@ -12,7 +12,7 @@ struct Edge final : AbstractSerializable {
   std::uint32_t weight{};
 
   [[nodiscard]] nlohmann::json serialize() const override;
-  void deserialize(const nlohmann::json& data) override;
+  bool deserialize(const nlohmann::json& data) override;
 
   static EdgeId makeId(NodeId source, NodeId target);
 };

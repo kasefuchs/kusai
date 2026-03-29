@@ -22,12 +22,16 @@ nlohmann::json BackoffMarkov::serialize() const {
   };
 }
 
-void BackoffMarkov::deserialize(const nlohmann::json& data) {
+bool BackoffMarkov::deserialize(const nlohmann::json& data) {
   std::unique_lock lock(mutex_);
-  data.at("max_context_size").get_to(maxContextSize_);
+  try {
+    data.at("max_context_size").get_to(maxContextSize_);
+  } catch (const nlohmann::json::exception&) {
+    return false;
+  }
 
-  graph->deserialize(data.at("graph"));
   rebuildModels();
+  return graph->deserialize(data.at("graph"));
 }
 
 void BackoffMarkov::trainUnlocked(const std::vector<std::vector<NodeId> >& sequences) {

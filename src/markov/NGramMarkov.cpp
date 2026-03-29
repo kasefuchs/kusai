@@ -21,11 +21,15 @@ nlohmann::json NGramMarkov::serialize() const {
   return {{"graph", graph->serialize()}, {"context_size", contextSize_}};
 }
 
-void NGramMarkov::deserialize(const nlohmann::json& data) {
+bool NGramMarkov::deserialize(const nlohmann::json& data) {
   std::unique_lock lock(mutex_);
-  data.at("context_size").get_to(contextSize_);
+  try {
+    data.at("context_size").get_to(contextSize_);
+  } catch (const nlohmann::json::exception&) {
+    return false;
+  }
 
-  graph->deserialize(data.at("graph"));
+  return graph->deserialize(data.at("graph"));
 }
 
 void NGramMarkov::trainUnlocked(const std::vector<std::vector<NodeId> >& sequences) {

@@ -11,10 +11,16 @@
 namespace kusai {
 nlohmann::json Edge::serialize() const { return {{"source", source}, {"target", target}, {"weight", weight}}; }
 
-void Edge::deserialize(const nlohmann::json& data) {
-  data.at("source").get_to(source);
-  data.at("target").get_to(target);
-  data.at("weight").get_to(weight);
+bool Edge::deserialize(const nlohmann::json& data) {
+  try {
+    data.at("source").get_to(source);
+    data.at("target").get_to(target);
+    data.at("weight").get_to(weight);
+  } catch (const nlohmann::json::exception&) {
+    return false;
+  }
+
+  return true;
 }
 
 EdgeId Edge::makeId(const NodeId source, const NodeId target) {

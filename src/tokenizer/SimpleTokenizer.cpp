@@ -49,14 +49,21 @@ nlohmann::json SimpleTokenizer::serialize() const {
   return {{"vocabulary", vocabJson}};
 }
 
-void SimpleTokenizer::deserialize(const nlohmann::json& data) {
+bool SimpleTokenizer::deserialize(const nlohmann::json& data) {
   std::unique_lock lock(mutex_);
   vocabulary_.clear();
 
   for (const auto& vocabJson = data.at("vocabulary"); auto& [key, value] : vocabJson.items()) {
     TokenId id;
-    if (absl::SimpleAtoi(key, &id)) vocabulary_.emplace(id, value.get<std::string>());
+    if (absl::SimpleAtoi(key, &id)) {
+      vocabulary_.emplace(id, value.get<std::string>());
+      continue;
+    }
+
+    return false;
   }
+
+  return true;
 }
 
 TokenId SimpleTokenizer::makeTokenId(const std::string& token) { return XXH64(&token[0], token.size(), 0); }

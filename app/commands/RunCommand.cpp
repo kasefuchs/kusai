@@ -33,7 +33,9 @@ void RunCommand::execute() {
   auto tokenizer = std::make_shared<kusai::SimpleTokenizer>();
 
   kusai::TextChain chain(markov, tokenizer);
-  chain.deserializeFromIstream(in);
+  if (!chain.deserializeFromIstream(in)) {
+    throw std::runtime_error("Cannot parse input file: " + inputFile_);
+  }
 
   std::cout << chain.generateText(context_, limit_) << std::endl;
 }

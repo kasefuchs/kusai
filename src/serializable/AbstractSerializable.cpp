@@ -1,14 +1,20 @@
 #include "kusai/serializable/AbstractSerializable.hpp"
 
+#include <iostream>
 #include <istream>
-#include <ostream>
+#include <nlohmann/json.hpp>
 
 namespace kusai {
-void AbstractSerializable::serializeToOstream(std::ostream& out) const { out << serialize().dump(); }
+void AbstractSerializable::serializeToOstream(std::ostream& out) const { out << serialize(); }
 
-void AbstractSerializable::deserializeFromIstream(std::istream& in) {
-  nlohmann::json root;
-  in >> root;
-  deserialize(root);
+bool AbstractSerializable::deserializeFromIstream(std::istream& in) {
+  try {
+    nlohmann::json root;
+    in >> root;
+    return deserialize(root);
+  } catch (const nlohmann::json::exception& e) {
+  }
+
+  return false;
 }
 }  // namespace kusai

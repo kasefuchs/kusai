@@ -46,7 +46,7 @@ class AbstractGraph : public AbstractSerializable {
   void clear();
 
   [[nodiscard]] nlohmann::json serialize() const override;
-  void deserialize(const nlohmann::json& data) override;
+  bool deserialize(const nlohmann::json& data) override;
 
  protected:
   mutable std::shared_mutex mutex_;

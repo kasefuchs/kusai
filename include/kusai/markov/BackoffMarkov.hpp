@@ -16,7 +16,7 @@ class BackoffMarkov : public AbstractMarkov {
   }
 
   [[nodiscard]] nlohmann::json serialize() const override;
-  void deserialize(const nlohmann::json& data) override;
+  bool deserialize(const nlohmann::json& data) override;
 
  protected:
   void trainUnlocked(const std::vector<std::vector<NodeId> >& sequences) override;

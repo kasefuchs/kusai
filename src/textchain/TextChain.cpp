@@ -40,10 +40,11 @@ nlohmann::json TextChain::serialize() const {
   return {{"markov", markov->serialize()}, {"tokenizer", tokenizer->serialize()}};
 }
 
-void TextChain::deserialize(const nlohmann::json& data) {
+bool TextChain::deserialize(const nlohmann::json& data) {
   std::unique_lock lock(mutex_);
-  markov->deserialize(data.at("markov"));
-  tokenizer->deserialize(data.at("tokenizer"));
+  if (!(markov->deserialize(data.at("markov")) && tokenizer->deserialize(data.at("tokenizer")))) return false;
+
+  return true;
 }
 
 std::vector<TokenId> TextChain::generateSequenceUnlocked(const std::string& context, uint32_t limit) const {

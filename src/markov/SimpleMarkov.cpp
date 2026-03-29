@@ -16,9 +16,9 @@ nlohmann::json SimpleMarkov::serialize() const {
   return {{"graph", graph->serialize()}};
 }
 
-void SimpleMarkov::deserialize(const nlohmann::json& data) {
+bool SimpleMarkov::deserialize(const nlohmann::json& data) {
   std::unique_lock lock(mutex_);
-  graph->deserialize(data.at("graph"));
+  return graph->deserialize(data.at("graph"));
 }
 
 void SimpleMarkov::trainUnlocked(const std::vector<std::vector<NodeId> >& sequences) {

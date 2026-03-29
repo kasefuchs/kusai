@@ -11,6 +11,6 @@ struct Node final : AbstractSerializable {
   NodeId id{};
 
   [[nodiscard]] nlohmann::json serialize() const override;
-  void deserialize(const nlohmann::json& data) override;
+  bool deserialize(const nlohmann::json& data) override;
 };
 }  // namespace kusai

@@ -5,6 +5,7 @@
     "abseil",
     "cli11",
     "xxhash",
+    "pybind11",
     "nlohmann-json"
   ]
 }

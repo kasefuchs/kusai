@@ -16,5 +16,6 @@ if (KUSAI_BUILD_APP)
 endif ()
 
 add_subdirectory(src)
+add_subdirectory(bind)
 
 include(Install)

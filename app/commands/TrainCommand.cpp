@@ -8,12 +8,12 @@
 #include <vector>
 
 #include "CLI/CLI.hpp"
-#include "commands/AbstractCommand.hpp"
 #include "helpers/model.hpp"
 #include "kusai/graph/MemoryGraph.hpp"
 #include "kusai/textchain/TextChain.hpp"
 #include "kusai/tokenizer/SimpleTokenizer.hpp"
 
+namespace kusai::app {
 TrainCommand::TrainCommand(CLI::App& app) : AbstractCommand(app) {
   cmd_ = app.add_subcommand("train", "Train model");
 
@@ -24,7 +24,7 @@ TrainCommand::TrainCommand(CLI::App& app) : AbstractCommand(app) {
 }
 
 void TrainCommand::execute() {
-  auto graph = std::make_shared<kusai::MemoryGraph>();
+  auto graph = std::make_shared<MemoryGraph>();
   auto markov = makeModel(modelType_, graph, contextSize_);
 
   std::ifstream in(inputFile_);
@@ -39,8 +39,8 @@ void TrainCommand::execute() {
     if (!line.empty()) data.push_back(std::move(line));
   }
 
-  auto tokenizer = std::make_shared<kusai::SimpleTokenizer>();
-  kusai::TextChain chain(markov, tokenizer);
+  auto tokenizer = std::make_shared<SimpleTokenizer>();
+  TextChain chain(markov, tokenizer);
   chain.train(data);
 
   std::ofstream out(outputFile_, std::ios::binary);
@@ -50,3 +50,4 @@ void TrainCommand::execute() {
 
   chain.serializeToOstream(out);
 }
+}  // namespace kusai::app

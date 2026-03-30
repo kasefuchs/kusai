@@ -3,6 +3,7 @@
 #include "AbstractCommand.hpp"
 #include "helpers/model.hpp"
 
+namespace kusai::app {
 class RunCommand : public AbstractCommand {
  public:
   explicit RunCommand(CLI::App& app);
@@ -16,3 +17,4 @@ class RunCommand : public AbstractCommand {
   std::string context_;
   int limit_ = INT8_MAX;
 };
+}  // namespace kusai::app

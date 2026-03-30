@@ -11,8 +11,9 @@ add_executable(kusai
   helpers/model.hpp
 )
 
-target_include_directories(kusai
-  PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
+target_include_directories(kusai PRIVATE
+  ${CMAKE_SOURCE_DIR}/include
+  ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 target_link_libraries(kusai

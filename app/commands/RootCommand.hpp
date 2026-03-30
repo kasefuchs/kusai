@@ -2,6 +2,7 @@
 
 #include "AbstractCommand.hpp"
 
+namespace kusai::app {
 class RootCommand : public AbstractCommand {
  public:
   explicit RootCommand(CLI::App& app);
@@ -14,3 +15,4 @@ class RootCommand : public AbstractCommand {
  private:
   std::vector<std::unique_ptr<AbstractCommand>> commands_;
 };
+}  // namespace kusai::app

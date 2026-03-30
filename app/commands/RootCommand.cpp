@@ -8,8 +8,8 @@
 
 #include "RunCommand.hpp"
 #include "TrainCommand.hpp"
-#include "commands/AbstractCommand.hpp"
 
+namespace kusai::app {
 RootCommand::RootCommand(CLI::App& app) : AbstractCommand(app) {
   commands_.push_back(std::make_unique<RunCommand>(app));
   commands_.push_back(std::make_unique<TrainCommand>(app));
@@ -37,3 +37,4 @@ void RootCommand::execute() {
 
   std::cerr << app.help() << std::flush;
 }
+}  // namespace kusai::app

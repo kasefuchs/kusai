@@ -18,10 +18,10 @@ find_package(xxHash CONFIG REQUIRED)
 if (KUSAI_BUILD_PYTHON)
   find_package(pybind11 CONFIG REQUIRED)
 
-  FetchContent_Declare(
-    pybind11_json
+  FetchContent_Declare(pybind11_json
     GIT_REPOSITORY https://github.com/pybind/pybind11_json.git
     GIT_TAG        master
+    EXCLUDE_FROM_ALL
   )
   FetchContent_MakeAvailable(pybind11_json)
 endif()

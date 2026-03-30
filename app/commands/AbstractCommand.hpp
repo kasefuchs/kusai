@@ -2,6 +2,7 @@
 
 #include <CLI/App.hpp>
 
+namespace kusai::app {
 class AbstractCommand {
  public:
   CLI::App& app;
@@ -17,3 +18,4 @@ class AbstractCommand {
 
   virtual void execute() = 0;
 };
+}  // namespace kusai::app

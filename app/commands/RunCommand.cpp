@@ -6,12 +6,12 @@
 #include <stdexcept>
 
 #include "CLI/CLI.hpp"
-#include "commands/AbstractCommand.hpp"
 #include "helpers/model.hpp"
 #include "kusai/graph/MemoryGraph.hpp"
 #include "kusai/textchain/TextChain.hpp"
 #include "kusai/tokenizer/SimpleTokenizer.hpp"
 
+namespace kusai::app {
 RunCommand::RunCommand(CLI::App& app) : AbstractCommand(app) {
   cmd_ = app.add_subcommand("run", "Run text generation");
 
@@ -22,7 +22,7 @@ RunCommand::RunCommand(CLI::App& app) : AbstractCommand(app) {
 }
 
 void RunCommand::execute() {
-  auto graph = std::make_shared<kusai::MemoryGraph>();
+  auto graph = std::make_shared<MemoryGraph>();
   auto markov = makeModel(modelType_, graph);
 
   std::ifstream in(inputFile_, std::ios::binary);
@@ -30,12 +30,13 @@ void RunCommand::execute() {
     throw std::runtime_error("Cannot open input file: " + inputFile_);
   }
 
-  auto tokenizer = std::make_shared<kusai::SimpleTokenizer>();
+  auto tokenizer = std::make_shared<SimpleTokenizer>();
 
-  kusai::TextChain chain(markov, tokenizer);
+  TextChain chain(markov, tokenizer);
   if (!chain.deserializeFromIstream(in)) {
     throw std::runtime_error("Cannot parse input file: " + inputFile_);
   }
 
   std::cout << chain.generateText(context_, limit_) << std::endl;
 }
+}  // namespace kusai::app

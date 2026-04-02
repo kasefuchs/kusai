@@ -1,6 +1,6 @@
 {
   "name": "kusai",
-  "version-string": "0.11.0",
+  "version-string": "0.11.1",
   "dependencies": [
     "abseil",
     "cli11",

@@ -13,8 +13,8 @@ steps:
     commands: # language="sh"
       # Install dependencies
       - apt-get update --assume-yes
-      - apt-get install --assume-yes libabsl-dev libcli11-dev
-      - vcpkg-gen-overlay.sh abseil cli11
+      - apt-get install --assume-yes libabsl-dev libcli11-dev pybind11-dev nlohmann-json3-dev
+      - vcpkg-gen-overlay.sh abseil cli11 pybind11 nlohmann-json
 
       # Compile app
       - >-
@@ -23,6 +23,7 @@ steps:
         -DVCPKG_TARGET_TRIPLET=$([ "${LINKAGE}" = "static" ] && echo x64-linux || echo x64-linux-dynamic)
         -DBUILD_SHARED_LIBS=$([ "${LINKAGE}" = "static" ] && echo OFF || echo ON)
         -DCMAKE_BUILD_TYPE=Release
+        -DKUSAI_INSTALL=ON
         -DKUSAI_BUILD_APP=ON
       - cmake --build cmake-build-${LINKAGE} --config Release
 

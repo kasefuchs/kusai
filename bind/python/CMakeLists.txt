@@ -34,3 +34,7 @@ target_link_libraries(bind-python
     serializable
     pybind11_json
 )
+
+install(TARGETS bind-python
+  DESTINATION .
+)

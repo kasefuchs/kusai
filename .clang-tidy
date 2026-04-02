@@ -2,5 +2,5 @@
 Checks: >-
   misc-include-cleaner,
   modernize-deprecated-headers
-WarningsAsErrors: ''
-HeaderFilterRegex: '.*'
+WarningsAsErrors: ""
+HeaderFilterRegex: ".*"

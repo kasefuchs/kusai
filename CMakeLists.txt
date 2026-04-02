@@ -18,4 +18,6 @@ endif ()
 add_subdirectory(src)
 add_subdirectory(bind)
 
-include(Install)
+if (KUSAI_INSTALL)
+  include(Install)
+endif ()

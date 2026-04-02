@@ -21,5 +21,6 @@ set(CPACK_PACKAGE_CONTACT "kasefuchs@protonmail.com")
 set(CPACK_PACKAGE_LICENSE "MIT")
 set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
 
+option(KUSAI_INSTALL "Enable install" ON)
 option(KUSAI_BUILD_APP "Build CLI app" OFF)
 option(KUSAI_BUILD_PYTHON "Build Python bindings" OFF)

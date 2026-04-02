@@ -1,0 +1,13 @@
+---
+when:
+  - event: tag
+
+steps:
+  - name: release
+    image: ghcr.io/astral-sh/uv:alpine
+    environment:
+      UV_PUBLISH_TOKEN:
+        from_secret: PYPI_API_TOKEN
+    commands: # language="sh"
+      - uv build --sdist
+      - uv publish

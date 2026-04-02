@@ -9,14 +9,12 @@ matrix:
 
 steps:
   - name: build
-    image: ghcr.io/kasefuchs/vcpkg
-    environment:
-      VCPKG_OVERLAY_PORTS: /tmp/overlay-ports
+    image: ghcr.io/kasefuchs/vcpkg:2026.03.18
     commands: # language="sh"
       # Install dependencies
       - apt-get update --assume-yes
       - apt-get install --assume-yes libabsl-dev libcli11-dev
-      - tools/vcpkg/gen-overlay.sh abseil cli11
+      - vcpkg-gen-overlay.sh abseil cli11
 
       # Compile app
       - >-

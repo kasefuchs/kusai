@@ -1,11 +1,11 @@
 cmake_minimum_required(VERSION 3.16)
 
 project(kusai
-  VERSION 0.10.0
+  VERSION 0.11.0
   LANGUAGES CXX
 )
 
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
 include(Settings)
 include(Dependencies)

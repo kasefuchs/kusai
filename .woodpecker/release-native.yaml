@@ -9,7 +9,7 @@ matrix:
 
 steps:
   - name: build
-    image: ghcr.io/kasefuchs/vcpkg:2026.03.18
+    image: ghcr.io/kasefuchs/containers/vcpkg:2026.03.18
     commands: # language="sh"
       # Install dependencies
       - apt-get update --assume-yes

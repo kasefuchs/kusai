@@ -15,5 +15,5 @@ kusai_add_library(
     serializable
     absl::log_internal_check_op
     nlohmann_json::nlohmann_json
-    xxHash::xxhash
+    @foreign_pkgcfg::libxxhash
 )

@@ -12,7 +12,7 @@ endif ()
 find_package(nlohmann_json CONFIG REQUIRED)
 
 # xxHash
-find_package(xxHash CONFIG REQUIRED)
+cmake_pkg_config(IMPORT libxxhash REQUIRED)
 
 # Pybind11
 if (KUSAI_BUILD_PYTHON)

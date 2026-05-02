@@ -11,5 +11,5 @@ kusai_add_library(
     absl::strings
     absl::flat_hash_map
     nlohmann_json::nlohmann_json
-    xxHash::xxhash
+    @foreign_pkgcfg::libxxhash
 )

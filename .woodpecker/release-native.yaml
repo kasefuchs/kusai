@@ -1,36 +1,23 @@
----
 when:
   - event: tag
-
 matrix:
   LINKAGE:
     - dynamic
     - static
-
 steps:
   - name: build
-    image: ghcr.io/kasefuchs/containers/vcpkg:2026.03.18
-    commands: # language="sh"
+    image: ghcr.io/kasefuchs/containers/cmake:4.3.1
+    commands:
       # Install dependencies
       - apt-get update --assume-yes
-      - apt-get install --assume-yes libabsl-dev libcli11-dev pybind11-dev nlohmann-json3-dev
-      - vcpkg-gen-overlay.sh abseil cli11 pybind11 nlohmann-json
-
+      - apt-get install --assume-yes libabsl-dev libcli11-dev libxxhash-dev nlohmann-json3-dev
       # Compile app
       - >-
-        cmake -G Ninja -B cmake-build-${LINKAGE}
-        -DCMAKE_TOOLCHAIN_FILE=$${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake
-        -DVCPKG_TARGET_TRIPLET=$([ "${LINKAGE}" = "static" ] && echo x64-linux || echo x64-linux-dynamic)
-        -DBUILD_SHARED_LIBS=$([ "${LINKAGE}" = "static" ] && echo OFF || echo ON)
-        -DCMAKE_BUILD_TYPE=Release
-        -DKUSAI_INSTALL=ON
-        -DKUSAI_BUILD_APP=ON
+        cmake -G Ninja -B cmake-build-${LINKAGE} -DBUILD_SHARED_LIBS=$([ "${LINKAGE}" = "static" ] && echo OFF || echo ON) -DCMAKE_BUILD_TYPE=Release -DKUSAI_INSTALL=ON -DKUSAI_BUILD_APP=ON
       - cmake --build cmake-build-${LINKAGE} --config Release
-
       # Package build
       - cd cmake-build-${LINKAGE}
       - cpack
-
   - name: publish
     image: woodpeckerci/plugin-release
     settings:

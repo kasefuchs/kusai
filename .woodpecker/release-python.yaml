@@ -1,7 +1,5 @@
----
 when:
   - event: tag
-
 steps:
   - name: release
     image: ghcr.io/astral-sh/uv:alpine

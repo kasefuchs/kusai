@@ -25,3 +25,8 @@ if (KUSAI_BUILD_PYTHON)
   )
   FetchContent_MakeAvailable(pybind11_json)
 endif()
+
+# Doxygen
+if (KUSAI_BUILD_DOC)
+  find_package(Doxygen REQUIRED COMPONENTS dot)
+endif ()

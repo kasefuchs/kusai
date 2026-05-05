@@ -21,6 +21,13 @@ set(CPACK_PACKAGE_CONTACT "kasefuchs@protonmail.com")
 set(CPACK_PACKAGE_LICENSE "MIT")
 set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
 
+set(DOXYGEN_USE_MDFILE_AS_MAINPAGE "${CMAKE_SOURCE_DIR}/README.md")
+set(DOXYGEN_STRIP_FROM_PATH
+  "${CMAKE_SOURCE_DIR}/include"
+  "${CMAKE_SOURCE_DIR}/src"
+)
+
 option(KUSAI_INSTALL "Enable install" OFF)
 option(KUSAI_BUILD_APP "Build CLI app" OFF)
+option(KUSAI_BUILD_DOC "Build documentation" OFF)
 option(KUSAI_BUILD_PYTHON "Build Python bindings" OFF)

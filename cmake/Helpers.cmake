@@ -7,6 +7,7 @@ function(kusai_add_library)
   )
 
   add_library(${KUSAI_LIB_NAME} ${KUSAI_LIB_SRCS})
+  add_library(kusai::${KUSAI_LIB_NAME} ALIAS ${KUSAI_LIB_NAME})
 
   set_target_properties(${KUSAI_LIB_NAME} PROPERTIES
     OUTPUT_NAME "kusai_${KUSAI_LIB_NAME}"
@@ -15,13 +16,13 @@ function(kusai_add_library)
   if(KUSAI_LIB_HDRS)
     set(_hdr_paths "")
     foreach(h ${KUSAI_LIB_HDRS})
-      list(APPEND _hdr_paths "${CMAKE_SOURCE_DIR}/include/kusai/${KUSAI_LIB_NAME}/${h}")
+      list(APPEND _hdr_paths "${PROJECT_SOURCE_DIR}/include/kusai/${KUSAI_LIB_NAME}/${h}")
     endforeach()
 
     target_sources(${KUSAI_LIB_NAME} PUBLIC
       FILE_SET HEADERS
         TYPE HEADERS
-        BASE_DIRS ${CMAKE_SOURCE_DIR}/include
+        BASE_DIRS ${PROJECT_SOURCE_DIR}/include
         FILES ${_hdr_paths}
     )
   endif()

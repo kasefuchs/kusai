@@ -8,8 +8,6 @@ kusai_add_library(
     SimpleTokenizer.hpp
   DEPS
     serializable
-    absl::strings
-    absl::flat_hash_map
     nlohmann_json::nlohmann_json
     PkgConfig::libxxhash
 )

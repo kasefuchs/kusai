@@ -1,9 +1,11 @@
 #include "kusai/tokenizer/SimpleTokenizer.hpp"
 
-#include <absl/strings/str_join.h>
 #include <xxhash.h>
 
+#include <exception>
+#include <iterator>
 #include <mutex>
+#include <numeric>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -36,7 +38,12 @@ std::string SimpleTokenizer::decodeUnlocked(const std::vector<TokenId>& context)
     }
   }
 
-  return absl::StrJoin(tokens, " ");
+  if (tokens.empty()) {
+    return {};
+  }
+
+  return std::accumulate(std::next(tokens.begin()), tokens.end(), tokens.front(),
+                         [](const std::string& a, const std::string& b) { return a + " " + b; });
 }
 
 nlohmann::json SimpleTokenizer::serialize() const {
@@ -53,13 +60,12 @@ bool SimpleTokenizer::deserialize(const nlohmann::json& data) {
   std::unique_lock lock(mutex_);
   vocabulary_.clear();
 
-  for (const auto& vocabJson = data.at("vocabulary"); auto& [key, value] : vocabJson.items()) {
-    TokenId id;
-    if (absl::SimpleAtoi(key, &id)) {
+  try {
+    for (const auto& vocabJson = data.at("vocabulary"); auto& [key, value] : vocabJson.items()) {
+      const TokenId id = std::stoull(key);
       vocabulary_.emplace(id, value.get<std::string>());
-      continue;
     }
-
+  } catch (const std::exception&) {
     return false;
   }
 

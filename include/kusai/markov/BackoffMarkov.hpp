@@ -1,7 +1,5 @@
 #pragma once
 
-#include <absl/log/check.h>
-
 #include "AbstractMarkov.hpp"
 #include "NGramMarkov.hpp"
 
@@ -10,7 +8,9 @@ class BackoffMarkov : public AbstractMarkov {
  public:
   explicit BackoffMarkov(const std::shared_ptr<AbstractGraph>& graph, const uint32_t maxContextSize = 1)
       : AbstractMarkov(graph), maxContextSize_(maxContextSize) {
-    CHECK(maxContextSize_ > 0) << "Maximum context size must be greater than 0.";
+    if (maxContextSize_ == 0) {
+      throw std::invalid_argument("Maximum context size must be greater than 0.");
+    }
 
     rebuildModels();
   }

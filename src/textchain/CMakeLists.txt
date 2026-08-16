@@ -9,6 +9,5 @@ kusai_add_library(
     markov
     tokenizer
     serializable
-    absl::strings
     nlohmann_json::nlohmann_json
 )

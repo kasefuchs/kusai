@@ -1,8 +1,6 @@
 @PACKAGE_INIT@
 include(CMakeFindDependencyMacro)
 
-find_package(absl CONFIG REQUIRED)
-
 cmake_pkg_config(IMPORT libxxhash REQUIRED)
 
 find_package(nlohmann_json CONFIG QUIET)

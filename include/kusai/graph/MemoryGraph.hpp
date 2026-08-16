@@ -1,6 +1,6 @@
 #pragma once
 
-#include <absl/container/flat_hash_map.h>
+#include <unordered_map>
 
 #include "AbstractGraph.hpp"
 
@@ -36,7 +36,7 @@ class MemoryGraph : public AbstractGraph {
   void clearEdgesUnlocked() override;
 
  private:
-  absl::flat_hash_map<NodeId, std::unique_ptr<Node> > nodes_;
-  absl::flat_hash_map<EdgeId, std::unique_ptr<Edge> > edges_;
+  std::unordered_map<NodeId, std::unique_ptr<Node> > nodes_;
+  std::unordered_map<EdgeId, std::unique_ptr<Edge> > edges_;
 };
 }  // namespace kusai

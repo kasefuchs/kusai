@@ -1,8 +1,5 @@
 include(FetchContent)
 
-# Abseil
-find_package(absl CONFIG REQUIRED)
-
 # CLI11
 if (KUSAI_BUILD_APP)
   find_package(CLI11 CONFIG REQUIRED)

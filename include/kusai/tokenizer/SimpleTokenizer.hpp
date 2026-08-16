@@ -1,6 +1,6 @@
 #pragma once
 
-#include <absl/container/flat_hash_map.h>
+#include <unordered_map>
 
 #include "AbstractTokenizer.hpp"
 
@@ -15,7 +15,7 @@ class SimpleTokenizer : public AbstractTokenizer {
   bool deserialize(const nlohmann::json& data) override;
 
  private:
-  absl::flat_hash_map<TokenId, std::string> vocabulary_;
+  std::unordered_map<TokenId, std::string> vocabulary_;
 
   [[nodiscard]] static TokenId makeTokenId(const std::string& token);
 };

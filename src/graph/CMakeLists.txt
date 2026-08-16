@@ -12,7 +12,6 @@ kusai_add_library(
     MemoryGraph.hpp
   DEPS
     serializable
-    absl::flat_hash_map
     nlohmann_json::nlohmann_json
     PkgConfig::libxxhash
 )

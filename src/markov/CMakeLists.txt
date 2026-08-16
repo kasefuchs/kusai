@@ -13,7 +13,6 @@ kusai_add_library(
   DEPS
     graph
     serializable
-    absl::log_internal_check_op
     nlohmann_json::nlohmann_json
     PkgConfig::libxxhash
 )

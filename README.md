@@ -1,5 +1,6 @@
 # Kusai
-## Building 
+
+## Building
 
 ```bash
 git clone https://codeberg.org/kasefuchs/kusai.git
@@ -8,7 +9,8 @@ cmake ..
 cmake --build .
 ```
 
-Install to systyem with 
+Install to system with
+
 ```bash
 cmake --build . --target install
 ```
@@ -21,7 +23,9 @@ cmake --build . --target install
 find_package(kusai REQUIRED)
 target_link_libraries(<your-target> kusai::textchain)
 ```
+
 Or FetchContent version
+
 ```cmake
 include(FetchContent)
 FetchContent_Declare(kusai
@@ -33,6 +37,7 @@ target_link_libraries(<your-target> kusai::textchain)
 ```
 
 ### Hello World
+
 ```cpp
 #include <kusai/graph/MemoryGraph.hpp>
 #include <kusai/markov/SimpleMarkov.hpp>

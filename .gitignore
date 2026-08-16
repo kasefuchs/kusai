@@ -1,16 +1,17 @@
-# --- IDE / Editor ---
-# JetBrains
+# Editors
 .idea/
+.vscode/
+.zed/
+.gram/
 *.iml
 
-# VSCode
-.vscode/
-
-# --- C / C++ ---
-# CMake
-cmake-build/
-cmake-build-*/
-
-# --- Python ---
 # Artifacts
 dist/
+build/
+cmake-build-*/
+
+# Cache
+.cache/
+
+# Local
+model.json

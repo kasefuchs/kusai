@@ -5,6 +5,12 @@
 .gram/
 *.iml
 
+# Python
+__pycache__/
+.ruff_cache/
+.venv/
+uv.lock
+
 # Artifacts
 dist/
 build/

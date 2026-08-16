@@ -1,0 +1,149 @@
+apiVersion: tekton.dev/v1
+kind: PipelineRun
+metadata:
+  name: release
+  annotations:
+    pipelinesascode.tekton.dev/on-event: "[push]"
+    pipelinesascode.tekton.dev/on-target-branch: "[refs/tags/*]"
+    pipelinesascode.tekton.dev/task: "[git-clone]"
+spec:
+  taskRunTemplate:
+    podTemplate:
+      securityContext:
+        fsGroup: 65532
+  workspaces:
+    - name: source
+      volumeClaimTemplate:
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 1Gi
+    - name: basic-auth
+      secret:
+        secretName: "{{ git_auth_secret }}"
+  pipelineSpec:
+    workspaces:
+      - name: source
+      - name: basic-auth
+    tasks:
+      - name: fetch-repository
+        taskRef:
+          name: git-clone
+        workspaces:
+          - name: output
+            workspace: source
+          - name: basic-auth
+            workspace: basic-auth
+        params:
+          - name: url
+            value: "{{ repo_url }}"
+          - name: revision
+            value: "{{ revision }}"
+      - name: publish-docs
+        runAfter:
+          - fetch-repository
+        workspaces:
+          - name: source
+            workspace: source
+        taskSpec:
+          workspaces:
+            - name: source
+          steps:
+            - name: build-docs
+              image: quay.io/pypa/manylinux_2_28_x86_64:2026.08.15-1
+              workingDir: $(workspaces.source.path)
+              script: |-
+                #!/usr/bin/env sh
+                set -eu
+                dnf install -y doxygen graphviz xxhash-devel json-devel ninja-build
+                cmake -G Ninja -B cmake-build-docs \
+                  -DCMAKE_BUILD_TYPE=Release \
+                  -DKUSAI_BUILD_DOC=ON
+                cmake --build cmake-build-docs --config Release --target doc
+            - name: publish-pages
+              image: jfxs/wrangler:4.73
+              workingDir: $(workspaces.source.path)/cmake-build-docs/doc/html
+              env:
+                - name: CLOUDFLARE_ACCOUNT_ID
+                  valueFrom:
+                    secretKeyRef:
+                      name: cloudflare-pages-credentials
+                      key: account-id
+                - name: CLOUDFLARE_API_TOKEN
+                  valueFrom:
+                    secretKeyRef:
+                      name: cloudflare-pages-credentials
+                      key: api-token
+              script: |-
+                #!/usr/bin/env sh
+                set -eu
+                wrangler pages deploy . --project-name kusai
+      - name: release-native
+        runAfter:
+          - fetch-repository
+        workspaces:
+          - name: source
+            workspace: source
+        taskSpec:
+          workspaces:
+            - name: source
+          steps:
+            - name: build-native
+              image: quay.io/pypa/manylinux_2_28_x86_64:2026.08.15-1
+              workingDir: $(workspaces.source.path)
+              script: |-
+                #!/usr/bin/env sh
+                set -eu
+                dnf install -y xxhash-devel json-devel cli11-devel ninja-build
+                cmake -G Ninja -B cmake-build-static \
+                  -DBUILD_SHARED_LIBS=OFF \
+                  -DCMAKE_BUILD_TYPE=Release \
+                  -DKUSAI_INSTALL=ON \
+                  -DKUSAI_BUILD_APP=ON
+                cmake --build cmake-build-static --config Release
+                cd cmake-build-static && cpack
+            - name: publish-release
+              image: woodpeckerci/plugin-release:0.3.1
+              workingDir: $(workspaces.source.path)/cmake-build-static/dist
+              env:
+                - name: PLUGIN_API_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: codeberg-release-credentials
+                      key: token
+              args:
+                - --pipeline.event=tag
+                - --commit.ref=refs/tags/{{ git_tag }}
+                - --forge.type=forgejo
+                - --base-url=https://codeberg.org
+                - --repo.owner={{ repo_owner }}
+                - --repo.name={{ repo_name }}
+                - --files=*
+      - name: release-python
+        runAfter:
+          - fetch-repository
+        workspaces:
+          - name: source
+            workspace: source
+        taskSpec:
+          workspaces:
+            - name: source
+          steps:
+            - name: publish-pypi
+              image: quay.io/pypa/manylinux_2_28_x86_64:2026.08.15-1
+              workingDir: $(workspaces.source.path)
+              env:
+                - name: UV_PUBLISH_TOKEN
+                  valueFrom:
+                    secretKeyRef:
+                      name: pypi-credentials
+                      key: token
+              script: |-
+                #!/usr/bin/env sh
+                set -eu
+                dnf install -y xxhash-devel json-devel ninja-build
+                uv build
+                auditwheel repair dist/*linux_x86_64.whl -w dist && rm -f dist/*linux_x86_64.whl
+                uv publish

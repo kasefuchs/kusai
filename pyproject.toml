@@ -1,20 +1,25 @@
 [build-system]
-requires = ["scikit-build-core>=0.12.0"]
+requires = ["scikit-build-core>=1.0.3", "pybind11>=3.1.0"]
 build-backend = "scikit_build_core.build"
 
 [project]
 name = "kusai"
-version = "0.12.2"
-requires-python = ">=3.12"
+version = "0.13.0"
+requires-python = ">=3.11"
 description = "Python bindings for Kusai"
-authors = [{ name = "Kasefuchs", email = "kasefuchs@protonmail.com" }]
-readme = { file = "README.md", content-type = "text/markdown" }
 license = "MIT"
 dependencies = []
 
-[tool.scikit-build]
-cmake.args = [
-  "-DKUSAI_BUILD_PYTHON=ON",
-  "-DBUILD_SHARED_LIBS=OFF"
-]
-wheel.packages = []
+[[project.authors]]
+name = "Kasefuchs"
+email = "kasefuchs@protonmail.com"
+
+[project.readme]
+file = "README.md"
+content-type = "text/markdown"
+
+[tool.scikit-build.cmake]
+args = ["-DKUSAI_BUILD_PYTHON=ON", "-DBUILD_SHARED_LIBS=OFF"]
+
+[tool.scikit-build.wheel]
+packages = []

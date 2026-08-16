@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 4.1)
 
 project(kusai
-  VERSION 0.12.2
+  VERSION 0.13.0
   LANGUAGES CXX
 )
 

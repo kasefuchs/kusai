@@ -40,7 +40,7 @@ void NGramMarkov::trainUnlocked(const std::vector<std::vector<NodeId> >& sequenc
     for (size_t i = 0; i + windowSize <= seq.size(); ++i) {
       std::span window(seq.data() + i, windowSize);
 
-      std::vector<uint64_t> ctx;
+      std::vector<NodeId> ctx;
       ctx.reserve(contextSize_);
       for (const auto node : window.first(contextSize_)) {
         ctx.push_back(node);
@@ -57,7 +57,7 @@ void NGramMarkov::trainUnlocked(const std::vector<std::vector<NodeId> >& sequenc
 std::optional<NodeId> NGramMarkov::nextNodeUnlocked(const std::vector<NodeId>& context) const {
   if (context.size() < contextSize_) return std::nullopt;
 
-  std::vector<uint64_t> ctx;
+  std::vector<NodeId> ctx;
   ctx.reserve(contextSize_);
   for (const std::span window(context); const auto node : window.last(contextSize_)) {
     ctx.push_back(node);

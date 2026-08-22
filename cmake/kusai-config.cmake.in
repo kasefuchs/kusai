@@ -1,7 +1,10 @@
 @PACKAGE_INIT@
 include(CMakeFindDependencyMacro)
 
-cmake_pkg_config(IMPORT libxxhash REQUIRED)
+cmake_pkg_config(IMPORT libxxhash QUIET)
+if (TARGET PkgConfig::libxxhash AND NOT TARGET xxHash::xxhash)
+  add_library(xxHash::xxhash ALIAS PkgConfig::libxxhash)
+endif()
 
 find_package(nlohmann_json CONFIG QUIET)
 

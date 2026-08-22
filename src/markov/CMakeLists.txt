@@ -14,5 +14,5 @@ kusai_add_library(
     graph
     serializable
     nlohmann_json::nlohmann_json
-    PkgConfig::libxxhash
+    xxHash::xxhash
 )
